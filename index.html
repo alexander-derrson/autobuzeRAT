@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>RAT Craiova Tracker</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>RAT Craiova Tracker</h1>
+
+    <div class="controls">
+
+      <label>
+        Operator:
+        <select id="operatorFilter">
+          <option value="all">All operators</option>
+          <option value="transmixt">RAT Craiova</option>
+        </select>
+      </label>
+
+      <label>
+        Route:
+        <select id="routeFilter">
+          <option value="all">All routes</option>
+        </select>
+      </label>
+
+      <button id="refreshButton">
+        Refresh
+      </button>
+
+    </div>
+
+    <div id="status">
+      Loading...
+    </div>
+  </header>
+
+  <main>
+
+    <div id="map"></div>
+
+    <div id="vehicleMenu" class="vehicle-menu">
+
+      <div class="vehicle-menu-header">
+        <h3>Vehicles</h3>
+      </div>
+
+      <div id="vehicleList">
+        Loading vehicles...
+      </div>
+
+    </div>
+
+  </main>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+  </script>
+
+  <script src="app.js"></script>
+
+</body>
+</html>

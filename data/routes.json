@@ -1,0 +1,77 @@
+{
+  "RAT Craiova": {
+    "21": {
+      "indicative": "1"
+    },
+    "25": {
+      "indicative": "E1T"
+    },
+    "26": {
+      "indicative": "E1R"
+    },
+    "19": {
+      "indicative": "2"
+    },
+    "20": {
+      "indicative": "3b"
+    },
+    "24": {
+      "indicative": "4"
+    },
+    "22": {
+      "indicative": "5b"
+    },
+    "37": {
+      "indicative": "6"
+    },
+    "38": {
+      "indicative": "7"
+    },
+    "36": {
+      "indicative": "8"
+    },
+    "28": {
+      "indicative": "9"
+    },
+    "23": {
+      "indicative": "10"
+    },
+    "35": {
+      "indicative": "11"
+    },
+	"43": {
+      "indicative": "12"
+    },
+    "30": {
+      "indicative": "13"
+    },
+    "31": {
+      "indicative": "17"
+    },
+    "32": {
+      "indicative": "20"
+    },
+    "29": {
+      "indicative": "23b"
+    },
+    "34": {
+      "indicative": "24"
+    },
+    "33": {
+      "indicative": "25"
+    },
+    "27": {
+      "indicative": "29b"
+    },
+    "39": {
+      "indicative": "T100"
+    },
+	"40": {
+      "indicative": "T101"
+    },
+	"41": {
+      "indicative": "T102"
+    }
+
+  }
+}

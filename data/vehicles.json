@@ -1,0 +1,612 @@
+{
+  "RAT Craiova": {
+    "1001": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1002": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1003": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1004": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1005": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1006": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1007": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1008": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1009": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1010": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1011": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1012": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1013": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1014": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1015": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1016": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "1017": {
+      "type": "tram",
+      "model": "PESA Twist 145N"
+    },
+    "001": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "002": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "003": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "004": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "005": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "006": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "007": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "008": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "009": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "010": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "011": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "012": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "013": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "014": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "015": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "016": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "017": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "018": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "019": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "020": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "021": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "022": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "023": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "024": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "025": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "026": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "027": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "028": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "029": {
+      "type": "bus",
+      "model": "Solaris Urbino 12"
+    },
+    "030": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "031": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "032": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "033": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "034": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "035": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "036": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "037": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "038": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "039": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "040": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "041": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "042": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "043": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "044": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "045": {
+      "type": "bus",
+      "model": "Solaris Urbino 18 Electric"
+    },
+    "R01": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R02": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R03": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R04": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R05": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R06": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R07": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R08": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R09": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R10": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R11": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R12": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R13": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R14": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R15": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R16": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R17": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R18": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R19": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R20": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R21": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R22": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R23": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R24": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R25": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R26": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R27": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R28": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R29": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R30": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R31": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R32": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R33": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R34": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R35": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R36": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R37": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R38": {
+      "type": "bus",
+      "model": "BMC Procity 12LF"
+    },
+    "R39": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R40": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R41": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R42": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R43": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R44": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R45": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R46": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R47": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R48": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R49": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R50": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R51": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R52": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R53": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R54": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R55": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R56": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R57": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R58": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R59": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R60": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R61": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R62": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R63": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R64": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R65": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R66": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R67": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R68": {
+      "type": "bus",
+      "model": "ZTE / Granton GTZ6129BEVR"
+    },
+    "R69": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R70": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R71": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R72": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R73": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R74": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R75": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R76": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R77": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R78": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R79": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R80": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R81": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R82": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R83": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R84": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R85": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R86": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R87": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R88": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R89": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    },
+    "R90": {
+      "type": "bus",
+      "model": "Karsan e-ATA 12"
+    }
+  }
+}
