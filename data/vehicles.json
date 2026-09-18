@@ -607,6 +607,126 @@
     "R90": {
       "type": "bus",
       "model": "Karsan e-ATA 12"
+    },
+    "094": {
+      "type": "bus",
+      "model": "Temsa Prestij"
+    },
+    "108": {
+      "type": "bus",
+      "model": "Temsa Prestij"
+    },
+    "123": {
+      "type": "bus",
+      "model": "Iveco Daily"
+    },
+    "126": {
+      "type": "bus",
+      "model": "Iveco Daily"
+    },
+    "142": {
+      "type": "bus",
+      "model": "Iveco Daily"
+    },
+    "143": {
+      "type": "bus",
+      "model": "Iveco Daily"
+    },
+    "144": {
+      "type": "bus",
+      "model": "Iveco Daily"
+    },
+    "145": {
+      "type": "bus",
+      "model": "Iveco Daily"
+    },
+    "165": {
+      "type": "bus",
+      "model": "BMC Belde 250 SLF"
+    },
+    "166": {
+      "type": "bus",
+      "model": "BMC Belde 250 SLF"
+    },
+    "167": {
+      "type": "bus",
+      "model": "BMC Belde 250 SLF"
+    },
+    "168": {
+      "type": "bus",
+      "model": "BMC Belde 250 SLF"
+    },
+    "169": {
+      "type": "bus",
+      "model": "BMC Belde 250 SLF"
+    },
+    "437": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "438": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "439": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "440": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "441": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "442": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "443": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "444": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "445": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "446": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "447": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "448": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "449": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "450": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "451": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "452": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
+    },
+    "453": {
+      "type": "bus",
+      "model": "MAN A78 EL283"
     }
   }
 }
