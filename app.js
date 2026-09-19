@@ -32,6 +32,10 @@ let PATTERNS = {};
 let ROUTE_META = {};
 let STOPS = {};
 
+// Timetable per stop, fetched when a stop popup is opened
+let STOP_TIMES = {};
+const STOP_TIMES_TTL = 20000;
+
 let selectedVehicleKey = null;
 let drawnPatternKey = null;
 let transportDataPromise = null;
@@ -65,6 +69,18 @@ L.tileLayer(
 
 // Layer that holds the drawn route line + stops of the selected vehicle
 const routeLayer = L.layerGroup().addTo(map);
+
+// Dedicated pane so the route line sits above the general stops
+map.createPane("routePane").style.zIndex = 450;
+
+// Layer with every stop of the network (shown when zoomed in)
+const STOP_MIN_ZOOM = 14;
+const stopsLayer = L.layerGroup();
+
+map.on("zoomend", updateStopsVisibility);
+
+// Stop whose popup is currently open (so it can refresh live)
+let openStop = null;
 
 
 // ============================================================
@@ -425,6 +441,7 @@ async function loadRoutes(api) {
 
     ROUTE_META[api.operator][String(route.id)] = {
       color: route.color ?? null,
+      textColor: route.textColor ?? null,
       shortName: route.shortName
     };
 
@@ -475,8 +492,10 @@ async function loadStops(api) {
         stop.shortName ??
         stop.longName ??
         `Stop ${id}`,
+      code: stop.code ?? null,
       lat: Number(lat),
-      lng: Number(lng)
+      lng: Number(lng),
+      patterns: stop.patterns ?? []
     };
   });
 
@@ -508,6 +527,8 @@ async function loadTransportData() {
         : null
     ]);
   }
+
+  buildStopsLayer();
 }
 
 
@@ -525,6 +546,490 @@ function getStop(operator, stopId) {
   }
 
   return STOPS[operator]?.[String(stopId)] ?? null;
+}
+
+
+// ============================================================
+// STOP MARKERS + POPUP
+// ============================================================
+
+function getRouteIndicative(operator, routeId) {
+  return (
+    ROUTES[operator]?.[String(routeId)]?.indicative ??
+    ROUTE_META[operator]?.[String(routeId)]?.shortName ??
+    String(routeId)
+  );
+}
+
+
+// Vehicles heading to (or standing at) this stop, on a route that
+// serves it. stopsAway = 0 means the stop is the vehicle's next stop.
+function getStopArrivals(operator, stop) {
+
+  const arrivals = [];
+
+  allVehicles.forEach(vehicle => {
+
+    if (vehicle.operator !== operator) {
+      return;
+    }
+
+    const pattern = getPattern(vehicle);
+
+    if (!pattern || !Array.isArray(pattern.stops)) {
+      return;
+    }
+
+    const nextIndex = pattern.stops.findIndex(
+      id => Number(id) === Number(vehicle.stopId)
+    );
+
+    if (nextIndex < 0) {
+      return;
+    }
+
+    const targetIndex = pattern.stops.findIndex(
+      (id, index) =>
+        index >= nextIndex && Number(id) === Number(stop.id)
+    );
+
+    if (targetIndex < 0) {
+      return;
+    }
+
+    arrivals.push({
+      vehicle,
+      stopsAway: targetIndex - nextIndex
+    });
+  });
+
+  arrivals.sort((a, b) => {
+
+    if (a.stopsAway !== b.stopsAway) {
+      return a.stopsAway - b.stopsAway;
+    }
+
+    return String(a.vehicle.label)
+      .localeCompare(String(b.vehicle.label));
+  });
+
+  return arrivals;
+}
+
+
+function formatArrival(vehicle, stopsAway) {
+
+  if (stopsAway === 0) {
+
+    if (vehicle.stopStatus === "STOPPED_AT") {
+      return "în stație";
+    }
+
+    const arrival = new Date(vehicle.nextStopArrival);
+
+    if (
+      !vehicle.nextStopArrival ||
+      Number.isNaN(arrival.getTime())
+    ) {
+      return "urmează";
+    }
+
+    const minutes = Math.round(
+      (arrival.getTime() - Date.now()) / 60000
+    );
+
+    const time = arrival.toLocaleTimeString("ro-RO", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    return minutes <= 0
+      ? `${time} (acum)`
+      : `${time} (peste ${minutes} min)`;
+  }
+
+  return stopsAway === 1
+    ? "o stație distanță"
+    : `${stopsAway} stații distanță`;
+}
+
+
+// ============================================================
+// STOP TIMETABLE (scheduled + real-time arrivals)
+// ============================================================
+
+function getApi(operator) {
+  return API_URLS.find(api => api.operator === operator) ?? null;
+}
+
+
+// Only accepts a plain 6-digit hex colour (values come from the API)
+function safeHex(value) {
+
+  const text = String(value ?? "").replace("#", "");
+
+  return /^[0-9a-fA-F]{6}$/.test(text) ? text : null;
+}
+
+
+function readableTextColor(hex) {
+
+  const value = safeHex(hex);
+
+  if (!value) {
+    return "#ffffff";
+  }
+
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  return luminance > 0.6 ? "#000000" : "#ffffff";
+}
+
+
+function routeBadge(operator, routeId) {
+
+  const meta = ROUTE_META[operator]?.[String(routeId)];
+
+  const color = safeHex(meta?.color);
+  const textColor = safeHex(meta?.textColor);
+
+  const background = color ? `#${color}` : "#666666";
+  const foreground = textColor
+    ? `#${textColor}`
+    : readableTextColor(color);
+
+  return `<span style="display:inline-block; min-width:34px; text-align:center; padding:1px 6px; border-radius:4px; font-weight:bold; background:${background}; color:${foreground};">${escapeHtml(getRouteIndicative(operator, routeId))}</span>`;
+}
+
+
+function formatClock(timestamp) {
+
+  return new Date(timestamp).toLocaleTimeString("ro-RO", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+
+// Fetches .../stops/{id}/times (cached for a short while)
+function requestStopTimes(operator, stop) {
+
+  const api = getApi(operator);
+
+  if (!api || !api.stopsUrl) {
+    return;
+  }
+
+  const key = `${operator}|${stop.id}`;
+  const previous = STOP_TIMES[key];
+
+  if (
+    previous &&
+    (previous.loading || Date.now() - previous.time < STOP_TIMES_TTL)
+  ) {
+    return;
+  }
+
+  STOP_TIMES[key] = {
+    data: previous?.data ?? null,
+    error: false,
+    loading: true,
+    time: previous?.time ?? 0
+  };
+
+  fetch(`${api.stopsUrl}/${stop.id}/times`)
+    .then(response => {
+
+      if (!response.ok) {
+        throw new Error(`stop times returned ${response.status}`);
+      }
+
+      return response.json();
+    })
+    .then(data => {
+
+      STOP_TIMES[key] = {
+        data: Array.isArray(data) ? data : [],
+        error: false,
+        loading: false,
+        time: Date.now()
+      };
+    })
+    .catch(error => {
+
+      console.warn(`Could not load times for stop ${stop.id}:`, error);
+
+      STOP_TIMES[key] = {
+        data: previous?.data ?? null,
+        error: true,
+        loading: false,
+        time: Date.now()
+      };
+    })
+    .finally(() => {
+
+      if (
+        openStop &&
+        openStop.operator === operator &&
+        openStop.stop.id === stop.id
+      ) {
+        refreshOpenStopPopup();
+      }
+    });
+}
+
+
+// Upcoming arrivals at a stop, sorted by time.
+// Returns null while the timetable has not been loaded yet.
+function getStopDepartures(operator, stop) {
+
+  const entry = STOP_TIMES[`${operator}|${stop.id}`];
+
+  if (!entry || !entry.data) {
+    return null;
+  }
+
+  const now = Date.now();
+  const departures = [];
+
+  entry.data.forEach(group => {
+
+    const routeId = group.route?.routeId;
+
+    const pattern =
+      PATTERNS[patternKey(operator, routeId, group.route?.index)];
+
+    (group.times ?? []).forEach(time => {
+
+      const scheduled = new Date(time.scheduledArrival).getTime();
+
+      if (Number.isNaN(scheduled)) {
+        return;
+      }
+
+      const delayMs = Number(time.arrivalDelay ?? 0) * 1000;
+
+      const predicted =
+        scheduled + (Number.isNaN(delayMs) ? 0 : delayMs);
+
+      // Skip arrivals that already happened
+      if (predicted < now - 60000) {
+        return;
+      }
+
+      departures.push({
+        routeId,
+        pattern,
+        predicted,
+        realtime: Boolean(time.realtime)
+      });
+    });
+  });
+
+  departures.sort((a, b) => a.predicted - b.predicted);
+
+  return departures;
+}
+
+
+function createStopPopup(operator, stop) {
+
+  // Load (or refresh) the timetable in the background
+  requestStopTimes(operator, stop);
+
+  // ----------------------------------------------------------
+  // Lines that serve this stop
+  // ----------------------------------------------------------
+
+  const indicatives = [
+    ...new Set(
+      (stop.patterns ?? []).map(pattern =>
+        getRouteIndicative(operator, pattern.routeId)
+      )
+    )
+  ].sort((a, b) =>
+    String(a).localeCompare(String(b), undefined, { numeric: true })
+  );
+
+  const linesText = indicatives.length
+    ? indicatives.map(escapeHtml).join(", ")
+    : "-";
+
+
+  // ----------------------------------------------------------
+  // Timetable
+  // ----------------------------------------------------------
+
+  const entry = STOP_TIMES[`${operator}|${stop.id}`];
+  const departures = getStopDepartures(operator, stop);
+
+  let timetableHtml;
+
+  if (departures === null) {
+
+    timetableHtml = entry?.error
+      ? "<li>Orarul nu a putut fi încărcat</li>"
+      : "<li>Se încarcă...</li>";
+
+  } else if (departures.length === 0) {
+
+    timetableHtml = "<li>Nicio sosire programată în curând</li>";
+
+  } else {
+
+    timetableHtml = departures.slice(0, 8).map(item => {
+
+      let headsign = "";
+
+      if (item.pattern) {
+        headsign =
+          Number(item.pattern.toStopId) === Number(stop.id)
+            ? "capăt de linie"
+            : getStop(operator, item.pattern.toStopId)?.name ?? "";
+      }
+
+      const minutes = Math.round((item.predicted - Date.now()) / 60000);
+
+      const inText = minutes <= 0 ? "acum" : `peste ${minutes} min`;
+
+      return `
+        <li style="margin-bottom: 3px;">
+          ${routeBadge(operator, item.routeId)}
+          ${headsign ? `→ ${escapeHtml(headsign)}` : ""}
+          <br>
+          <strong>${formatClock(item.predicted)}</strong>
+          (${inText})${item.realtime ? " · live" : ""}
+        </li>
+      `;
+    }).join("");
+  }
+
+
+  // ----------------------------------------------------------
+  // Vehicles that are close to this stop
+  // ----------------------------------------------------------
+
+  const nearby = getStopArrivals(operator, stop)
+    .filter(item => item.stopsAway <= 3)
+    .slice(0, 4);
+
+  const nearbyHtml = nearby.length
+    ? `
+      <p><strong>Vehicule în apropiere:</strong></p>
+      <ul style="margin: 4px 0; padding-left: 18px;">
+        ${nearby.map(item => `
+          <li>
+            <strong>${escapeHtml(item.vehicle.routeIndicative)}</strong>
+            · ${escapeHtml(item.vehicle.label)}
+            · ${formatArrival(item.vehicle, item.stopsAway)}
+          </li>
+        `).join("")}
+      </ul>
+    `
+    : "";
+
+
+  const title = stop.code
+    ? `${escapeHtml(stop.name)} (${escapeHtml(stop.code)})`
+    : escapeHtml(stop.name);
+
+  return `
+    <div class="vehicle-popup">
+
+      <p>
+        <strong>Stația:</strong>
+        ${title}
+      </p>
+
+      <p>
+        <strong>Linii:</strong>
+        ${linesText}
+      </p>
+
+      <p><strong>Următoarele sosiri:</strong></p>
+      <ul style="margin: 4px 0; padding-left: 0; list-style: none;">
+        ${timetableHtml}
+      </ul>
+
+      ${nearbyHtml}
+
+    </div>
+  `;
+}
+
+
+function createStopMarker(operator, stop) {
+
+  const marker = L.circleMarker([stop.lat, stop.lng], {
+    radius: 5,
+    color: "#444444",
+    weight: 2,
+    fillColor: "#ffffff",
+    fillOpacity: 1
+  });
+
+  marker.bindTooltip(escapeHtml(stop.name));
+
+  // A function is evaluated every time the popup opens/updates,
+  // so the live arrivals are always current.
+  marker.bindPopup(() => createStopPopup(operator, stop));
+
+  marker.on("popupopen", () => {
+    openStop = { marker, operator, stop };
+  });
+
+  marker.on("popupclose", () => {
+    if (openStop && openStop.marker === marker) {
+      openStop = null;
+    }
+  });
+
+  return marker;
+}
+
+
+function buildStopsLayer() {
+
+  stopsLayer.clearLayers();
+
+  Object.entries(STOPS).forEach(([operator, stops]) => {
+
+    Object.values(stops).forEach(stop => {
+      createStopMarker(operator, stop).addTo(stopsLayer);
+    });
+  });
+
+  updateStopsVisibility();
+}
+
+
+// Stops are only shown when zoomed in, to keep the map readable.
+function updateStopsVisibility() {
+
+  const show = map.getZoom() >= STOP_MIN_ZOOM;
+
+  if (show && !map.hasLayer(stopsLayer)) {
+    stopsLayer.addTo(map);
+  }
+
+  if (!show && map.hasLayer(stopsLayer)) {
+    map.removeLayer(stopsLayer);
+  }
+}
+
+
+// Called after every refresh: updates an open stop popup.
+function refreshOpenStopPopup() {
+
+  if (!openStop) {
+    return;
+  }
+
+  openStop.marker.getPopup()?.update();
 }
 
 
@@ -565,6 +1070,8 @@ function drawVehicleRoute(vehicle) {
     const points = decodePolyline(pattern.geometry);
 
     L.polyline(points, {
+      pane: "routePane",
+      interactive: false,
       color,
       weight: 5,
       opacity: 0.85
@@ -576,6 +1083,8 @@ function drawVehicleRoute(vehicle) {
     L.polyline(
       stops.map(stop => [stop.lat, stop.lng]),
       {
+        pane: "routePane",
+        interactive: false,
         color,
         weight: 4,
         opacity: 0.7,
@@ -590,15 +1099,16 @@ function drawVehicleRoute(vehicle) {
 
   stops.forEach(stop => {
 
+    // Not interactive: clicks go to the stop marker underneath
     L.circleMarker([stop.lat, stop.lng], {
+      pane: "routePane",
+      interactive: false,
       radius: 5,
       color,
       weight: 2,
       fillColor: "#ffffff",
       fillOpacity: 1
-    })
-      .bindTooltip(escapeHtml(stop.name))
-      .addTo(routeLayer);
+    }).addTo(routeLayer);
   });
 }
 
@@ -1071,6 +1581,8 @@ async function updateVehicles() {
     displayVehicles();
 
     refreshSelectedRoute();
+
+    refreshOpenStopPopup();
 
 
     console.log(
