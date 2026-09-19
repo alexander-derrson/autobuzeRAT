@@ -152,6 +152,30 @@ function enrichVehicle(vehicle) {
 
 
 // ============================================================
+// NORMALIZE VEHICLE LABEL
+// ============================================================
+// The API sends some vehicles as S01-S29.
+// They are shown (and looked up in vehicles.json) as 001-029.
+
+function normalizeLabel(label) {
+
+  if (label === null || label === undefined) {
+    return label;
+  }
+
+  const text = String(label).trim();
+
+  const match = text.match(/^S(\d{2})$/i);
+
+  if (match) {
+    return `0${match[1]}`;
+  }
+
+  return text;
+}
+
+
+// ============================================================
 // FETCH VEHICLES FROM ONE API
 // ============================================================
 
@@ -175,6 +199,12 @@ async function fetchFromAPI(api) {
 
   return vehicles.map(vehicle => ({
     ...vehicle,
+
+    // Original label from the API (e.g. S01)
+    apiLabel: vehicle.label,
+
+    // Label used everywhere else (e.g. 001)
+    label: normalizeLabel(vehicle.label),
 
     operator: api.operator,
 
