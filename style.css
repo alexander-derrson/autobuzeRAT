@@ -16,6 +16,8 @@ body {
 }
 
 header {
+  position: relative;
+  z-index: 2000;
   padding: 12px 16px;
   background: #222;
   color: white;
@@ -43,6 +45,102 @@ select,
 button {
   padding: 6px 10px;
   font-size: 14px;
+}
+
+/* ---------- Stop search ---------- */
+
+.stop-search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.stop-search-box {
+  position: relative;
+  flex: 1;
+  max-width: 420px;
+}
+
+.stop-search input {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.stop-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 50vh;
+  overflow-y: auto;
+
+  background: white;
+  color: #222;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.stop-results[hidden] {
+  display: none;
+}
+
+.stop-result {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  color: inherit;
+
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+  border-radius: 0;
+}
+
+.stop-result:hover,
+.stop-result.active {
+  background: #eef2f7;
+}
+
+.stop-result-name {
+  font-weight: bold;
+}
+
+.stop-result-code {
+  margin-left: 6px;
+  font-weight: normal;
+  font-size: 12px;
+  color: #777;
+}
+
+.stop-result-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.stop-result-more {
+  align-self: center;
+  color: #777;
+}
+
+.stop-result-direction {
+  margin-top: 3px;
+  font-size: 12px;
+  color: #666;
+}
+
+.stop-result-message {
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #666;
 }
 
 button {

@@ -22,14 +22,6 @@
     <div class="controls">
 
       <label>
-        Operator:
-        <select id="operatorFilter">
-          <option value="all">All operators</option>
-          <option value="transmixt">RAT Craiova</option>
-        </select>
-      </label>
-
-      <label>
         Route:
         <select id="routeFilter">
           <option value="all">All routes</option>
@@ -39,6 +31,26 @@
       <button id="refreshButton">
         Refresh
       </button>
+
+    </div>
+
+    <div class="stop-search">
+
+      <label for="stopSearch">Stop:</label>
+
+      <div class="stop-search-box">
+
+        <input
+          id="stopSearch"
+          type="search"
+          placeholder="Search a stop or line, e.g. Complex Nou 25"
+          autocomplete="off"
+          spellcheck="false"
+        >
+
+        <div id="stopResults" class="stop-results" hidden></div>
+
+      </div>
 
     </div>
 
