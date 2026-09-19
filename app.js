@@ -82,6 +82,9 @@ map.on("zoomend", updateStopsVisibility);
 // Stop whose popup is currently open (so it can refresh live)
 let openStop = null;
 
+// Stop marker whose lines are currently highlighted
+let selectedStopMarker = null;
+
 
 // ============================================================
 // LOAD LOCAL DATA
@@ -962,6 +965,45 @@ function createStopPopup(operator, stop) {
 }
 
 
+// Highlights every line that serves the clicked stop.
+function showStopRoutes(marker, operator, stop) {
+
+  // A stop selection replaces a vehicle selection
+  selectedVehicleKey = null;
+  drawnPatternKey = null;
+  selectedStopMarker = marker;
+
+  routeLayer.clearLayers();
+
+  const seen = new Set();
+
+  (stop.patterns ?? []).forEach(item => {
+
+    const key = patternKey(operator, item.routeId, item.index);
+
+    if (seen.has(key)) {
+      return;
+    }
+
+    seen.add(key);
+
+    const pattern = PATTERNS[key];
+
+    if (pattern) {
+      drawPatternLine(operator, item.routeId, pattern, 4);
+    }
+  });
+}
+
+
+function clearStopRoutes() {
+
+  routeLayer.clearLayers();
+
+  selectedStopMarker = null;
+}
+
+
 function createStopMarker(operator, stop) {
 
   const marker = L.circleMarker([stop.lat, stop.lng], {
@@ -978,13 +1020,22 @@ function createStopMarker(operator, stop) {
   // so the live arrivals are always current.
   marker.bindPopup(() => createStopPopup(operator, stop));
 
+  // Draw the lines serving this stop when it is clicked,
+  // remove them when its popup is closed.
+  marker.on("click", () => showStopRoutes(marker, operator, stop));
+
   marker.on("popupopen", () => {
     openStop = { marker, operator, stop };
   });
 
   marker.on("popupclose", () => {
+
     if (openStop && openStop.marker === marker) {
       openStop = null;
+    }
+
+    if (selectedStopMarker === marker) {
+      clearStopRoutes();
     }
   });
 
@@ -1033,6 +1084,54 @@ function refreshOpenStopPopup() {
 }
 
 
+// Draws the line of one pattern (in the colour of its route).
+// Returns the colour and the known stops of the pattern.
+function drawPatternLine(operator, routeId, pattern, weight = 5) {
+
+  const hex = safeHex(
+    ROUTE_META[operator]?.[String(routeId)]?.color
+  );
+
+  const color = hex ? `#${hex}` : "#3388ff";
+
+  const stops = (pattern.stops ?? [])
+    .map(stopId => getStop(operator, stopId))
+    .filter(Boolean);
+
+  if (pattern.geometry) {
+
+    if (!pattern._points) {
+      pattern._points = decodePolyline(pattern.geometry);
+    }
+
+    L.polyline(pattern._points, {
+      pane: "routePane",
+      interactive: false,
+      color,
+      weight,
+      opacity: 0.85
+    }).addTo(routeLayer);
+
+  } else if (stops.length > 1) {
+
+    // No drawn geometry for this pattern: connect the stops
+    L.polyline(
+      stops.map(stop => [stop.lat, stop.lng]),
+      {
+        pane: "routePane",
+        interactive: false,
+        color,
+        weight: Math.max(weight - 1, 3),
+        opacity: 0.7,
+        dashArray: "6 8"
+      }
+    ).addTo(routeLayer);
+  }
+
+  return { color, stops };
+}
+
+
 function drawVehicleRoute(vehicle) {
 
   routeLayer.clearLayers();
@@ -1052,46 +1151,12 @@ function drawVehicleRoute(vehicle) {
     return;
   }
 
-  const color =
-    ROUTE_META[vehicle.operator]?.[String(vehicle.routeId)]?.color
-      ? `#${ROUTE_META[vehicle.operator][String(vehicle.routeId)].color}`
-      : "#3388ff";
-
-  const stops = (pattern.stops ?? [])
-    .map(stopId => getStop(vehicle.operator, stopId))
-    .filter(Boolean);
-
-  // ----------------------------------------------------------
-  // Route line
-  // ----------------------------------------------------------
-
-  if (pattern.geometry) {
-
-    const points = decodePolyline(pattern.geometry);
-
-    L.polyline(points, {
-      pane: "routePane",
-      interactive: false,
-      color,
-      weight: 5,
-      opacity: 0.85
-    }).addTo(routeLayer);
-
-  } else if (stops.length > 1) {
-
-    // No drawn geometry for this pattern: connect the stops
-    L.polyline(
-      stops.map(stop => [stop.lat, stop.lng]),
-      {
-        pane: "routePane",
-        interactive: false,
-        color,
-        weight: 4,
-        opacity: 0.7,
-        dashArray: "6 8"
-      }
-    ).addTo(routeLayer);
-  }
+  const { color, stops } = drawPatternLine(
+    vehicle.operator,
+    vehicle.routeId,
+    pattern,
+    5
+  );
 
   // ----------------------------------------------------------
   // Stops of this pattern
@@ -1124,6 +1189,7 @@ function clearVehicleRoute() {
 
 async function showVehicleRoute(vehicleKey) {
 
+  selectedStopMarker = null;
   selectedVehicleKey = vehicleKey;
 
   if (transportDataPromise) {
