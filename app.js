@@ -24,8 +24,9 @@ let allVehicles = [];
 
 let markers = {};
 
-let selectedOperator = "all";
-let selectedRoute = "all";
+// Route chosen in the "Route" dropdown: { operator, routeId },
+// or null when "All routes" is selected
+let selectedRoute = null;
 
 // Route lines and stops (loaded from the API)
 let PATTERNS = {};
@@ -39,6 +40,28 @@ const STOP_TIMES_TTL = 20000;
 let selectedVehicleKey = null;
 let drawnPatternKey = null;
 let transportDataPromise = null;
+
+// Stop markers by "operator|stopId" (used for visibility + stop search)
+let stopMarkers = {};
+
+// Keys of the stops on the selected route (null = no route selected)
+let selectedRouteStopKeys = null;
+
+// Stop that must stay on the map even if it would normally be hidden:
+// the one picked from the search box, until its popup is closed
+let pinnedStopKey = null;
+
+// Searchable list of stops, built once stops + route patterns are loaded
+let STOP_INDEX = [];
+let transportReady = false;
+
+// Status bar
+let shownVehicleCount = 0;
+let lastUpdateTime = null;
+let routeNote = "";
+
+// Lets a newer route selection cancel an older one that is still loading
+let routeDrawToken = 0;
 
 
 
@@ -67,15 +90,37 @@ L.tileLayer(
   }
 ).addTo(map);
 
-// Layer that holds the drawn route line + stops of the selected vehicle
+// Layer that holds the drawn route line + stops of the selected vehicle / stop
 const routeLayer = L.layerGroup().addTo(map);
 
-// Dedicated pane so the route line sits above the general stops
+// Dedicated pane so that line sits above the general stops
 map.createPane("routePane").style.zIndex = 450;
 
-// Layer with every stop of the network (shown when zoomed in)
+// Layer for the route picked in the "Route" dropdown. Its panes sit BELOW
+// the stops (overlayPane = 400), so the stop dots stay on top and clickable.
+const selectedRouteLayer = L.layerGroup().addTo(map);
+map.createPane("selectedRouteCasingPane").style.zIndex = 380;
+map.createPane("selectedRoutePane").style.zIndex = 390;
+
+// Layer with the stop markers. Which of them are actually on the map is
+// decided by updateStopsVisibility().
 const STOP_MIN_ZOOM = 14;
-const stopsLayer = L.layerGroup();
+const STOP_FOCUS_ZOOM = 17;
+const stopsLayer = L.layerGroup().addTo(map);
+
+// Stop dots: white with a thin black outline, thicker when selected
+const STOP_STYLE = {
+  radius: 5,
+  color: "#000000",
+  weight: 1,
+  fillColor: "#ffffff",
+  fillOpacity: 1
+};
+
+const STOP_STYLE_SELECTED = {
+  ...STOP_STYLE,
+  weight: 4
+};
 
 map.on("zoomend", updateStopsVisibility);
 
@@ -176,6 +221,7 @@ function enrichVehicle(vehicle) {
 
   routeIndicative:
     routeInfo?.indicative ??
+    ROUTE_META[vehicle.operator]?.[String(vehicle.routeId)]?.shortName ??
     String(vehicle.routeId),
 
   direction:
@@ -532,6 +578,12 @@ async function loadTransportData() {
   }
 
   buildStopsLayer();
+  buildStopIndex();
+
+  transportReady = true;
+
+  // The API can know routes that routes.json does not (and vice versa)
+  updateRouteFilter();
 }
 
 
@@ -1006,13 +1058,12 @@ function clearStopRoutes() {
 
 function createStopMarker(operator, stop) {
 
-  const marker = L.circleMarker([stop.lat, stop.lng], {
-    radius: 5,
-    color: "#000000",
-    weight: 2,
-    fillColor: "#ffffff",
-    fillOpacity: 1
-  });
+  const key = `${operator}|${stop.id}`;
+
+  const marker = L.circleMarker(
+    [stop.lat, stop.lng],
+    { ...STOP_STYLE }
+  );
 
   marker.bindTooltip(escapeHtml(stop.name));
 
@@ -1020,12 +1071,17 @@ function createStopMarker(operator, stop) {
   // so the live arrivals are always current.
   marker.bindPopup(() => createStopPopup(operator, stop));
 
-  // Draw the lines serving this stop when it is clicked,
-  // remove them when its popup is closed.
-  marker.on("click", () => showStopRoutes(marker, operator, stop));
-
+  // These run on popupopen / popupclose (not on click) so that a popup
+  // opened from code, e.g. from the stop search, behaves exactly like a
+  // real click: thick outline + the lines serving the stop are drawn.
   marker.on("popupopen", () => {
+
     openStop = { marker, operator, stop };
+
+    marker.setStyle(STOP_STYLE_SELECTED);
+    marker.bringToFront();
+
+    showStopRoutes(marker, operator, stop);
   });
 
   marker.on("popupclose", () => {
@@ -1034,9 +1090,18 @@ function createStopMarker(operator, stop) {
       openStop = null;
     }
 
+    marker.setStyle(STOP_STYLE);
+
     if (selectedStopMarker === marker) {
       clearStopRoutes();
     }
+
+    if (pinnedStopKey === key) {
+      pinnedStopKey = null;
+    }
+
+    // Deferred: another popup may be opening right now
+    setTimeout(updateStopsVisibility, 0);
   });
 
   return marker;
@@ -1046,11 +1111,13 @@ function createStopMarker(operator, stop) {
 function buildStopsLayer() {
 
   stopsLayer.clearLayers();
+  stopMarkers = {};
 
   Object.entries(STOPS).forEach(([operator, stops]) => {
 
     Object.values(stops).forEach(stop => {
-      createStopMarker(operator, stop).addTo(stopsLayer);
+      stopMarkers[`${operator}|${stop.id}`] =
+        createStopMarker(operator, stop);
     });
   });
 
@@ -1058,18 +1125,36 @@ function buildStopsLayer() {
 }
 
 
-// Stops are only shown when zoomed in, to keep the map readable.
+// Decides which stop markers are on the map:
+//  - route selected  -> only the stops of that route (at any zoom)
+//  - no route        -> every stop, but only when zoomed in
+// The stop with the open popup and the stop picked from the search
+// box always stay visible.
 function updateStopsVisibility() {
 
-  const show = map.getZoom() >= STOP_MIN_ZOOM;
+  const zoomedIn = map.getZoom() >= STOP_MIN_ZOOM;
 
-  if (show && !map.hasLayer(stopsLayer)) {
-    stopsLayer.addTo(map);
-  }
+  const openKey = openStop
+    ? `${openStop.operator}|${openStop.stop.id}`
+    : null;
 
-  if (!show && map.hasLayer(stopsLayer)) {
-    map.removeLayer(stopsLayer);
-  }
+  Object.entries(stopMarkers).forEach(([key, marker]) => {
+
+    const show =
+      key === openKey ||
+      key === pinnedStopKey ||
+      (selectedRouteStopKeys
+        ? selectedRouteStopKeys.has(key)
+        : zoomedIn);
+
+    const shown = stopsLayer.hasLayer(marker);
+
+    if (show && !shown) {
+      stopsLayer.addLayer(marker);
+    } else if (!show && shown) {
+      stopsLayer.removeLayer(marker);
+    }
+  });
 }
 
 
@@ -1085,8 +1170,17 @@ function refreshOpenStopPopup() {
 
 
 // Draws the line of one pattern (in the colour of its route).
-// Returns the colour and the known stops of the pattern.
-function drawPatternLine(operator, routeId, pattern, weight = 5) {
+// Returns the colour, the known stops and the points of the line.
+//
+// options:
+//   layer       layer group to draw into (default: routeLayer)
+//   pane        pane of the line          (default: "routePane")
+//   casingPane  when set, a white outline is drawn underneath in that
+//               pane so the line stands out from the map
+function drawPatternLine(operator, routeId, pattern, weight = 5, options = {}) {
+
+  const layer = options.layer ?? routeLayer;
+  const pane = options.pane ?? "routePane";
 
   const hex = safeHex(
     ROUTE_META[operator]?.[String(routeId)]?.color
@@ -1098,37 +1192,50 @@ function drawPatternLine(operator, routeId, pattern, weight = 5) {
     .map(stopId => getStop(operator, stopId))
     .filter(Boolean);
 
+  let points = [];
+
   if (pattern.geometry) {
 
     if (!pattern._points) {
       pattern._points = decodePolyline(pattern.geometry);
     }
 
-    L.polyline(pattern._points, {
-      pane: "routePane",
+    points = pattern._points;
+
+    if (options.casingPane) {
+      L.polyline(points, {
+        pane: options.casingPane,
+        interactive: false,
+        color: "#ffffff",
+        weight: weight + 4,
+        opacity: 0.9
+      }).addTo(layer);
+    }
+
+    L.polyline(points, {
+      pane,
       interactive: false,
       color,
       weight,
       opacity: 0.85
-    }).addTo(routeLayer);
+    }).addTo(layer);
 
   } else if (stops.length > 1) {
 
     // No drawn geometry for this pattern: connect the stops
-    L.polyline(
-      stops.map(stop => [stop.lat, stop.lng]),
-      {
-        pane: "routePane",
-        interactive: false,
-        color,
-        weight: Math.max(weight - 1, 3),
-        opacity: 0.7,
-        dashArray: "6 8"
-      }
-    ).addTo(routeLayer);
+    points = stops.map(stop => [stop.lat, stop.lng]);
+
+    L.polyline(points, {
+      pane,
+      interactive: false,
+      color,
+      weight: Math.max(weight - 1, 3),
+      opacity: 0.7,
+      dashArray: "6 8"
+    }).addTo(layer);
   }
 
-  return { color, stops };
+  return { color, stops, points };
 }
 
 
@@ -1151,7 +1258,7 @@ function drawVehicleRoute(vehicle) {
     return;
   }
 
-  const { color, stops } = drawPatternLine(
+  const { stops } = drawPatternLine(
     vehicle.operator,
     vehicle.routeId,
     pattern,
@@ -1166,13 +1273,9 @@ function drawVehicleRoute(vehicle) {
 
     // Not interactive: clicks go to the stop marker underneath
     L.circleMarker([stop.lat, stop.lng], {
+      ...STOP_STYLE,
       pane: "routePane",
-      interactive: false,
-      radius: 5,
-      color,
-      weight: 2,
-      fillColor: "#ffffff",
-      fillOpacity: 1
+      interactive: false
     }).addTo(routeLayer);
   });
 }
@@ -1457,23 +1560,16 @@ function displayVehicles() {
   const filteredVehicles =
     allVehicles.filter(vehicle => {
 
-      // Operator filter
-      if (
-        selectedOperator !== "all" &&
-        vehicle.operator !== selectedOperator
-      ) {
-        return false;
-      }
-
-
       // Route filter
       if (
-        selectedRoute !== "all" &&
-        String(vehicle.routeId) !== String(selectedRoute)
+        selectedRoute &&
+        (
+          vehicle.operator !== selectedRoute.operator ||
+          String(vehicle.routeId) !== selectedRoute.routeId
+        )
       ) {
         return false;
       }
-
 
       return true;
     });
@@ -1494,76 +1590,105 @@ function displayVehicles() {
 
 
 // ============================================================
-// UPDATE ROUTE FILTER
+// ROUTE DROPDOWN
 // ============================================================
+// Lists EVERY known route, not only the ones that currently have a
+// vehicle on the map: routes.json + the routes API + any route seen
+// on a vehicle.
+
+let routeFilterSignature = "";
 
 function updateRouteFilter() {
 
   const routeFilter =
     document.getElementById("routeFilter");
 
-  const previousValue =
-    routeFilter.value;
-
-
-  routeFilter.innerHTML = `
-    <option value="all">
-      All routes
-    </option>
-  `;
-
-
   const routes = new Map();
 
 
-  allVehicles.forEach(vehicle => {
+  function addRoute(operator, routeId) {
 
-    if (
-      selectedOperator !== "all" &&
-      vehicle.operator !== selectedOperator
-    ) {
+    if (routeId === null || routeId === undefined) {
       return;
     }
 
-
-    if (
-      vehicle.routeId === null ||
-      vehicle.routeId === undefined
-    ) {
-      return;
-    }
-
-
-    const key =
-      `${vehicle.operator}-${vehicle.routeId}`;
-
+    const key = `${operator}|${routeId}`;
 
     if (!routes.has(key)) {
 
       routes.set(key, {
-        operator: vehicle.operator,
-        routeId: vehicle.routeId,
-        indicative: vehicle.routeIndicative
+        key,
+        operator,
+        routeId: String(routeId),
+        indicative: String(
+          getRouteIndicative(operator, routeId)
+        )
       });
+    }
+  }
 
+
+  // 1. routes API: the real list of routes. Once it has loaded it is the
+  //    authority, so a stale id left in routes.json cannot show up twice.
+  Object.entries(ROUTE_META).forEach(([operator, metas]) => {
+    Object.keys(metas ?? {}).forEach(routeId =>
+      addRoute(operator, routeId)
+    );
+  });
+
+  // 2. routes.json: used until the API has loaded (or if it cannot be
+  //    reached), so the list is never empty. Its labels (1b, 23b, ...)
+  //    are always the ones shown, see getRouteIndicative().
+  Object.entries(ROUTES).forEach(([operator, operatorRoutes]) => {
+
+    if (Object.keys(ROUTE_META[operator] ?? {}).length > 0) {
+      return;
     }
 
+    Object.keys(operatorRoutes ?? {}).forEach(routeId =>
+      addRoute(operator, routeId)
+    );
   });
+
+  // 3. routes seen on vehicles
+  allVehicles.forEach(vehicle =>
+    addRoute(vehicle.operator, vehicle.routeId)
+  );
 
 
   const sortedRoutes =
-    [...routes.values()].sort((a, b) => {
+    [...routes.values()].sort((a, b) =>
+      a.indicative.localeCompare(
+        b.indicative,
+        undefined,
+        { numeric: true }
+      )
+    );
 
-      return String(a.indicative)
-        .localeCompare(
-          String(b.indicative),
-          undefined,
-          {
-            numeric: true
-          }
-        );
 
-    });
+  // Called on every refresh: only rebuild when the list changed
+  const signature = sortedRoutes
+    .map(route => `${route.key}:${route.indicative}`)
+    .join(",");
+
+  if (signature === routeFilterSignature) {
+    return;
+  }
+
+  routeFilterSignature = signature;
+
+
+  // Only mention the operator if there is more than one
+  const showOperator =
+    new Set(sortedRoutes.map(route => route.operator)).size > 1;
+
+
+  routeFilter.innerHTML = "";
+
+  const allOption = document.createElement("option");
+  allOption.value = "all";
+  allOption.textContent = "All routes";
+  routeFilter.appendChild(allOption);
 
 
   sortedRoutes.forEach(route => {
@@ -1571,32 +1696,114 @@ function updateRouteFilter() {
     const option =
       document.createElement("option");
 
-    option.value =
-      `${route.operator}|${route.routeId}`;
+    option.value = route.key;
 
-    option.textContent =
-      `${route.indicative} (${route.operator === "RAT Craiova"
-        ? "RAT Craiova"
-        : "RAT Craiova"})`;
+    option.textContent = showOperator
+      ? `${route.indicative} (${route.operator})`
+      : route.indicative;
 
     routeFilter.appendChild(option);
-
   });
 
 
-  // Restore selection if possible
-  if (
-    [...routeFilter.options]
-      .some(option => option.value === previousValue)
-  ) {
+  // Restore the selection
+  routeFilter.value = selectedRoute
+    ? `${selectedRoute.operator}|${selectedRoute.routeId}`
+    : "all";
 
-    routeFilter.value = previousValue;
-
-  } else {
+  if (routeFilter.selectedIndex === -1) {
 
     routeFilter.value = "all";
+    selectedRoute = null;
 
-    selectedRoute = "all";
+    drawSelectedRoute({ fit: false });
+    displayVehicles();
+  }
+}
+
+
+// ============================================================
+// SELECTED ROUTE (from the dropdown)
+// ============================================================
+// Draws every pattern (direction / variant) of the route, shows only
+// its stops, and zooms the map to it. Vehicles are filtered separately
+// by displayVehicles().
+
+async function drawSelectedRoute({ fit = true } = {}) {
+
+  const token = ++routeDrawToken;
+
+  selectedRouteLayer.clearLayers();
+  selectedRouteStopKeys = null;
+  routeNote = "";
+
+  updateStopsVisibility();
+  renderStatus();
+
+
+  if (!selectedRoute) {
+    return;
+  }
+
+  const { operator, routeId } = selectedRoute;
+
+
+  // Lines + stops load in the background at startup
+  if (transportDataPromise) {
+    await transportDataPromise;
+  }
+
+  // The user picked something else while this was loading
+  if (token !== routeDrawToken) {
+    return;
+  }
+
+
+  const prefix = patternKey(operator, routeId, "");
+
+  const patterns = Object.entries(PATTERNS)
+    .filter(([key]) => key.startsWith(prefix))
+    .map(([, pattern]) => pattern);
+
+
+  const stopKeys = new Set();
+  const bounds = L.latLngBounds([]);
+
+  patterns.forEach(pattern => {
+
+    const { stops, points } = drawPatternLine(
+      operator,
+      routeId,
+      pattern,
+      6,
+      {
+        layer: selectedRouteLayer,
+        pane: "selectedRoutePane",
+        casingPane: "selectedRouteCasingPane"
+      }
+    );
+
+    stops.forEach(stop => {
+      stopKeys.add(`${operator}|${stop.id}`);
+      bounds.extend([stop.lat, stop.lng]);
+    });
+
+    points.forEach(point => bounds.extend(point));
+  });
+
+
+  if (patterns.length === 0) {
+    routeNote = "no route line available";
+  }
+
+  selectedRouteStopKeys = stopKeys.size > 0 ? stopKeys : null;
+
+  updateStopsVisibility();
+  renderStatus();
+
+
+  if (fit && bounds.isValid()) {
+    map.fitBounds(bounds, { padding: [40, 40] });
   }
 }
 
@@ -1607,15 +1814,54 @@ function updateRouteFilter() {
 
 function updateStatus(vehicles) {
 
+  shownVehicleCount = vehicles.length;
+
+  lastUpdateTime = new Date().toLocaleTimeString();
+
+  renderStatus();
+}
+
+
+function renderStatus() {
+
+  // Nothing to show before the first update
+  if (!lastUpdateTime) {
+    return;
+  }
+
   const status =
     document.getElementById("status");
 
-  const time =
-    new Date().toLocaleTimeString();
+  const count = shownVehicleCount;
 
+  const vehicleText =
+    `${count} ${count === 1 ? "vehicle" : "vehicles"}`;
 
-  status.textContent =
-    `${vehicles.length} vehicles shown • Last update: ${time}`;
+  let text;
+
+  if (selectedRoute) {
+
+    const name = getRouteIndicative(
+      selectedRoute.operator,
+      selectedRoute.routeId
+    );
+
+    text = count === 0
+      ? `Route ${name}: no vehicles on the map right now`
+      : `Route ${name}: ${vehicleText} on the map`;
+
+  } else {
+
+    text = `${vehicleText} shown`;
+  }
+
+  text += ` • Last update: ${lastUpdateTime}`;
+
+  if (routeNote) {
+    text += ` • ${routeNote}`;
+  }
+
+  status.textContent = text;
 }
 
 
@@ -1667,35 +1913,12 @@ async function updateVehicles() {
 
 
 // ============================================================
-// OPERATOR FILTER
-// ============================================================
-
-document
-  .getElementById("operatorFilter")
-  .addEventListener(
-    "change",
-    event => {
-
-      selectedOperator =
-        event.target.value;
-
-      selectedRoute =
-        "all";
-
-      updateRouteFilter();
-
-      displayVehicles();
-    }
-  );
-
-
-// ============================================================
 // ROUTE FILTER
 // ============================================================
 
 document
   .getElementById("routeFilter")
-  .addEventListener(
+  ?.addEventListener(
     "change",
     event => {
 
@@ -1706,38 +1929,455 @@ document
       if (value === "all") {
 
         selectedRoute =
-          "all";
+          null;
 
       } else {
 
         // Format:
         // operator|routeId
 
-        const [
-          operator,
-          routeId
-        ] = value.split("|");
+        const separator =
+          value.indexOf("|");
 
-
-        // Make sure the selected operator
-        // matches the selected route.
-
-        selectedOperator =
-          operator;
-
-        document
-          .getElementById("operatorFilter")
-          .value = operator;
-
-
-        selectedRoute =
-          routeId;
+        selectedRoute = {
+          operator: value.slice(0, separator),
+          routeId: value.slice(separator + 1)
+        };
       }
 
 
+      // Start from a clean map: closing the popup also removes
+      // any vehicle / stop highlight that is currently drawn.
+      map.closePopup();
+
       displayVehicles();
+
+      drawSelectedRoute({ fit: true });
     }
   );
+
+
+// ============================================================
+// STOP SEARCH
+// ============================================================
+// Type part of a stop name and / or a line number, e.g.
+// "complex nou", "25" or "complex nou 25". Every word must match
+// either the stop name or one of the lines that serve the stop.
+
+// Lower case, no diacritics: "Ștefan" -> "stefan"
+function normalizeText(value) {
+
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+
+function compareIndicatives(a, b) {
+
+  return String(a).localeCompare(
+    String(b),
+    undefined,
+    { numeric: true }
+  );
+}
+
+
+function buildStopIndex() {
+
+  STOP_INDEX = [];
+
+  function setFor(map, id) {
+
+    if (!map[id]) {
+      map[id] = new Set();
+    }
+
+    return map[id];
+  }
+
+  Object.entries(STOPS).forEach(([operator, stops]) => {
+
+    const routesByStop = {};
+    const destinationsByStop = {};
+
+    function note(stopId, routeId, toStopId) {
+
+      const id = String(stopId);
+
+      setFor(routesByStop, id).add(String(routeId));
+
+      if (toStopId !== null && toStopId !== undefined) {
+        setFor(destinationsByStop, id).add(String(toStopId));
+      }
+    }
+
+
+    // Which routes pass through each stop, and where they are heading
+    const prefix = `${operator}|`;
+
+    Object.entries(PATTERNS).forEach(([key, pattern]) => {
+
+      if (!key.startsWith(prefix)) {
+        return;
+      }
+
+      const routeId = key.slice(prefix.length).split("|")[0];
+
+      (pattern.stops ?? []).forEach(stopId =>
+        note(stopId, routeId, pattern.toStopId)
+      );
+    });
+
+
+    Object.values(stops).forEach(stop => {
+
+      // Also trust what the stops API says about this stop
+      (stop.patterns ?? []).forEach(item => {
+
+        const pattern =
+          PATTERNS[patternKey(operator, item.routeId, item.index)];
+
+        note(stop.id, item.routeId, pattern?.toStopId);
+      });
+
+
+      const id = String(stop.id);
+
+      const lines = [...(routesByStop[id] ?? [])]
+        .map(routeId => ({
+          routeId,
+          indicative: String(getRouteIndicative(operator, routeId))
+        }))
+        .sort((a, b) => compareIndicatives(a.indicative, b.indicative));
+
+      // Where the lines through this stop are heading. This tells apart
+      // two stops with the same name on opposite sides of the street.
+      const destinations = [
+        ...new Set(
+          [...(destinationsByStop[id] ?? [])]
+            .filter(destinationId => destinationId !== id)
+            .map(destinationId => getStop(operator, destinationId)?.name)
+            .filter(name => name && name !== stop.name)
+        )
+      ];
+
+      STOP_INDEX.push({
+        operator,
+        stop,
+        key: `${operator}|${id}`,
+        nameNorm: normalizeText(stop.name),
+        lines,
+        lineNorms: lines.map(line => normalizeText(line.indicative)),
+        destinations
+      });
+    });
+  });
+
+  console.log(`Stop search index: ${STOP_INDEX.length} stops`);
+}
+
+
+function searchStops(query) {
+
+  const tokens = normalizeText(query)
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (tokens.length === 0) {
+    return [];
+  }
+
+  const matches = [];
+
+  STOP_INDEX.forEach(entry => {
+
+    let score = 0;
+
+    for (const token of tokens) {
+
+      if (entry.nameNorm.includes(token)) {
+
+        // A name (or word of it) that starts with the token ranks higher
+        score +=
+          entry.nameNorm.startsWith(token) ||
+          entry.nameNorm.includes(` ${token}`)
+            ? 3
+            : 2;
+
+      } else if (entry.lineNorms.includes(token)) {
+
+        score += 3;
+
+      } else if (entry.lineNorms.some(line => line.startsWith(token))) {
+
+        // Still typing a line, e.g. "2" while looking for "25"
+        score += 1;
+
+      } else {
+
+        // Every word has to match something
+        return;
+      }
+    }
+
+    matches.push({ entry, score });
+  });
+
+  matches.sort((a, b) =>
+    b.score - a.score ||
+    a.entry.stop.name.localeCompare(b.entry.stop.name, "ro") ||
+    compareIndicatives(
+      a.entry.lines[0]?.indicative ?? "",
+      b.entry.lines[0]?.indicative ?? ""
+    )
+  );
+
+  return matches.map(match => match.entry);
+}
+
+
+// Moves the map to a stop and opens its timetable popup, the same
+// as if the stop had been clicked.
+function focusStop(operator, stopId) {
+
+  const key = `${operator}|${stopId}`;
+
+  const stop = getStop(operator, stopId);
+  const marker = stopMarkers[key];
+
+  if (!stop || !marker) {
+    return;
+  }
+
+  // Make sure the marker is on the map even if it is normally hidden
+  // (zoomed out, or not part of the selected route)
+  pinnedStopKey = key;
+  updateStopsVisibility();
+
+  const zoom = Math.max(map.getZoom(), STOP_FOCUS_ZOOM);
+
+  let opened = false;
+
+  function openPopup() {
+
+    if (opened) {
+      return;
+    }
+
+    opened = true;
+
+    map.off("moveend", openPopup);
+
+    if (map.hasLayer(marker)) {
+      marker.openPopup();
+    }
+  }
+
+  // Open once the map has finished moving; the timeout is a safety net
+  map.on("moveend", openPopup);
+  setTimeout(openPopup, 1500);
+
+  map.setView([stop.lat, stop.lng], zoom, { animate: true });
+}
+
+
+// ---------------- search box ----------------
+
+// Assigned by initStopSearch(). If the page has no search box (for example
+// an older index.html), the search is simply disabled: it must never stop
+// the rest of the app from starting.
+let stopSearchInput = null;
+let stopResultsEl = null;
+
+const MAX_STOP_RESULTS = 40;
+const MAX_LINE_BADGES = 8;
+
+let stopResults = [];
+let activeResultIndex = -1;
+
+
+function hideStopResults() {
+
+  stopResultsEl.hidden = true;
+  activeResultIndex = -1;
+}
+
+
+function showStopMessage(text) {
+
+  stopResults = [];
+  activeResultIndex = -1;
+
+  stopResultsEl.innerHTML =
+    `<div class="stop-result-message">${escapeHtml(text)}</div>`;
+
+  stopResultsEl.hidden = false;
+}
+
+
+function renderStopResults() {
+
+  const query = stopSearchInput.value.trim();
+
+  if (!query) {
+    stopResults = [];
+    hideStopResults();
+    return;
+  }
+
+  if (!transportReady) {
+    showStopMessage("Stops are still loading...");
+    return;
+  }
+
+  const found = searchStops(query);
+
+  if (found.length === 0) {
+    showStopMessage("No stops found");
+    return;
+  }
+
+  stopResults = found.slice(0, MAX_STOP_RESULTS);
+  activeResultIndex = -1;
+
+  const items = stopResults.map((entry, index) => {
+
+    const badges = entry.lines
+      .slice(0, MAX_LINE_BADGES)
+      .map(line => routeBadge(entry.operator, line.routeId))
+      .join(" ");
+
+    const more = entry.lines.length > MAX_LINE_BADGES
+      ? `<span class="stop-result-more">+${entry.lines.length - MAX_LINE_BADGES}</span>`
+      : "";
+
+    const code = entry.stop.code
+      ? `<span class="stop-result-code">${escapeHtml(entry.stop.code)}</span>`
+      : "";
+
+    const heading = entry.destinations.length
+      ? `<div class="stop-result-direction">→ ${escapeHtml(entry.destinations.slice(0, 2).join(", "))}${entry.destinations.length > 2 ? "…" : ""}</div>`
+      : "";
+
+    return `
+      <button type="button" class="stop-result" data-index="${index}">
+        <div class="stop-result-name">${escapeHtml(entry.stop.name)}${code}</div>
+        <div class="stop-result-lines">${badges}${more}</div>
+        ${heading}
+      </button>
+    `;
+  });
+
+  const footer = found.length > MAX_STOP_RESULTS
+    ? `<div class="stop-result-message">Showing ${MAX_STOP_RESULTS} of ${found.length} stops. Keep typing to narrow it down.</div>`
+    : "";
+
+  stopResultsEl.innerHTML = items.join("") + footer;
+  stopResultsEl.hidden = false;
+}
+
+
+function setActiveResult(index) {
+
+  const buttons = stopResultsEl.querySelectorAll(".stop-result");
+
+  buttons.forEach((button, i) =>
+    button.classList.toggle("active", i === index)
+  );
+
+  activeResultIndex = index;
+
+  buttons[index]?.scrollIntoView({ block: "nearest" });
+}
+
+
+function selectStopResult(entry) {
+
+  if (!entry) {
+    return;
+  }
+
+  stopSearchInput.value = entry.stop.name;
+
+  hideStopResults();
+
+  // Closes the keyboard on phones so the map + popup are visible
+  stopSearchInput.blur();
+
+  focusStop(entry.operator, entry.stop.id);
+}
+
+
+function initStopSearch() {
+
+  stopSearchInput = document.getElementById("stopSearch");
+  stopResultsEl = document.getElementById("stopResults");
+
+  if (!stopSearchInput || !stopResultsEl) {
+    console.warn(
+      "Stop search disabled: #stopSearch / #stopResults not found in index.html"
+    );
+    return;
+  }
+
+  stopSearchInput.addEventListener("input", renderStopResults);
+
+  stopSearchInput.addEventListener("focus", renderStopResults);
+
+  stopSearchInput.addEventListener("keydown", event => {
+
+    if (event.key === "Escape") {
+      hideStopResults();
+      return;
+    }
+
+    if (stopResultsEl.hidden || stopResults.length === 0) {
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
+
+      event.preventDefault();
+      setActiveResult(
+        Math.min(activeResultIndex + 1, stopResults.length - 1)
+      );
+
+    } else if (event.key === "ArrowUp") {
+
+      event.preventDefault();
+      setActiveResult(Math.max(activeResultIndex - 1, 0));
+
+    } else if (event.key === "Enter") {
+
+      event.preventDefault();
+      selectStopResult(
+        stopResults[activeResultIndex >= 0 ? activeResultIndex : 0]
+      );
+    }
+  });
+
+  stopResultsEl.addEventListener("click", event => {
+
+    const button = event.target.closest(".stop-result");
+
+    if (button) {
+      selectStopResult(stopResults[Number(button.dataset.index)]);
+    }
+  });
+
+  // Click anywhere outside the search box closes the results
+  document.addEventListener("click", event => {
+
+    if (!event.target.closest(".stop-search")) {
+      hideStopResults();
+    }
+  });
+}
+
+initStopSearch();
 
 
 // ============================================================
@@ -1746,7 +2386,7 @@ document
 
 document
   .getElementById("refreshButton")
-  .addEventListener(
+  ?.addEventListener(
     "click",
     updateVehicles
   );
@@ -1767,6 +2407,9 @@ async function startApp() {
 
 
     await loadLocalData();
+
+    // List every route from routes.json straight away
+    updateRouteFilter();
 
     // Route lines + stops load in the background
     transportDataPromise = loadTransportData();
