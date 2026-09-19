@@ -6,7 +6,9 @@ const API_URLS = [
   {
     operator: "RAT Craiova",
     name: "RAT Craiova",
-    url: "https://app.craiova-transport.com/api/v1/ba79f1ee-c6f7-48ad-8a42-d23417a3ab53/transport/planner/vehicles"
+    url: "https://app.craiova-transport.com/api/v1/ba79f1ee-c6f7-48ad-8a42-d23417a3ab53/transport/planner/vehicles",
+    routesUrl: "https://app.craiova-transport.com/api/v1/ba79f1ee-c6f7-48ad-8a42-d23417a3ab53/transport/planner/routes",
+    stopsUrl: "https://app.craiova-transport.com/api/v1/ba79f1ee-c6f7-48ad-8a42-d23417a3ab53/transport/planner/stops"
   }
 ];
 
@@ -24,6 +26,15 @@ let markers = {};
 
 let selectedOperator = "all";
 let selectedRoute = "all";
+
+// Route lines and stops (loaded from the API)
+let PATTERNS = {};
+let ROUTE_META = {};
+let STOPS = {};
+
+let selectedVehicleKey = null;
+let drawnPatternKey = null;
+let transportDataPromise = null;
 
 
 
@@ -51,6 +62,9 @@ L.tileLayer(
     attribution: "&copy; OpenStreetMap contributors"
   }
 ).addTo(map);
+
+// Layer that holds the drawn route line + stops of the selected vehicle
+const routeLayer = L.layerGroup().addTo(map);
 
 
 // ============================================================
@@ -318,6 +332,342 @@ function normalizeVehicle(vehicle) {
 
 
 // ============================================================
+// ROUTE LINES + STOPS
+// ============================================================
+
+function patternKey(operator, routeId, patternIndex) {
+  return `${operator}|${routeId}|${patternIndex}`;
+}
+
+
+function vehicleKeyOf(vehicle) {
+  return `${vehicle.operator}-${vehicle.vehicleId}`;
+}
+
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
+}
+
+
+// Decodes an encoded polyline (Google format, precision 5)
+// into an array of [lat, lng] pairs.
+function decodePolyline(encoded, precision = 5) {
+
+  const factor = Math.pow(10, precision);
+  const points = [];
+
+  let index = 0;
+  let lat = 0;
+  let lng = 0;
+
+  while (index < encoded.length) {
+
+    let result = 0;
+    let shift = 0;
+    let byte;
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while (byte >= 0x20);
+
+    lat += (result & 1) ? ~(result >> 1) : (result >> 1);
+
+    result = 0;
+    shift = 0;
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while (byte >= 0x20);
+
+    lng += (result & 1) ? ~(result >> 1) : (result >> 1);
+
+    const point = [lat / factor, lng / factor];
+    const last = points[points.length - 1];
+
+    // Skip repeated points ("??" segments in the API data)
+    if (!last || last[0] !== point[0] || last[1] !== point[1]) {
+      points.push(point);
+    }
+  }
+
+  return points;
+}
+
+
+async function loadRoutes(api) {
+
+  const response = await fetch(api.routesUrl);
+
+  if (!response.ok) {
+    throw new Error(`routes returned ${response.status}`);
+  }
+
+  const routes = await response.json();
+
+  if (!Array.isArray(routes)) {
+    throw new Error("routes response is not an array");
+  }
+
+  ROUTE_META[api.operator] = {};
+
+  routes.forEach(route => {
+
+    ROUTE_META[api.operator][String(route.id)] = {
+      color: route.color ?? null,
+      shortName: route.shortName
+    };
+
+    (route.patterns ?? []).forEach(pattern => {
+      PATTERNS[
+        patternKey(api.operator, route.id, pattern.index)
+      ] = pattern;
+    });
+  });
+
+  console.log(
+    `Loaded ${Object.keys(ROUTE_META[api.operator]).length} routes for ${api.name}`
+  );
+}
+
+
+async function loadStops(api) {
+
+  const response = await fetch(api.stopsUrl);
+
+  if (!response.ok) {
+    throw new Error(`stops returned ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  const list = Array.isArray(data)
+    ? data
+    : (data.stops ?? data.data ?? []);
+
+  STOPS[api.operator] = {};
+
+  list.forEach(stop => {
+
+    const id = stop.id ?? stop.stopId;
+    const lat = getLatitude(stop);
+    const lng = getLongitude(stop);
+
+    if (id === undefined || lat === null || lng === null) {
+      return;
+    }
+
+    STOPS[api.operator][String(id)] = {
+      id,
+      name:
+        stop.name ??
+        stop.stopName ??
+        stop.shortName ??
+        stop.longName ??
+        `Stop ${id}`,
+      lat: Number(lat),
+      lng: Number(lng)
+    };
+  });
+
+  const count = Object.keys(STOPS[api.operator]).length;
+
+  if (count === 0) {
+    console.warn(
+      "No stops could be read from the stops API. First item:",
+      list[0]
+    );
+  } else {
+    console.log(`Loaded ${count} stops for ${api.name}`);
+  }
+}
+
+
+async function loadTransportData() {
+
+  for (const api of API_URLS) {
+
+    await Promise.all([
+      api.routesUrl
+        ? loadRoutes(api).catch(error =>
+            console.warn(`Could not load routes for ${api.name}:`, error))
+        : null,
+      api.stopsUrl
+        ? loadStops(api).catch(error =>
+            console.warn(`Could not load stops for ${api.name}:`, error))
+        : null
+    ]);
+  }
+}
+
+
+function getPattern(vehicle) {
+  return PATTERNS[
+    patternKey(vehicle.operator, vehicle.routeId, vehicle.patternIndex)
+  ] ?? null;
+}
+
+
+function getStop(operator, stopId) {
+
+  if (stopId === null || stopId === undefined) {
+    return null;
+  }
+
+  return STOPS[operator]?.[String(stopId)] ?? null;
+}
+
+
+function drawVehicleRoute(vehicle) {
+
+  routeLayer.clearLayers();
+
+  const key = patternKey(
+    vehicle.operator,
+    vehicle.routeId,
+    vehicle.patternIndex
+  );
+
+  drawnPatternKey = key;
+
+  const pattern = PATTERNS[key];
+
+  if (!pattern) {
+    console.warn("Route pattern not found:", key);
+    return;
+  }
+
+  const color =
+    ROUTE_META[vehicle.operator]?.[String(vehicle.routeId)]?.color
+      ? `#${ROUTE_META[vehicle.operator][String(vehicle.routeId)].color}`
+      : "#3388ff";
+
+  const stops = (pattern.stops ?? [])
+    .map(stopId => getStop(vehicle.operator, stopId))
+    .filter(Boolean);
+
+  // ----------------------------------------------------------
+  // Route line
+  // ----------------------------------------------------------
+
+  if (pattern.geometry) {
+
+    const points = decodePolyline(pattern.geometry);
+
+    L.polyline(points, {
+      color,
+      weight: 5,
+      opacity: 0.85
+    }).addTo(routeLayer);
+
+  } else if (stops.length > 1) {
+
+    // No drawn geometry for this pattern: connect the stops
+    L.polyline(
+      stops.map(stop => [stop.lat, stop.lng]),
+      {
+        color,
+        weight: 4,
+        opacity: 0.7,
+        dashArray: "6 8"
+      }
+    ).addTo(routeLayer);
+  }
+
+  // ----------------------------------------------------------
+  // Stops of this pattern
+  // ----------------------------------------------------------
+
+  stops.forEach(stop => {
+
+    L.circleMarker([stop.lat, stop.lng], {
+      radius: 5,
+      color,
+      weight: 2,
+      fillColor: "#ffffff",
+      fillOpacity: 1
+    })
+      .bindTooltip(escapeHtml(stop.name))
+      .addTo(routeLayer);
+  });
+}
+
+
+function clearVehicleRoute() {
+
+  routeLayer.clearLayers();
+
+  selectedVehicleKey = null;
+  drawnPatternKey = null;
+}
+
+
+async function showVehicleRoute(vehicleKey) {
+
+  selectedVehicleKey = vehicleKey;
+
+  if (transportDataPromise) {
+    await transportDataPromise;
+  }
+
+  // The popup may have been closed while the data was loading
+  if (selectedVehicleKey !== vehicleKey) {
+    return;
+  }
+
+  const vehicle = allVehicles.find(
+    item => vehicleKeyOf(item) === vehicleKey
+  );
+
+  if (!vehicle) {
+    clearVehicleRoute();
+    return;
+  }
+
+  drawVehicleRoute(vehicle);
+}
+
+
+// Called after every refresh: keeps the drawn route in sync
+// (a vehicle changes pattern when it starts a new trip).
+function refreshSelectedRoute() {
+
+  if (!selectedVehicleKey) {
+    return;
+  }
+
+  const vehicle = allVehicles.find(
+    item => vehicleKeyOf(item) === selectedVehicleKey
+  );
+
+  if (!vehicle) {
+    clearVehicleRoute();
+    return;
+  }
+
+  const key = patternKey(
+    vehicle.operator,
+    vehicle.routeId,
+    vehicle.patternIndex
+  );
+
+  if (key !== drawnPatternKey) {
+    drawVehicleRoute(vehicle);
+  }
+}
+
+
+// ============================================================
 // POPUP
 // ============================================================
 
@@ -333,6 +683,44 @@ function createPopup(vehicle) {
     delayText = `${delayMinutes} min întârziere`;
   } else {
     delayText = "La timp";
+  }
+
+  const pattern = getPattern(vehicle);
+  const destination = getStop(vehicle.operator, pattern?.toStopId);
+  const nextStop = getStop(vehicle.operator, vehicle.stopId);
+
+  let extraLines = "";
+
+  if (destination) {
+    extraLines += `
+      <p>
+        <strong>Spre:</strong>
+        ${escapeHtml(destination.name)}
+      </p>
+    `;
+  }
+
+  if (nextStop) {
+
+    let nextStopText = escapeHtml(nextStop.name);
+
+    if (vehicle.nextStopArrival) {
+      const arrival = new Date(vehicle.nextStopArrival);
+
+      if (!Number.isNaN(arrival.getTime())) {
+        nextStopText += ` (${arrival.toLocaleTimeString("ro-RO", {
+          hour: "2-digit",
+          minute: "2-digit"
+        })})`;
+      }
+    }
+
+    extraLines += `
+      <p>
+        <strong>Următoarea stație:</strong>
+        ${nextStopText}
+      </p>
+    `;
   }
 
   return `
@@ -362,6 +750,8 @@ function createPopup(vehicle) {
         <strong>Întârziere:</strong>
         ${delayText}
       </p>
+
+      ${extraLines}
 
     </div>
   `;
@@ -436,6 +826,16 @@ function updateMarker(vehicle) {
   marker.bindPopup(
     createPopup(vehicle)
   );
+
+  // Draw the route line when the vehicle is clicked,
+  // remove it when its popup is closed.
+  marker.on("click", () => showVehicleRoute(vehicleKey));
+
+  marker.on("popupclose", () => {
+    if (selectedVehicleKey === vehicleKey) {
+      clearVehicleRoute();
+    }
+  });
 
   marker.addTo(map);
 
@@ -670,6 +1070,8 @@ async function updateVehicles() {
 
     displayVehicles();
 
+    refreshSelectedRoute();
+
 
     console.log(
       "Vehicles:",
@@ -787,6 +1189,9 @@ async function startApp() {
 
 
     await loadLocalData();
+
+    // Route lines + stops load in the background
+    transportDataPromise = loadTransportData();
 
 
     document
