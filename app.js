@@ -966,7 +966,7 @@ function createStopMarker(operator, stop) {
 
   const marker = L.circleMarker([stop.lat, stop.lng], {
     radius: 5,
-    color: "#444444",
+    color: "#000000",
     weight: 2,
     fillColor: "#ffffff",
     fillOpacity: 1
