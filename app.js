@@ -24,14 +24,22 @@ let allVehicles = [];
 
 let markers = {};
 
-// Route chosen in the "Route" dropdown: { operator, routeId },
-// or null when "All routes" is selected
-let selectedRoute = null;
+// The city has a single operator
+const OPERATOR = API_URLS[0].operator;
+
+let selectedRoute = "all";
 
 // Route lines and stops (loaded from the API)
 let PATTERNS = {};
 let ROUTE_META = {};
 let STOPS = {};
+
+// All patterns of each route: operator -> routeId -> [patterns]
+let ROUTE_PATTERNS = {};
+
+// Extra routes / stops / timetables that are not in the API
+// (data/extra.json, optional)
+let EXTRA = null;
 
 // Timetable per stop, fetched when a stop popup is opened
 let STOP_TIMES = {};
@@ -40,28 +48,6 @@ const STOP_TIMES_TTL = 20000;
 let selectedVehicleKey = null;
 let drawnPatternKey = null;
 let transportDataPromise = null;
-
-// Stop markers by "operator|stopId" (used for visibility + stop search)
-let stopMarkers = {};
-
-// Keys of the stops on the selected route (null = no route selected)
-let selectedRouteStopKeys = null;
-
-// Stop that must stay on the map even if it would normally be hidden:
-// the one picked from the search box, until its popup is closed
-let pinnedStopKey = null;
-
-// Searchable list of stops, built once stops + route patterns are loaded
-let STOP_INDEX = [];
-let transportReady = false;
-
-// Status bar
-let shownVehicleCount = 0;
-let lastUpdateTime = null;
-let routeNote = "";
-
-// Lets a newer route selection cancel an older one that is still loading
-let routeDrawToken = 0;
 
 
 
@@ -90,37 +76,21 @@ L.tileLayer(
   }
 ).addTo(map);
 
-// Layer that holds the drawn route line + stops of the selected vehicle / stop
+// Layer that holds the drawn route line + stops of the selected vehicle
 const routeLayer = L.layerGroup().addTo(map);
 
-// Dedicated pane so that line sits above the general stops
+// Layer that holds the line(s) of the route chosen in the route list
+const routeSelectionLayer = L.layerGroup().addTo(map);
+
+// Dedicated pane so the route line sits above the general stops
 map.createPane("routePane").style.zIndex = 450;
 
-// Layer for the route picked in the "Route" dropdown. Its panes sit BELOW
-// the stops (overlayPane = 400), so the stop dots stay on top and clickable.
-const selectedRouteLayer = L.layerGroup().addTo(map);
-map.createPane("selectedRouteCasingPane").style.zIndex = 380;
-map.createPane("selectedRoutePane").style.zIndex = 390;
-
-// Layer with the stop markers. Which of them are actually on the map is
-// decided by updateStopsVisibility().
+// Layer with every stop of the network (shown when zoomed in)
 const STOP_MIN_ZOOM = 14;
-const STOP_FOCUS_ZOOM = 17;
 const stopsLayer = L.layerGroup().addTo(map);
 
-// Stop dots: white with a thin black outline, thicker when selected
-const STOP_STYLE = {
-  radius: 5,
-  color: "#000000",
-  weight: 1,
-  fillColor: "#ffffff",
-  fillOpacity: 1
-};
-
-const STOP_STYLE_SELECTED = {
-  ...STOP_STYLE,
-  weight: 4
-};
+// One marker per stop, created once: "operator|stopId" -> marker
+const stopMarkers = new Map();
 
 map.on("zoomend", updateStopsVisibility);
 
@@ -129,6 +99,12 @@ let openStop = null;
 
 // Stop marker whose lines are currently highlighted
 let selectedStopMarker = null;
+
+// Route list / stop search state
+let routeListSignature = "";
+let stopSearchIndex = [];
+let searchResults = [];
+let activeResult = -1;
 
 
 // ============================================================
@@ -139,10 +115,12 @@ async function loadLocalData() {
 
   const [
     vehiclesResponse,
-    routesResponse
+    routesResponse,
+    extraResponse
   ] = await Promise.all([
     fetch("data/vehicles.json"),
-    fetch("data/routes.json")
+    fetch("data/routes.json"),
+    fetch("data/extra.json").catch(() => null)
   ]);
 
   if (!vehiclesResponse.ok) {
@@ -155,6 +133,18 @@ async function loadLocalData() {
 
   VEHICLES = await vehiclesResponse.json();
   ROUTES = await routesResponse.json();
+
+  // Optional file with routes / stops / timetables missing from the API
+  EXTRA = null;
+
+  if (extraResponse && extraResponse.ok) {
+
+    try {
+      EXTRA = await extraResponse.json();
+    } catch (error) {
+      console.warn("data/extra.json is not valid JSON:", error);
+    }
+  }
 }
 
 
@@ -221,7 +211,6 @@ function enrichVehicle(vehicle) {
 
   routeIndicative:
     routeInfo?.indicative ??
-    ROUTE_META[vehicle.operator]?.[String(vehicle.routeId)]?.shortName ??
     String(vehicle.routeId),
 
   direction:
@@ -485,6 +474,7 @@ async function loadRoutes(api) {
   }
 
   ROUTE_META[api.operator] = {};
+  ROUTE_PATTERNS[api.operator] = {};
 
   routes.forEach(route => {
 
@@ -494,10 +484,15 @@ async function loadRoutes(api) {
       shortName: route.shortName
     };
 
+    ROUTE_PATTERNS[api.operator][String(route.id)] = [];
+
     (route.patterns ?? []).forEach(pattern => {
+
       PATTERNS[
         patternKey(api.operator, route.id, pattern.index)
       ] = pattern;
+
+      ROUTE_PATTERNS[api.operator][String(route.id)].push(pattern);
     });
   });
 
@@ -561,6 +556,391 @@ async function loadStops(api) {
 }
 
 
+// ============================================================
+// EXTRA DATA (routes / stops / timetables that are not in the API)
+// ============================================================
+
+function distanceMeters(a, b) {
+
+  const toRadians = degrees => degrees * Math.PI / 180;
+
+  const dLat = toRadians(b.lat - a.lat);
+  const dLng = toRadians(b.lng - a.lng);
+
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRadians(a.lat)) *
+    Math.cos(toRadians(b.lat)) *
+    Math.sin(dLng / 2) ** 2;
+
+  return 2 * 6371000 * Math.asin(Math.sqrt(h));
+}
+
+
+// Minutes after the departure from the first stop, for every stop
+// of the pattern. Known values come from "offsets"; the last stop can
+// come from "duration". Gaps are filled proportionally to the distance.
+function computeOffsets(operator, stopIds, pattern) {
+
+  const count = stopIds.length;
+  const offsets = new Array(count).fill(null);
+
+  if (Array.isArray(pattern.offsets)) {
+
+    pattern.offsets.forEach((value, index) => {
+
+      if (
+        index < count &&
+        value !== null &&
+        value !== undefined &&
+        !Number.isNaN(Number(value))
+      ) {
+        offsets[index] = Number(value);
+      }
+    });
+  }
+
+  if (offsets[0] === null) {
+    offsets[0] = 0;
+  }
+
+  if (
+    offsets[count - 1] === null &&
+    pattern.duration !== undefined &&
+    pattern.duration !== null &&
+    !Number.isNaN(Number(pattern.duration))
+  ) {
+    offsets[count - 1] = Number(pattern.duration);
+  }
+
+  // Without a duration only the first stop can be timed
+  if (offsets[count - 1] === null) {
+    return offsets;
+  }
+
+  const stops = stopIds.map(id => getStop(operator, id));
+
+  const distance = [0];
+
+  for (let i = 1; i < count; i++) {
+    distance[i] = distance[i - 1] + distanceMeters(stops[i - 1], stops[i]);
+  }
+
+  let previous = 0;
+
+  for (let i = 1; i < count; i++) {
+
+    if (offsets[i] === null) {
+      continue;
+    }
+
+    const span = distance[i] - distance[previous];
+
+    for (let j = previous + 1; j < i; j++) {
+
+      const ratio = span > 0
+        ? (distance[j] - distance[previous]) / span
+        : (j - previous) / (i - previous);
+
+      offsets[j] =
+        offsets[previous] + ratio * (offsets[i] - offsets[previous]);
+    }
+
+    previous = i;
+  }
+
+  return offsets;
+}
+
+
+function mergeExtraData() {
+
+  if (!EXTRA) {
+    return;
+  }
+
+  const operator = OPERATOR;
+
+  STOPS[operator] = STOPS[operator] ?? {};
+  ROUTE_META[operator] = ROUTE_META[operator] ?? {};
+  ROUTE_PATTERNS[operator] = ROUTE_PATTERNS[operator] ?? {};
+
+  // ----------------------------------------------------------
+  // Extra stops
+  // ----------------------------------------------------------
+
+  (EXTRA.stops ?? []).forEach(stop => {
+
+    const id = stop.id;
+    const lat = Number(stop.latitude ?? stop.lat);
+    const lng = Number(stop.longitude ?? stop.lng);
+
+    if (
+      id === undefined ||
+      id === null ||
+      Number.isNaN(lat) ||
+      Number.isNaN(lng)
+    ) {
+      console.warn("extra.json: stop needs id, latitude, longitude:", stop);
+      return;
+    }
+
+    if (STOPS[operator][String(id)] && !STOPS[operator][String(id)].extra) {
+      console.warn(`extra.json: stop id ${id} already exists in the API, skipped`);
+      return;
+    }
+
+    STOPS[operator][String(id)] = {
+      id,
+      name: stop.name ?? `Stop ${id}`,
+      code: stop.code ?? null,
+      lat,
+      lng,
+      patterns: [],
+      extra: true
+    };
+  });
+
+  // ----------------------------------------------------------
+  // Extra routes
+  // ----------------------------------------------------------
+
+  (EXTRA.routes ?? []).forEach(route => {
+
+    const routeId = String(route.id);
+
+    if (ROUTE_META[operator][routeId] && !ROUTE_META[operator][routeId].extra) {
+      console.warn(`extra.json: route id ${routeId} already exists in the API, skipped`);
+      return;
+    }
+
+    ROUTE_META[operator][routeId] = {
+      color: route.color ?? null,
+      textColor: route.textColor ?? null,
+      shortName: route.shortName ?? routeId,
+      extra: true
+    };
+
+    ROUTE_PATTERNS[operator][routeId] = [];
+
+    (route.patterns ?? []).forEach((item, position) => {
+
+      const index = item.index ?? position + 1;
+      const stopIds = item.stops ?? [];
+
+      const missing = stopIds.filter(id => !getStop(operator, id));
+
+      if (stopIds.length < 2 || missing.length > 0) {
+        console.warn(
+          `extra.json: route ${routeId} pattern ${index} skipped`,
+          stopIds.length < 2
+            ? "(needs at least 2 stops)"
+            : `(unknown stops: ${missing.join(", ")})`
+        );
+        return;
+      }
+
+      const pattern = {
+        index,
+        routeId: route.id,
+        fromStopId: stopIds[0],
+        toStopId: stopIds[stopIds.length - 1],
+        direction: item.direction ?? position % 2,
+        stops: stopIds,
+        geometry: item.geometry ?? null,
+        headsign: item.headsign ?? null,
+        schedule: item.schedule ?? {},
+        offsets: computeOffsets(operator, stopIds, item),
+        extra: true
+      };
+
+      if (Array.isArray(item.path)) {
+        pattern._points = item.path.map(point => [
+          Number(point[0]),
+          Number(point[1])
+        ]);
+      }
+
+      if (pattern.offsets[stopIds.length - 1] === null) {
+        console.warn(
+          `extra.json: route ${routeId} pattern ${index} has no "duration": only the first stop gets times`
+        );
+      }
+
+      PATTERNS[patternKey(operator, route.id, index)] = pattern;
+      ROUTE_PATTERNS[operator][routeId].push(pattern);
+
+      // Let every stop of the pattern know that the line serves it
+      new Set(stopIds.map(String)).forEach(stopId => {
+
+        const stop = getStop(operator, stopId);
+
+        stop.patterns = stop.patterns ?? [];
+
+        stop.patterns.push({
+          index,
+          routeId: route.id,
+          fromStopId: pattern.fromStopId,
+          toStopId: pattern.toStopId,
+          direction: pattern.direction
+        });
+      });
+    });
+  });
+
+  console.log(
+    `Loaded extra data: ${(EXTRA.routes ?? []).length} routes, ${(EXTRA.stops ?? []).length} stops`
+  );
+}
+
+
+// Date / weekday / minutes since midnight in Craiova (Bucharest time)
+function getBucharestNow(nowMs) {
+
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Bucharest",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(new Date(nowMs));
+
+  const get = type => parts.find(part => part.type === type)?.value;
+
+  return {
+    date: `${get("year")}-${get("month")}-${get("day")}`,
+    weekday: get("weekday"),
+    minutes:
+      Number(get("hour")) * 60 +
+      Number(get("minute")) +
+      Number(get("second")) / 60
+  };
+}
+
+
+// weekday / saturday / sunday (public holidays count as sunday)
+function getDayType(info) {
+
+  if ((EXTRA?.holidays ?? []).includes(info.date)) {
+    return "sunday";
+  }
+
+  if (info.weekday === "Sat") {
+    return "saturday";
+  }
+
+  if (info.weekday === "Sun") {
+    return "sunday";
+  }
+
+  return "weekday";
+}
+
+
+// "05:30" -> 330 (hours above 24 are allowed: "24:30" = 00:30 next day)
+function parseClock(text) {
+
+  const match = /^(\d{1,2})[:.](\d{2})$/.exec(String(text).trim());
+
+  if (!match) {
+    return null;
+  }
+
+  return Number(match[1]) * 60 + Number(match[2]);
+}
+
+
+// Scheduled arrivals of the extra lines at a stop (next 24 hours)
+function getExtraDepartures(operator, stop, nowMs = Date.now()) {
+
+  if (!EXTRA) {
+    return [];
+  }
+
+  const today = getBucharestNow(nowMs);
+
+  const days = [
+    { shift: -1440, info: getBucharestNow(nowMs - 86400000) },
+    { shift: 0, info: today },
+    { shift: 1440, info: getBucharestNow(nowMs + 86400000) }
+  ].map(day => ({ shift: day.shift, type: getDayType(day.info) }));
+
+  const results = [];
+  const seen = new Set();
+
+  (stop.patterns ?? []).forEach(item => {
+
+    const key = patternKey(operator, item.routeId, item.index);
+
+    if (seen.has(key)) {
+      return;
+    }
+
+    seen.add(key);
+
+    const pattern = PATTERNS[key];
+
+    if (!pattern || !pattern.extra || !pattern.offsets) {
+      return;
+    }
+
+    pattern.stops.forEach((stopId, index) => {
+
+      if (String(stopId) !== String(stop.id)) {
+        return;
+      }
+
+      const offset = pattern.offsets[index];
+
+      if (offset === null || offset === undefined) {
+        return;
+      }
+
+      days.forEach(day => {
+
+        const times =
+          pattern.schedule?.[day.type] ??
+          pattern.schedule?.daily ??
+          [];
+
+        times.forEach(text => {
+
+          const departure = parseClock(text);
+
+          if (departure === null) {
+            return;
+          }
+
+          const predicted =
+            nowMs +
+            (day.shift + departure + offset - today.minutes) * 60000;
+
+          if (
+            predicted < nowMs - 60000 ||
+            predicted > nowMs + 24 * 3600000
+          ) {
+            return;
+          }
+
+          results.push({
+            routeId: pattern.routeId,
+            pattern,
+            predicted,
+            realtime: false
+          });
+        });
+      });
+    });
+  });
+
+  return results;
+}
+
+
 async function loadTransportData() {
 
   for (const api of API_URLS) {
@@ -577,12 +957,10 @@ async function loadTransportData() {
     ]);
   }
 
+  mergeExtraData();
+
   buildStopsLayer();
-  buildStopIndex();
 
-  transportReady = true;
-
-  // The API can know routes that routes.json does not (and vice versa)
   updateRouteFilter();
 }
 
@@ -764,6 +1142,7 @@ function routeBadge(operator, routeId) {
 function formatClock(timestamp) {
 
   return new Date(timestamp).toLocaleTimeString("ro-RO", {
+    timeZone: "Europe/Bucharest",
     hour: "2-digit",
     minute: "2-digit"
   });
@@ -775,7 +1154,8 @@ function requestStopTimes(operator, stop) {
 
   const api = getApi(operator);
 
-  if (!api || !api.stopsUrl) {
+  // Extra stops are not in the API: nothing to request
+  if (stop.extra || !api || !api.stopsUrl) {
     return;
   }
 
@@ -920,19 +1300,29 @@ function createStopPopup(operator, stop) {
   // ----------------------------------------------------------
 
   const entry = STOP_TIMES[`${operator}|${stop.id}`];
-  const departures = getStopDepartures(operator, stop);
+
+  const apiDepartures = getStopDepartures(operator, stop);
+  const extraDepartures = getExtraDepartures(operator, stop);
+
+  // Extra stops have no API timetable to wait for
+  const loading = !stop.extra && apiDepartures === null;
+
+  const departures = [
+    ...(apiDepartures ?? []),
+    ...extraDepartures
+  ].sort((a, b) => a.predicted - b.predicted);
 
   let timetableHtml;
 
-  if (departures === null) {
+  if (departures.length === 0) {
 
-    timetableHtml = entry?.error
-      ? "<li>Orarul nu a putut fi încărcat</li>"
-      : "<li>Se încarcă...</li>";
-
-  } else if (departures.length === 0) {
-
-    timetableHtml = "<li>Nicio sosire programată în curând</li>";
+    if (loading) {
+      timetableHtml = "<li>Se încarcă...</li>";
+    } else if (entry?.error) {
+      timetableHtml = "<li>Orarul nu a putut fi încărcat</li>";
+    } else {
+      timetableHtml = "<li>Nicio sosire programată în curând</li>";
+    }
 
   } else {
 
@@ -941,10 +1331,15 @@ function createStopPopup(operator, stop) {
       let headsign = "";
 
       if (item.pattern) {
-        headsign =
-          Number(item.pattern.toStopId) === Number(stop.id)
-            ? "capăt de linie"
-            : getStop(operator, item.pattern.toStopId)?.name ?? "";
+
+        if (String(item.pattern.toStopId) === String(stop.id)) {
+          headsign = "capăt de linie";
+        } else {
+          headsign =
+            item.pattern.headsign ??
+            getStop(operator, item.pattern.toStopId)?.name ??
+            "";
+        }
       }
 
       const minutes = Math.round((item.predicted - Date.now()) / 60000);
@@ -1020,6 +1415,11 @@ function createStopPopup(operator, stop) {
 // Highlights every line that serves the clicked stop.
 function showStopRoutes(marker, operator, stop) {
 
+  // With a line selected in the route list, that line stays highlighted
+  if (selectedRoute !== "all") {
+    return;
+  }
+
   // A stop selection replaces a vehicle selection
   selectedVehicleKey = null;
   drawnPatternKey = null;
@@ -1058,12 +1458,13 @@ function clearStopRoutes() {
 
 function createStopMarker(operator, stop) {
 
-  const key = `${operator}|${stop.id}`;
-
-  const marker = L.circleMarker(
-    [stop.lat, stop.lng],
-    { ...STOP_STYLE }
-  );
+  const marker = L.circleMarker([stop.lat, stop.lng], {
+    radius: 5,
+    color: "#000000",
+    weight: 2,
+    fillColor: "#ffffff",
+    fillOpacity: 1
+  });
 
   marker.bindTooltip(escapeHtml(stop.name));
 
@@ -1071,17 +1472,12 @@ function createStopMarker(operator, stop) {
   // so the live arrivals are always current.
   marker.bindPopup(() => createStopPopup(operator, stop));
 
-  // These run on popupopen / popupclose (not on click) so that a popup
-  // opened from code, e.g. from the stop search, behaves exactly like a
-  // real click: thick outline + the lines serving the stop are drawn.
+  // Draw the lines serving this stop when it is clicked,
+  // remove them when its popup is closed.
+  marker.on("click", () => showStopRoutes(marker, operator, stop));
+
   marker.on("popupopen", () => {
-
     openStop = { marker, operator, stop };
-
-    marker.setStyle(STOP_STYLE_SELECTED);
-    marker.bringToFront();
-
-    showStopRoutes(marker, operator, stop);
   });
 
   marker.on("popupclose", () => {
@@ -1090,17 +1486,12 @@ function createStopMarker(operator, stop) {
       openStop = null;
     }
 
-    marker.setStyle(STOP_STYLE);
-
     if (selectedStopMarker === marker) {
       clearStopRoutes();
     }
 
-    if (pinnedStopKey === key) {
-      pinnedStopKey = null;
-    }
-
-    // Deferred: another popup may be opening right now
+    // Deferred: removing a marker while its popup is closing
+    // would re-enter this handler.
     setTimeout(updateStopsVisibility, 0);
   });
 
@@ -1111,47 +1502,66 @@ function createStopMarker(operator, stop) {
 function buildStopsLayer() {
 
   stopsLayer.clearLayers();
-  stopMarkers = {};
+  stopMarkers.clear();
 
   Object.entries(STOPS).forEach(([operator, stops]) => {
 
     Object.values(stops).forEach(stop => {
-      stopMarkers[`${operator}|${stop.id}`] =
-        createStopMarker(operator, stop);
+      stopMarkers.set(
+        `${operator}|${stop.id}`,
+        createStopMarker(operator, stop)
+      );
     });
   });
+
+  buildStopSearchIndex();
 
   updateStopsVisibility();
 }
 
 
-// Decides which stop markers are on the map:
-//  - route selected  -> only the stops of that route (at any zoom)
-//  - no route        -> every stop, but only when zoomed in
-// The stop with the open popup and the stop picked from the search
-// box always stay visible.
+// Which stops should be on the map right now:
+// - a line is selected in the route list -> only the stops of that line
+// - otherwise -> every stop, but only when zoomed in
+function getWantedStopKeys() {
+
+  const wanted = new Set();
+
+  if (selectedRoute !== "all") {
+
+    (ROUTE_PATTERNS[OPERATOR]?.[String(selectedRoute)] ?? [])
+      .forEach(pattern => {
+        (pattern.stops ?? []).forEach(stopId => {
+          wanted.add(`${OPERATOR}|${stopId}`);
+        });
+      });
+
+  } else if (map.getZoom() >= STOP_MIN_ZOOM) {
+
+    stopMarkers.forEach((marker, key) => wanted.add(key));
+  }
+
+  return wanted;
+}
+
+
 function updateStopsVisibility() {
 
-  const zoomedIn = map.getZoom() >= STOP_MIN_ZOOM;
+  const wanted = getWantedStopKeys();
 
-  const openKey = openStop
-    ? `${openStop.operator}|${openStop.stop.id}`
-    : null;
-
-  Object.entries(stopMarkers).forEach(([key, marker]) => {
-
-    const show =
-      key === openKey ||
-      key === pinnedStopKey ||
-      (selectedRouteStopKeys
-        ? selectedRouteStopKeys.has(key)
-        : zoomedIn);
+  stopMarkers.forEach((marker, key) => {
 
     const shown = stopsLayer.hasLayer(marker);
 
-    if (show && !shown) {
+    // A stop with an open popup / highlighted lines is never hidden
+    const keep =
+      wanted.has(key) ||
+      (openStop && openStop.marker === marker) ||
+      selectedStopMarker === marker;
+
+    if (keep && !shown) {
       stopsLayer.addLayer(marker);
-    } else if (!show && shown) {
+    } else if (!keep && shown) {
       stopsLayer.removeLayer(marker);
     }
   });
@@ -1171,16 +1581,13 @@ function refreshOpenStopPopup() {
 
 // Draws the line of one pattern (in the colour of its route).
 // Returns the colour, the known stops and the points of the line.
-//
-// options:
-//   layer       layer group to draw into (default: routeLayer)
-//   pane        pane of the line          (default: "routePane")
-//   casingPane  when set, a white outline is drawn underneath in that
-//               pane so the line stands out from the map
-function drawPatternLine(operator, routeId, pattern, weight = 5, options = {}) {
-
-  const layer = options.layer ?? routeLayer;
-  const pane = options.pane ?? "routePane";
+function drawPatternLine(
+  operator,
+  routeId,
+  pattern,
+  weight = 5,
+  layer = routeLayer
+) {
 
   const hex = safeHex(
     ROUTE_META[operator]?.[String(routeId)]?.color
@@ -1192,28 +1599,16 @@ function drawPatternLine(operator, routeId, pattern, weight = 5, options = {}) {
     .map(stopId => getStop(operator, stopId))
     .filter(Boolean);
 
-  let points = [];
+  if (!pattern._points && pattern.geometry) {
+    pattern._points = decodePolyline(pattern.geometry);
+  }
 
-  if (pattern.geometry) {
+  let points = pattern._points ?? [];
 
-    if (!pattern._points) {
-      pattern._points = decodePolyline(pattern.geometry);
-    }
-
-    points = pattern._points;
-
-    if (options.casingPane) {
-      L.polyline(points, {
-        pane: options.casingPane,
-        interactive: false,
-        color: "#ffffff",
-        weight: weight + 4,
-        opacity: 0.9
-      }).addTo(layer);
-    }
+  if (points.length > 1) {
 
     L.polyline(points, {
-      pane,
+      pane: "routePane",
       interactive: false,
       color,
       weight,
@@ -1226,7 +1621,7 @@ function drawPatternLine(operator, routeId, pattern, weight = 5, options = {}) {
     points = stops.map(stop => [stop.lat, stop.lng]);
 
     L.polyline(points, {
-      pane,
+      pane: "routePane",
       interactive: false,
       color,
       weight: Math.max(weight - 1, 3),
@@ -1258,7 +1653,7 @@ function drawVehicleRoute(vehicle) {
     return;
   }
 
-  const { stops } = drawPatternLine(
+  const { color, stops } = drawPatternLine(
     vehicle.operator,
     vehicle.routeId,
     pattern,
@@ -1273,9 +1668,13 @@ function drawVehicleRoute(vehicle) {
 
     // Not interactive: clicks go to the stop marker underneath
     L.circleMarker([stop.lat, stop.lng], {
-      ...STOP_STYLE,
       pane: "routePane",
-      interactive: false
+      interactive: false,
+      radius: 5,
+      color,
+      weight: 2,
+      fillColor: "#ffffff",
+      fillOpacity: 1
     }).addTo(routeLayer);
   });
 }
@@ -1291,6 +1690,11 @@ function clearVehicleRoute() {
 
 
 async function showVehicleRoute(vehicleKey) {
+
+  // With a line selected in the route list, that line stays highlighted
+  if (selectedRoute !== "all") {
+    return;
+  }
 
   selectedStopMarker = null;
   selectedVehicleKey = vehicleKey;
@@ -1562,14 +1966,12 @@ function displayVehicles() {
 
       // Route filter
       if (
-        selectedRoute &&
-        (
-          vehicle.operator !== selectedRoute.operator ||
-          String(vehicle.routeId) !== selectedRoute.routeId
-        )
+        selectedRoute !== "all" &&
+        String(vehicle.routeId) !== String(selectedRoute)
       ) {
         return false;
       }
+
 
       return true;
     });
@@ -1590,221 +1992,437 @@ function displayVehicles() {
 
 
 // ============================================================
-// ROUTE DROPDOWN
+// ROUTE LIST
 // ============================================================
-// Lists EVERY known route, not only the ones that currently have a
-// vehicle on the map: routes.json + the routes API + any route seen
-// on a vehicle.
 
-let routeFilterSignature = "";
+function normalizeText(value) {
+
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+
+function compareIndicatives(a, b) {
+
+  return String(a).localeCompare(
+    String(b),
+    undefined,
+    { numeric: true }
+  );
+}
+
+
+// Every route of the network, also the ones with no vehicles now
+function getAllRoutes() {
+
+  const routes = [];
+  const labels = new Set();
+
+  const add = routeId => {
+
+    const id = String(routeId);
+    const indicative = getRouteIndicative(OPERATOR, id);
+
+    routes.push({ routeId: id, indicative });
+    labels.add(normalizeText(indicative));
+  };
+
+  // Routes from the API (and extra.json)
+  Object.keys(ROUTE_META[OPERATOR] ?? {}).forEach(add);
+
+  // Fallback: routes only known from routes.json / running vehicles
+  const addIfNew = routeId => {
+
+    const id = String(routeId);
+
+    if (routes.some(route => route.routeId === id)) {
+      return;
+    }
+
+    if (labels.has(normalizeText(getRouteIndicative(OPERATOR, id)))) {
+      return;
+    }
+
+    add(id);
+  };
+
+  Object.keys(ROUTES[OPERATOR] ?? {}).forEach(addIfNew);
+
+  allVehicles.forEach(vehicle => {
+
+    if (vehicle.routeId !== null && vehicle.routeId !== undefined) {
+      addIfNew(vehicle.routeId);
+    }
+  });
+
+  return routes.sort((a, b) =>
+    compareIndicatives(a.indicative, b.indicative)
+  );
+}
+
 
 function updateRouteFilter() {
 
   const routeFilter =
     document.getElementById("routeFilter");
 
-  const routes = new Map();
+  const routes = getAllRoutes();
 
+  const signature = routes
+    .map(route => `${route.routeId}:${route.indicative}`)
+    .join("|");
 
-  function addRoute(operator, routeId) {
-
-    if (routeId === null || routeId === undefined) {
-      return;
-    }
-
-    const key = `${operator}|${routeId}`;
-
-    if (!routes.has(key)) {
-
-      routes.set(key, {
-        key,
-        operator,
-        routeId: String(routeId),
-        indicative: String(
-          getRouteIndicative(operator, routeId)
-        )
-      });
-    }
-  }
-
-
-  // 1. routes API: the real list of routes. Once it has loaded it is the
-  //    authority, so a stale id left in routes.json cannot show up twice.
-  Object.entries(ROUTE_META).forEach(([operator, metas]) => {
-    Object.keys(metas ?? {}).forEach(routeId =>
-      addRoute(operator, routeId)
-    );
-  });
-
-  // 2. routes.json: used until the API has loaded (or if it cannot be
-  //    reached), so the list is never empty. Its labels (1b, 23b, ...)
-  //    are always the ones shown, see getRouteIndicative().
-  Object.entries(ROUTES).forEach(([operator, operatorRoutes]) => {
-
-    if (Object.keys(ROUTE_META[operator] ?? {}).length > 0) {
-      return;
-    }
-
-    Object.keys(operatorRoutes ?? {}).forEach(routeId =>
-      addRoute(operator, routeId)
-    );
-  });
-
-  // 3. routes seen on vehicles
-  allVehicles.forEach(vehicle =>
-    addRoute(vehicle.operator, vehicle.routeId)
-  );
-
-
-  const sortedRoutes =
-    [...routes.values()].sort((a, b) =>
-      a.indicative.localeCompare(
-        b.indicative,
-        undefined,
-        { numeric: true }
-      )
-    );
-
-
-  // Called on every refresh: only rebuild when the list changed
-  const signature = sortedRoutes
-    .map(route => `${route.key}:${route.indicative}`)
-    .join(",");
-
-  if (signature === routeFilterSignature) {
+  // Rebuild only when the list changes, so an open list is not reset
+  if (signature === routeListSignature) {
     return;
   }
 
-  routeFilterSignature = signature;
+  routeListSignature = signature;
 
+  routeFilter.innerHTML =
+    '<option value="all">All routes</option>';
 
-  // Only mention the operator if there is more than one
-  const showOperator =
-    new Set(sortedRoutes.map(route => route.operator)).size > 1;
+  routes.forEach(route => {
 
+    const option = document.createElement("option");
 
-  routeFilter.innerHTML = "";
-
-  const allOption = document.createElement("option");
-  allOption.value = "all";
-  allOption.textContent = "All routes";
-  routeFilter.appendChild(allOption);
-
-
-  sortedRoutes.forEach(route => {
-
-    const option =
-      document.createElement("option");
-
-    option.value = route.key;
-
-    option.textContent = showOperator
-      ? `${route.indicative} (${route.operator})`
-      : route.indicative;
+    option.value = route.routeId;
+    option.textContent = route.indicative;
 
     routeFilter.appendChild(option);
   });
 
+  if (
+    selectedRoute !== "all" &&
+    routes.some(route => route.routeId === String(selectedRoute))
+  ) {
 
-  // Restore the selection
-  routeFilter.value = selectedRoute
-    ? `${selectedRoute.operator}|${selectedRoute.routeId}`
-    : "all";
+    routeFilter.value = selectedRoute;
 
-  if (routeFilter.selectedIndex === -1) {
+  } else {
 
     routeFilter.value = "all";
-    selectedRoute = null;
 
-    drawSelectedRoute({ fit: false });
-    displayVehicles();
+    if (selectedRoute !== "all") {
+      selectedRoute = "all";
+      applyRouteSelection();
+    }
   }
 }
 
 
-// ============================================================
-// SELECTED ROUTE (from the dropdown)
-// ============================================================
-// Draws every pattern (direction / variant) of the route, shows only
-// its stops, and zooms the map to it. Vehicles are filtered separately
-// by displayVehicles().
+// Highlights the line(s) of the selected route and shows its stops.
+function applyRouteSelection() {
 
-async function drawSelectedRoute({ fit = true } = {}) {
+  routeSelectionLayer.clearLayers();
 
-  const token = ++routeDrawToken;
+  // Drop highlights made by clicking a bus or a stop
+  clearVehicleRoute();
+  clearStopRoutes();
 
-  selectedRouteLayer.clearLayers();
-  selectedRouteStopKeys = null;
-  routeNote = "";
+  if (selectedRoute !== "all") {
 
-  updateStopsVisibility();
-  renderStatus();
+    const patterns =
+      ROUTE_PATTERNS[OPERATOR]?.[String(selectedRoute)] ?? [];
 
+    const allPoints = [];
 
-  if (!selectedRoute) {
-    return;
-  }
+    patterns.forEach(pattern => {
 
-  const { operator, routeId } = selectedRoute;
+      const { points } = drawPatternLine(
+        OPERATOR,
+        selectedRoute,
+        pattern,
+        5,
+        routeSelectionLayer
+      );
 
-
-  // Lines + stops load in the background at startup
-  if (transportDataPromise) {
-    await transportDataPromise;
-  }
-
-  // The user picked something else while this was loading
-  if (token !== routeDrawToken) {
-    return;
-  }
-
-
-  const prefix = patternKey(operator, routeId, "");
-
-  const patterns = Object.entries(PATTERNS)
-    .filter(([key]) => key.startsWith(prefix))
-    .map(([, pattern]) => pattern);
-
-
-  const stopKeys = new Set();
-  const bounds = L.latLngBounds([]);
-
-  patterns.forEach(pattern => {
-
-    const { stops, points } = drawPatternLine(
-      operator,
-      routeId,
-      pattern,
-      6,
-      {
-        layer: selectedRouteLayer,
-        pane: "selectedRoutePane",
-        casingPane: "selectedRouteCasingPane"
-      }
-    );
-
-    stops.forEach(stop => {
-      stopKeys.add(`${operator}|${stop.id}`);
-      bounds.extend([stop.lat, stop.lng]);
+      allPoints.push(...points);
     });
 
-    points.forEach(point => bounds.extend(point));
-  });
-
-
-  if (patterns.length === 0) {
-    routeNote = "no route line available";
+    if (allPoints.length > 1) {
+      map.fitBounds(allPoints, { padding: [40, 40] });
+    }
   }
-
-  selectedRouteStopKeys = stopKeys.size > 0 ? stopKeys : null;
 
   updateStopsVisibility();
-  renderStatus();
+}
 
 
-  if (fit && bounds.isValid()) {
-    map.fitBounds(bounds, { padding: [40, 40] });
+// ============================================================
+// STOP SEARCH
+// ============================================================
+
+function buildStopSearchIndex() {
+
+  stopSearchIndex = [];
+
+  Object.entries(STOPS).forEach(([operator, stops]) => {
+
+    Object.values(stops).forEach(stop => {
+
+      const seen = new Set();
+      const lines = [];
+
+      (stop.patterns ?? []).forEach(pattern => {
+
+        const routeId = String(pattern.routeId);
+
+        if (seen.has(routeId)) {
+          return;
+        }
+
+        seen.add(routeId);
+
+        lines.push({
+          routeId,
+          indicative: getRouteIndicative(operator, routeId)
+        });
+      });
+
+      lines.sort((a, b) =>
+        compareIndicatives(a.indicative, b.indicative)
+      );
+
+      stopSearchIndex.push({
+        operator,
+        stop,
+        name: normalizeText(stop.name),
+        code: normalizeText(stop.code),
+        lines,
+        lineKeys: lines.map(line => normalizeText(line.indicative))
+      });
+    });
+  });
+}
+
+
+// Every word typed must match the stop name, the code or one of
+// the lines that serve the stop ("complex nou 25").
+function searchStops(query) {
+
+  const tokens = normalizeText(query)
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (tokens.length === 0) {
+    return [];
   }
+
+  const phrase = tokens.join(" ");
+  const results = [];
+
+  stopSearchIndex.forEach(entry => {
+
+    const words = entry.name.split(/\s+/);
+
+    let score = entry.name.startsWith(phrase) ? 3 : 0;
+
+    for (const token of tokens) {
+
+      const nameStart = words.some(word => word.startsWith(token));
+      const nameHas = entry.name.includes(token);
+      const lineExact = entry.lineKeys.includes(token);
+      const linePrefix = entry.lineKeys.some(key => key.startsWith(token));
+      const codeExact = entry.code === token;
+
+      if (!nameHas && !linePrefix && !codeExact) {
+        return;
+      }
+
+      score +=
+        (nameStart ? 3 : nameHas ? 1 : 0) +
+        (lineExact ? 2 : linePrefix ? 1 : 0) +
+        (codeExact ? 2 : 0);
+    }
+
+    results.push({ entry, score });
+  });
+
+  results.sort((a, b) =>
+    b.score - a.score ||
+    a.entry.name.localeCompare(b.entry.name) ||
+    String(a.entry.stop.code).localeCompare(String(b.entry.stop.code))
+  );
+
+  return results.slice(0, 10).map(result => result.entry);
+}
+
+
+function hideStopResults() {
+
+  const list = document.getElementById("stopResults");
+
+  if (list) {
+    list.hidden = true;
+  }
+
+  activeResult = -1;
+}
+
+
+function renderStopResults(query) {
+
+  const list = document.getElementById("stopResults");
+
+  if (!normalizeText(query)) {
+    hideStopResults();
+    return;
+  }
+
+  activeResult = -1;
+
+  if (stopSearchIndex.length === 0) {
+
+    searchResults = [];
+
+    list.innerHTML =
+      '<li class="stop-result-empty">Stops are still loading...</li>';
+
+  } else {
+
+    searchResults = searchStops(query);
+
+    list.innerHTML = searchResults.length
+      ? searchResults.map((entry, index) => `
+          <li class="stop-result" data-index="${index}">
+            <span class="stop-result-name">
+              ${escapeHtml(entry.stop.name)}${entry.stop.code
+                ? ` <small>(${escapeHtml(entry.stop.code)})</small>`
+                : ""}
+            </span>
+            <span class="stop-result-lines">
+              ${entry.lines
+                .map(line => routeBadge(entry.operator, line.routeId))
+                .join(" ")}
+            </span>
+          </li>
+        `).join("")
+      : '<li class="stop-result-empty">No stops found</li>';
+  }
+
+  list.hidden = false;
+}
+
+
+function setActiveResult(index) {
+
+  const items = document.querySelectorAll("#stopResults .stop-result");
+
+  if (items.length === 0) {
+    return;
+  }
+
+  activeResult = (index + items.length) % items.length;
+
+  items.forEach((item, position) => {
+    item.classList.toggle("active", position === activeResult);
+  });
+
+  items[activeResult].scrollIntoView({ block: "nearest" });
+}
+
+
+// Moves the map to the stop and opens its popup,
+// exactly like clicking the stop.
+function goToStop(entry) {
+
+  const marker = stopMarkers.get(`${entry.operator}|${entry.stop.id}`);
+
+  if (!marker) {
+    return;
+  }
+
+  const input = document.getElementById("stopSearch");
+
+  input.value = entry.stop.name;
+  input.blur();
+
+  hideStopResults();
+
+  // The stop may be hidden (zoomed out / other line selected)
+  if (!stopsLayer.hasLayer(marker)) {
+    stopsLayer.addLayer(marker);
+  }
+
+  map.setView(
+    [entry.stop.lat, entry.stop.lng],
+    Math.max(map.getZoom(), 17),
+    { animate: false }
+  );
+
+  marker.openPopup();
+
+  showStopRoutes(marker, entry.operator, entry.stop);
+}
+
+
+function setupStopSearch() {
+
+  const input = document.getElementById("stopSearch");
+  const list = document.getElementById("stopResults");
+
+  if (!input || !list) {
+    return;
+  }
+
+  input.addEventListener("input", () => {
+    renderStopResults(input.value);
+  });
+
+  input.addEventListener("focus", () => {
+    renderStopResults(input.value);
+  });
+
+  input.addEventListener("keydown", event => {
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveResult(activeResult + 1);
+
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveResult(activeResult - 1);
+
+    } else if (event.key === "Enter") {
+
+      event.preventDefault();
+
+      const entry = searchResults[activeResult >= 0 ? activeResult : 0];
+
+      if (entry) {
+        goToStop(entry);
+      }
+
+    } else if (event.key === "Escape") {
+      hideStopResults();
+    }
+  });
+
+  list.addEventListener("click", event => {
+
+    const item = event.target.closest(".stop-result");
+
+    if (!item) {
+      return;
+    }
+
+    const entry = searchResults[Number(item.dataset.index)];
+
+    if (entry) {
+      goToStop(entry);
+    }
+  });
+
+  document.addEventListener("click", event => {
+
+    if (!event.target.closest(".stop-search")) {
+      hideStopResults();
+    }
+  });
 }
 
 
@@ -1814,54 +2432,17 @@ async function drawSelectedRoute({ fit = true } = {}) {
 
 function updateStatus(vehicles) {
 
-  shownVehicleCount = vehicles.length;
-
-  lastUpdateTime = new Date().toLocaleTimeString();
-
-  renderStatus();
-}
-
-
-function renderStatus() {
-
-  // Nothing to show before the first update
-  if (!lastUpdateTime) {
-    return;
-  }
-
   const status =
     document.getElementById("status");
 
-  const count = shownVehicleCount;
+  const time =
+    new Date().toLocaleTimeString();
 
-  const vehicleText =
-    `${count} ${count === 1 ? "vehicle" : "vehicles"}`;
 
-  let text;
-
-  if (selectedRoute) {
-
-    const name = getRouteIndicative(
-      selectedRoute.operator,
-      selectedRoute.routeId
-    );
-
-    text = count === 0
-      ? `Route ${name}: no vehicles on the map right now`
-      : `Route ${name}: ${vehicleText} on the map`;
-
-  } else {
-
-    text = `${vehicleText} shown`;
-  }
-
-  text += ` • Last update: ${lastUpdateTime}`;
-
-  if (routeNote) {
-    text += ` • ${routeNote}`;
-  }
-
-  status.textContent = text;
+  status.textContent =
+    selectedRoute !== "all" && vehicles.length === 0
+      ? `No vehicles on this line right now • Last update: ${time}`
+      : `${vehicles.length} vehicles shown • Last update: ${time}`;
 }
 
 
@@ -1918,41 +2499,16 @@ async function updateVehicles() {
 
 document
   .getElementById("routeFilter")
-  ?.addEventListener(
+  .addEventListener(
     "change",
     event => {
 
-      const value =
+      selectedRoute =
         event.target.value;
 
-
-      if (value === "all") {
-
-        selectedRoute =
-          null;
-
-      } else {
-
-        // Format:
-        // operator|routeId
-
-        const separator =
-          value.indexOf("|");
-
-        selectedRoute = {
-          operator: value.slice(0, separator),
-          routeId: value.slice(separator + 1)
-        };
-      }
-
-
-      // Start from a clean map: closing the popup also removes
-      // any vehicle / stop highlight that is currently drawn.
-      map.closePopup();
+      applyRouteSelection();
 
       displayVehicles();
-
-      drawSelectedRoute({ fit: true });
     }
   );
 
@@ -1960,424 +2516,8 @@ document
 // ============================================================
 // STOP SEARCH
 // ============================================================
-// Type part of a stop name and / or a line number, e.g.
-// "complex nou", "25" or "complex nou 25". Every word must match
-// either the stop name or one of the lines that serve the stop.
 
-// Lower case, no diacritics: "Ștefan" -> "stefan"
-function normalizeText(value) {
-
-  return String(value ?? "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-}
-
-
-function compareIndicatives(a, b) {
-
-  return String(a).localeCompare(
-    String(b),
-    undefined,
-    { numeric: true }
-  );
-}
-
-
-function buildStopIndex() {
-
-  STOP_INDEX = [];
-
-  function setFor(map, id) {
-
-    if (!map[id]) {
-      map[id] = new Set();
-    }
-
-    return map[id];
-  }
-
-  Object.entries(STOPS).forEach(([operator, stops]) => {
-
-    const routesByStop = {};
-    const destinationsByStop = {};
-
-    function note(stopId, routeId, toStopId) {
-
-      const id = String(stopId);
-
-      setFor(routesByStop, id).add(String(routeId));
-
-      if (toStopId !== null && toStopId !== undefined) {
-        setFor(destinationsByStop, id).add(String(toStopId));
-      }
-    }
-
-
-    // Which routes pass through each stop, and where they are heading
-    const prefix = `${operator}|`;
-
-    Object.entries(PATTERNS).forEach(([key, pattern]) => {
-
-      if (!key.startsWith(prefix)) {
-        return;
-      }
-
-      const routeId = key.slice(prefix.length).split("|")[0];
-
-      (pattern.stops ?? []).forEach(stopId =>
-        note(stopId, routeId, pattern.toStopId)
-      );
-    });
-
-
-    Object.values(stops).forEach(stop => {
-
-      // Also trust what the stops API says about this stop
-      (stop.patterns ?? []).forEach(item => {
-
-        const pattern =
-          PATTERNS[patternKey(operator, item.routeId, item.index)];
-
-        note(stop.id, item.routeId, pattern?.toStopId);
-      });
-
-
-      const id = String(stop.id);
-
-      const lines = [...(routesByStop[id] ?? [])]
-        .map(routeId => ({
-          routeId,
-          indicative: String(getRouteIndicative(operator, routeId))
-        }))
-        .sort((a, b) => compareIndicatives(a.indicative, b.indicative));
-
-      // Where the lines through this stop are heading. This tells apart
-      // two stops with the same name on opposite sides of the street.
-      const destinations = [
-        ...new Set(
-          [...(destinationsByStop[id] ?? [])]
-            .filter(destinationId => destinationId !== id)
-            .map(destinationId => getStop(operator, destinationId)?.name)
-            .filter(name => name && name !== stop.name)
-        )
-      ];
-
-      STOP_INDEX.push({
-        operator,
-        stop,
-        key: `${operator}|${id}`,
-        nameNorm: normalizeText(stop.name),
-        lines,
-        lineNorms: lines.map(line => normalizeText(line.indicative)),
-        destinations
-      });
-    });
-  });
-
-  console.log(`Stop search index: ${STOP_INDEX.length} stops`);
-}
-
-
-function searchStops(query) {
-
-  const tokens = normalizeText(query)
-    .split(/\s+/)
-    .filter(Boolean);
-
-  if (tokens.length === 0) {
-    return [];
-  }
-
-  const matches = [];
-
-  STOP_INDEX.forEach(entry => {
-
-    let score = 0;
-
-    for (const token of tokens) {
-
-      if (entry.nameNorm.includes(token)) {
-
-        // A name (or word of it) that starts with the token ranks higher
-        score +=
-          entry.nameNorm.startsWith(token) ||
-          entry.nameNorm.includes(` ${token}`)
-            ? 3
-            : 2;
-
-      } else if (entry.lineNorms.includes(token)) {
-
-        score += 3;
-
-      } else if (entry.lineNorms.some(line => line.startsWith(token))) {
-
-        // Still typing a line, e.g. "2" while looking for "25"
-        score += 1;
-
-      } else {
-
-        // Every word has to match something
-        return;
-      }
-    }
-
-    matches.push({ entry, score });
-  });
-
-  matches.sort((a, b) =>
-    b.score - a.score ||
-    a.entry.stop.name.localeCompare(b.entry.stop.name, "ro") ||
-    compareIndicatives(
-      a.entry.lines[0]?.indicative ?? "",
-      b.entry.lines[0]?.indicative ?? ""
-    )
-  );
-
-  return matches.map(match => match.entry);
-}
-
-
-// Moves the map to a stop and opens its timetable popup, the same
-// as if the stop had been clicked.
-function focusStop(operator, stopId) {
-
-  const key = `${operator}|${stopId}`;
-
-  const stop = getStop(operator, stopId);
-  const marker = stopMarkers[key];
-
-  if (!stop || !marker) {
-    return;
-  }
-
-  // Make sure the marker is on the map even if it is normally hidden
-  // (zoomed out, or not part of the selected route)
-  pinnedStopKey = key;
-  updateStopsVisibility();
-
-  const zoom = Math.max(map.getZoom(), STOP_FOCUS_ZOOM);
-
-  let opened = false;
-
-  function openPopup() {
-
-    if (opened) {
-      return;
-    }
-
-    opened = true;
-
-    map.off("moveend", openPopup);
-
-    if (map.hasLayer(marker)) {
-      marker.openPopup();
-    }
-  }
-
-  // Open once the map has finished moving; the timeout is a safety net
-  map.on("moveend", openPopup);
-  setTimeout(openPopup, 1500);
-
-  map.setView([stop.lat, stop.lng], zoom, { animate: true });
-}
-
-
-// ---------------- search box ----------------
-
-// Assigned by initStopSearch(). If the page has no search box (for example
-// an older index.html), the search is simply disabled: it must never stop
-// the rest of the app from starting.
-let stopSearchInput = null;
-let stopResultsEl = null;
-
-const MAX_STOP_RESULTS = 40;
-const MAX_LINE_BADGES = 8;
-
-let stopResults = [];
-let activeResultIndex = -1;
-
-
-function hideStopResults() {
-
-  stopResultsEl.hidden = true;
-  activeResultIndex = -1;
-}
-
-
-function showStopMessage(text) {
-
-  stopResults = [];
-  activeResultIndex = -1;
-
-  stopResultsEl.innerHTML =
-    `<div class="stop-result-message">${escapeHtml(text)}</div>`;
-
-  stopResultsEl.hidden = false;
-}
-
-
-function renderStopResults() {
-
-  const query = stopSearchInput.value.trim();
-
-  if (!query) {
-    stopResults = [];
-    hideStopResults();
-    return;
-  }
-
-  if (!transportReady) {
-    showStopMessage("Stops are still loading...");
-    return;
-  }
-
-  const found = searchStops(query);
-
-  if (found.length === 0) {
-    showStopMessage("No stops found");
-    return;
-  }
-
-  stopResults = found.slice(0, MAX_STOP_RESULTS);
-  activeResultIndex = -1;
-
-  const items = stopResults.map((entry, index) => {
-
-    const badges = entry.lines
-      .slice(0, MAX_LINE_BADGES)
-      .map(line => routeBadge(entry.operator, line.routeId))
-      .join(" ");
-
-    const more = entry.lines.length > MAX_LINE_BADGES
-      ? `<span class="stop-result-more">+${entry.lines.length - MAX_LINE_BADGES}</span>`
-      : "";
-
-    const code = entry.stop.code
-      ? `<span class="stop-result-code">${escapeHtml(entry.stop.code)}</span>`
-      : "";
-
-    const heading = entry.destinations.length
-      ? `<div class="stop-result-direction">→ ${escapeHtml(entry.destinations.slice(0, 2).join(", "))}${entry.destinations.length > 2 ? "…" : ""}</div>`
-      : "";
-
-    return `
-      <button type="button" class="stop-result" data-index="${index}">
-        <div class="stop-result-name">${escapeHtml(entry.stop.name)}${code}</div>
-        <div class="stop-result-lines">${badges}${more}</div>
-        ${heading}
-      </button>
-    `;
-  });
-
-  const footer = found.length > MAX_STOP_RESULTS
-    ? `<div class="stop-result-message">Showing ${MAX_STOP_RESULTS} of ${found.length} stops. Keep typing to narrow it down.</div>`
-    : "";
-
-  stopResultsEl.innerHTML = items.join("") + footer;
-  stopResultsEl.hidden = false;
-}
-
-
-function setActiveResult(index) {
-
-  const buttons = stopResultsEl.querySelectorAll(".stop-result");
-
-  buttons.forEach((button, i) =>
-    button.classList.toggle("active", i === index)
-  );
-
-  activeResultIndex = index;
-
-  buttons[index]?.scrollIntoView({ block: "nearest" });
-}
-
-
-function selectStopResult(entry) {
-
-  if (!entry) {
-    return;
-  }
-
-  stopSearchInput.value = entry.stop.name;
-
-  hideStopResults();
-
-  // Closes the keyboard on phones so the map + popup are visible
-  stopSearchInput.blur();
-
-  focusStop(entry.operator, entry.stop.id);
-}
-
-
-function initStopSearch() {
-
-  stopSearchInput = document.getElementById("stopSearch");
-  stopResultsEl = document.getElementById("stopResults");
-
-  if (!stopSearchInput || !stopResultsEl) {
-    console.warn(
-      "Stop search disabled: #stopSearch / #stopResults not found in index.html"
-    );
-    return;
-  }
-
-  stopSearchInput.addEventListener("input", renderStopResults);
-
-  stopSearchInput.addEventListener("focus", renderStopResults);
-
-  stopSearchInput.addEventListener("keydown", event => {
-
-    if (event.key === "Escape") {
-      hideStopResults();
-      return;
-    }
-
-    if (stopResultsEl.hidden || stopResults.length === 0) {
-      return;
-    }
-
-    if (event.key === "ArrowDown") {
-
-      event.preventDefault();
-      setActiveResult(
-        Math.min(activeResultIndex + 1, stopResults.length - 1)
-      );
-
-    } else if (event.key === "ArrowUp") {
-
-      event.preventDefault();
-      setActiveResult(Math.max(activeResultIndex - 1, 0));
-
-    } else if (event.key === "Enter") {
-
-      event.preventDefault();
-      selectStopResult(
-        stopResults[activeResultIndex >= 0 ? activeResultIndex : 0]
-      );
-    }
-  });
-
-  stopResultsEl.addEventListener("click", event => {
-
-    const button = event.target.closest(".stop-result");
-
-    if (button) {
-      selectStopResult(stopResults[Number(button.dataset.index)]);
-    }
-  });
-
-  // Click anywhere outside the search box closes the results
-  document.addEventListener("click", event => {
-
-    if (!event.target.closest(".stop-search")) {
-      hideStopResults();
-    }
-  });
-}
-
-initStopSearch();
+setupStopSearch();
 
 
 // ============================================================
@@ -2386,7 +2526,7 @@ initStopSearch();
 
 document
   .getElementById("refreshButton")
-  ?.addEventListener(
+  .addEventListener(
     "click",
     updateVehicles
   );
@@ -2407,9 +2547,6 @@ async function startApp() {
 
 
     await loadLocalData();
-
-    // List every route from routes.json straight away
-    updateRouteFilter();
 
     // Route lines + stops load in the background
     transportDataPromise = loadTransportData();
