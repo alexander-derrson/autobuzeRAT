@@ -143,8 +143,8 @@
   "routes": [
     {
       "id": "metro-breasta",
-      "shortName": "Breasta",
-      "longName": "Traseul Metropolitan Breasta",
+      "shortName": "M Breasta",
+      "longName": "Metropolitan Craiova-Breasta",
       "color": "e65100",
       "textColor": "ffffff",
       "patterns": [
@@ -176,8 +176,8 @@
     },
     {
       "id": "metro-bucovat",
-      "shortName": "Bucovat",
-      "longName": "Traseul Metropolitan Bucovat",
+      "shortName": "M Sarbatoarea",
+      "longName": "Metropolitan Craiova-Sarbatoarea",
       "color": "c2185b",
       "textColor": "ffffff",
       "patterns": [
