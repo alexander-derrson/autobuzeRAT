@@ -41,7 +41,7 @@
   "routes": [
     {
       "id": "metro-breasta",
-      "shortName": "[M] Breasta",
+      "shortName": "M Breasta",
       "longName": "Metropolitan Craiova-Breasta",
       "color": "e65100",
       "textColor": "ffffff",
