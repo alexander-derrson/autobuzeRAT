@@ -169,7 +169,10 @@ function enrichVehicle(vehicle) {
     ];
 
   // Debug information
-  if (!routeInfo) {
+  if (
+    !routeInfo &&
+    !ROUTE_META[vehicle.operator]?.[String(vehicle.routeId)]
+  ) {
     console.warn(
       "Route not found:",
       {
@@ -209,9 +212,10 @@ function enrichVehicle(vehicle) {
   vehicleType:
     vehicleInfo?.type ?? "bus",
 
+  // routes.json first (its names like "1b" / "23b" win), then the name
+  // the routes API gives the route, and only then the bare id.
   routeIndicative:
-    routeInfo?.indicative ??
-    String(vehicle.routeId),
+    getRouteIndicative(vehicle.operator, vehicle.routeId),
 
   direction:
     directionName ?? "Unknown"
@@ -963,6 +967,17 @@ async function loadTransportData() {
   buildStopsLayer();
 
   updateRouteFilter();
+
+  // Vehicles that arrived before the route names were loaded
+  if (allVehicles.length > 0) {
+
+    allVehicles.forEach(vehicle => {
+      vehicle.routeIndicative =
+        getRouteIndicative(vehicle.operator, vehicle.routeId);
+    });
+
+    displayVehicles();
+  }
 }
 
 
@@ -1219,6 +1234,134 @@ function requestStopTimes(operator, stop) {
 }
 
 
+// ------------------------------------------------------------
+// Which pattern does a timetable group belong to?
+// ------------------------------------------------------------
+// .../stops/{id}/times names the pattern of each group with
+// route.routeId + route.index. Normally that is exactly one of the
+// patterns of the routes API. When it is not (the index is missing, the
+// routes API does not list it, or it belongs to a pattern that does not
+// even call at this stop) the departure used to have no terminus at all,
+// or the terminus of the wrong direction.
+//
+// In that case the destination is worked out from the patterns of the
+// same route that DO call at this stop.
+
+const warnedTimetableGroups = new Set();
+
+function patternServesStop(pattern, stop) {
+
+  return (pattern.stops ?? []).some(
+    id => String(id) === String(stop.id)
+  );
+}
+
+
+function resolveGroupPattern(operator, stop, route) {
+
+  const routeId = route?.routeId;
+
+  const exact = PATTERNS[patternKey(operator, routeId, route?.index)];
+
+  if (exact && patternServesStop(exact, stop)) {
+    return exact;
+  }
+
+  // Tell the developer what the API really sent (once per case)
+  const warnKey = `${operator}|${stop.id}|${routeId}|${route?.index}`;
+
+  if (!warnedTimetableGroups.has(warnKey)) {
+
+    warnedTimetableGroups.add(warnKey);
+
+    console.warn(
+      `Stop ${stop.id} (${stop.name}): the timetable names a pattern that does not match the routes API ` +
+      `(route ${routeId}, index ${route?.index}). Working out the destination instead.`,
+      {
+        route,
+        knownPatterns: (ROUTE_PATTERNS[operator]?.[String(routeId)] ?? [])
+          .map(pattern => pattern.index)
+      }
+    );
+  }
+
+  // 1. A destination given by the timetable itself
+  const apiDestination = getStop(operator, route?.toStopId);
+
+  if (apiDestination) {
+    return { routeId, toStopId: apiDestination.id, headsign: null };
+  }
+
+  if (typeof route?.headsign === "string" && route.headsign.trim()) {
+    return { routeId, toStopId: null, headsign: route.headsign.trim() };
+  }
+
+  // 2. The patterns of this route that call at this stop
+  let candidates = (ROUTE_PATTERNS[operator]?.[String(routeId)] ?? [])
+    .filter(pattern =>
+      !pattern.extra && patternServesStop(pattern, stop)
+    );
+
+  // Same direction as the group, when the timetable says which one it is
+  if (route?.direction !== undefined && route?.direction !== null) {
+
+    const sameDirection = candidates.filter(
+      pattern => Number(pattern.direction) === Number(route.direction)
+    );
+
+    if (sameDirection.length > 0) {
+      candidates = sameDirection;
+    }
+  }
+
+  // Patterns with a real direction (0 / 1) describe one way of the line;
+  // prefer them over the "whole line" pattern (direction -1)
+  const oneWay = candidates.filter(
+    pattern => Number(pattern.direction) >= 0
+  );
+
+  if (oneWay.length > 0) {
+    candidates = oneWay;
+  }
+
+  const stopId = String(stop.id);
+
+  const termini = [
+    ...new Set(candidates.map(pattern => String(pattern.toStopId)))
+  ];
+
+  // A bus that only arrives here and stops here is "capăt de linie";
+  // when other destinations exist, prefer those
+  const others = termini.filter(id => id !== stopId);
+  const chosen = others.length > 0 ? others : termini;
+
+  if (chosen.length === 0) {
+    return exact ?? null;
+  }
+
+  if (chosen.length === 1) {
+    return candidates.find(
+      pattern => String(pattern.toStopId) === chosen[0]
+    );
+  }
+
+  // Several possible destinations: show them instead of a wrong one
+  const names = [
+    ...new Set(
+      chosen
+        .map(id => getStop(operator, id)?.name)
+        .filter(Boolean)
+    )
+  ].slice(0, 2);
+
+  return {
+    routeId,
+    toStopId: null,
+    headsign: names.length > 0 ? names.join(" / ") : null
+  };
+}
+
+
 // Upcoming arrivals at a stop, sorted by time.
 // Returns null while the timetable has not been loaded yet.
 function getStopDepartures(operator, stop) {
@@ -1236,8 +1379,7 @@ function getStopDepartures(operator, stop) {
 
     const routeId = group.route?.routeId;
 
-    const pattern =
-      PATTERNS[patternKey(operator, routeId, group.route?.index)];
+    const pattern = resolveGroupPattern(operator, stop, group.route);
 
     (group.times ?? []).forEach(time => {
 
@@ -1428,8 +1570,8 @@ function createStopPopup(operator, stop) {
           headsign = "capăt de linie";
         } else {
           headsign =
-            item.pattern.headsign ??
-            getStop(operator, item.pattern.toStopId)?.name ??
+            item.pattern.headsign ||
+            getStop(operator, item.pattern.toStopId)?.name ||
             "";
         }
       }
@@ -1866,11 +2008,16 @@ function createPopup(vehicle) {
 
   let extraLines = "";
 
-  if (destination) {
+  // The trip headsign sent with the vehicle is the fallback when its
+  // pattern is not in the routes API
+  const destinationName =
+    destination?.name || vehicle.headsign || "";
+
+  if (destinationName) {
     extraLines += `
       <p>
         <strong>Spre:</strong>
-        ${escapeHtml(destination.name)}
+        ${escapeHtml(destinationName)}
       </p>
     `;
   }
