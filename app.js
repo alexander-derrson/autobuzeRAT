@@ -1066,6 +1066,38 @@ function getStopArrivals(operator, stop) {
 }
 
 
+// "in N minutes", written the way people say it:
+//   under 1 hour   -> "peste 45 min"
+//   under 24 hours -> "peste 1h 15 min"  ("peste 2h" on the full hour)
+//   24 hours+      -> "peste 1zi 15h"    ("peste 2zile" on the full day)
+// The minutes must already be rounded and greater than 0.
+function formatWaitTime(minutes) {
+
+  if (minutes < 60) {
+    return `peste ${minutes} min`;
+  }
+
+  if (minutes < 24 * 60) {
+
+    const hours = Math.floor(minutes / 60);
+    const rest = minutes % 60;
+
+    return rest === 0
+      ? `peste ${hours}h`
+      : `peste ${hours}h ${rest} min`;
+  }
+
+  const days = Math.floor(minutes / (24 * 60));
+  const hours = Math.floor((minutes % (24 * 60)) / 60);
+
+  const dayText = days === 1 ? `${days}zi` : `${days}zile`;
+
+  return hours === 0
+    ? `peste ${dayText}`
+    : `peste ${dayText} ${hours}h`;
+}
+
+
 function formatArrival(vehicle, stopsAway) {
 
   if (stopsAway === 0) {
@@ -1094,7 +1126,7 @@ function formatArrival(vehicle, stopsAway) {
 
     return minutes <= 0
       ? `${time} (acum)`
-      : `${time} (peste ${minutes} min)`;
+      : `${time} (${formatWaitTime(minutes)})`;
   }
 
   return stopsAway === 1
@@ -1578,7 +1610,7 @@ function createStopPopup(operator, stop) {
 
       const minutes = Math.round((item.shown - Date.now()) / 60000);
 
-      const inText = minutes <= 0 ? "acum" : `peste ${minutes} min`;
+      const inText = minutes <= 0 ? "acum" : formatWaitTime(minutes);
 
       return `
         <li style="margin-bottom: 3px;">
