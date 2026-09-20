@@ -239,3 +239,50 @@ main {
   color: #777;
   font-size: 13px;
 }
+
+/* ---------- Vehicle list ---------- */
+
+.vehicle-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vehicle-status {
+  padding-left: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.vehicle-status-label {
+  margin-bottom: 1px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #999;
+}
+
+.vehicle-time {
+  font-weight: bold;
+  color: #222;
+}
+
+.vehicle-item.inactive .vehicle-time {
+  color: #888;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: #22c55e;
+  vertical-align: middle;
+}
+
+.vehicle-empty {
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #777;
+}

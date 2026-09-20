@@ -2227,6 +2227,286 @@ function removeOldMarkers(currentVehicles) {
 
 
 // ============================================================
+// VEHICLE LIST (the "Vehicles" section under the map)
+// ============================================================
+// "On the map now": every vehicle that is in the vehicles feed.
+// "Seen earlier":   vehicles this browser saw in the feed during the last
+//                   24 hours that are no longer in it, with the time of
+//                   their last update.
+// Like the map, the list follows the Route filter.
+//
+// The API only tells us who is running right now, so "seen earlier" is
+// remembered here, in the browser (localStorage), and starts empty the
+// first time the page is opened.
+
+const VEHICLE_HISTORY_KEY = "ratTracker.vehicleHistory.v1";
+const VEHICLE_HISTORY_MS = 24 * 60 * 60 * 1000;
+
+let vehicleHistory = loadVehicleHistory();
+
+
+function loadVehicleHistory() {
+
+  try {
+
+    const stored = JSON.parse(
+      localStorage.getItem(VEHICLE_HISTORY_KEY) ?? "{}"
+    );
+
+    const now = Date.now();
+    const history = {};
+
+    Object.entries(stored ?? {}).forEach(([key, entry]) => {
+
+      if (
+        entry &&
+        Number.isFinite(entry.t) &&
+        now - entry.t <= VEHICLE_HISTORY_MS
+      ) {
+        history[key] = entry;
+      }
+    });
+
+    return history;
+
+  } catch (error) {
+
+    // Storage blocked or corrupt: start empty
+    return {};
+  }
+}
+
+
+function saveVehicleHistory() {
+
+  try {
+
+    localStorage.setItem(
+      VEHICLE_HISTORY_KEY,
+      JSON.stringify(vehicleHistory)
+    );
+
+  } catch (error) {
+
+    // Storage unavailable: the history then lives in memory only
+  }
+}
+
+
+// Called after every fetch with ALL vehicles of the feed
+// (not only the ones passing the route filter)
+function recordVehicleHistory(vehicles) {
+
+  const now = Date.now();
+
+  vehicles.forEach(vehicle => {
+
+    const parsed = Date.parse(vehicle.lastUpdated);
+    const key = vehicleKeyOf(vehicle);
+
+    vehicleHistory[key] = {
+      operator: vehicle.operator,
+      label: vehicle.label,
+      routeId: vehicle.routeId,
+      t: Math.max(
+        vehicleHistory[key]?.t ?? 0,
+        Number.isFinite(parsed) ? parsed : now
+      )
+    };
+  });
+
+  Object.entries(vehicleHistory).forEach(([key, entry]) => {
+
+    if (now - entry.t > VEHICLE_HISTORY_MS) {
+      delete vehicleHistory[key];
+    }
+  });
+
+  saveVehicleHistory();
+}
+
+
+// ---------------- time formatting ----------------
+
+const BUCHAREST = "Europe/Bucharest";
+
+function formatClockSeconds(timestamp) {
+
+  return new Date(timestamp).toLocaleTimeString("ro-RO", {
+    timeZone: BUCHAREST,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+}
+
+
+// "13:24:26" today, "19 Sep, 22:10" on another day
+function formatLastUpdate(timestamp, now) {
+
+  const time = formatClockSeconds(timestamp);
+
+  const dayOf = value =>
+    new Date(value).toLocaleDateString("en-CA", { timeZone: BUCHAREST });
+
+  if (dayOf(timestamp) === dayOf(now)) {
+    return time;
+  }
+
+  const date = new Date(timestamp).toLocaleDateString("en-GB", {
+    timeZone: BUCHAREST,
+    day: "numeric",
+    month: "short"
+  });
+
+  return `${date}, ${time}`;
+}
+
+
+function formatAgo(timestamp, now) {
+
+  const seconds = Math.max(0, Math.round((now - timestamp) / 1000));
+
+  if (seconds < 10) {
+    return "just now";
+  }
+
+  if (seconds < 60) {
+    return `${seconds} s ago`;
+  }
+
+  const minutes = Math.floor(seconds / 60);
+
+  if (minutes < 60) {
+    return `${minutes} min ago`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+
+  return rest === 0
+    ? `${hours}h ago`
+    : `${hours}h ${rest} min ago`;
+}
+
+
+// ---------------- rendering ----------------
+
+function vehicleListRow({ operator, label, routeId, model, t }, live, now) {
+
+  const line = routeId === null || routeId === undefined
+    ? ""
+    : routeBadge(operator, routeId);
+
+  const modelText =
+    model && model !== "Unknown" ? escapeHtml(model) : "";
+
+  const details = [line, modelText].filter(Boolean).join(" ");
+
+  return `
+    <div class="vehicle-item ${live ? "active" : "inactive"}">
+
+      <div class="vehicle-info">
+        <span class="vehicle-plate">${escapeHtml(label)}</span>
+        <span class="vehicle-line">${details}</span>
+      </div>
+
+      <div class="vehicle-status">
+        <div class="vehicle-status-label">Last update</div>
+        <div>
+          ${live ? '<span class="live-dot" title="On the map now"></span>' : ""}
+          <span class="vehicle-time">${escapeHtml(formatLastUpdate(t, now))}</span>
+          &middot; ${escapeHtml(formatAgo(t, now))}
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+
+function renderVehicleList(activeVehicles) {
+
+  const list = document.getElementById("vehicleList");
+
+  // Older index.html without the list: nothing to do
+  if (!list) {
+    return;
+  }
+
+  const now = Date.now();
+
+  // Everything currently in the feed, whatever the route filter says
+  const inFeed = new Set(allVehicles.map(vehicleKeyOf));
+
+  const active = [...activeVehicles]
+    .sort((a, b) => compareIndicatives(a.label, b.label))
+    .map(vehicle => {
+
+      const parsed = Date.parse(vehicle.lastUpdated);
+
+      return vehicleListRow(
+        {
+          operator: vehicle.operator,
+          label: vehicle.label,
+          routeId: vehicle.routeId,
+          model: vehicle.model,
+          t: Number.isFinite(parsed) ? parsed : now
+        },
+        true,
+        now
+      );
+    });
+
+  const earlier = Object.entries(vehicleHistory)
+    .filter(([key, entry]) =>
+      !inFeed.has(key) &&
+      (
+        selectedRoute === "all" ||
+        String(entry.routeId) === String(selectedRoute)
+      )
+    )
+    .map(([, entry]) => entry)
+    .sort((a, b) => b.t - a.t)
+    .map(entry =>
+      vehicleListRow(
+        {
+          ...entry,
+          model: VEHICLES[entry.operator]?.[String(entry.label)]?.model
+        },
+        false,
+        now
+      )
+    );
+
+  const emptyText = selectedRoute === "all"
+    ? "No vehicles on the map right now."
+    : "No vehicles on this route right now.";
+
+  let html = `
+    <div class="vehicle-list-section">
+      <h4>On the map now (${active.length})</h4>
+      ${active.length > 0
+        ? active.join("")
+        : `<div class="vehicle-empty">${emptyText}</div>`}
+    </div>
+  `;
+
+  if (earlier.length > 0) {
+
+    html += `
+      <div class="vehicle-list-section">
+        <h4>Seen earlier, last 24 h (${earlier.length})</h4>
+        ${earlier.join("")}
+      </div>
+    `;
+  }
+
+  list.innerHTML = html;
+}
+
+
+// ============================================================
 // DISPLAY VEHICLES
 // ============================================================
 
@@ -2259,6 +2539,8 @@ function displayVehicles() {
 
 
   updateStatus(filteredVehicles);
+
+  renderVehicleList(filteredVehicles);
 }
 
 
@@ -2739,6 +3021,8 @@ async function updateVehicles() {
     allVehicles =
       allVehicles.map(normalizeVehicle);
 
+
+    recordVehicleHistory(allVehicles);
 
     updateRouteFilter();
 
