@@ -930,6 +930,7 @@ function getExtraDepartures(operator, stop, nowMs = Date.now()) {
             routeId: pattern.routeId,
             pattern,
             predicted,
+            scheduled: predicted,
             realtime: false
           });
         });
@@ -1260,6 +1261,7 @@ function getStopDepartures(operator, stop) {
         routeId,
         pattern,
         predicted,
+        scheduled,
         realtime: Boolean(time.realtime)
       });
     });
@@ -1268,6 +1270,82 @@ function getStopDepartures(operator, stop) {
   departures.sort((a, b) => a.predicted - b.predicted);
 
   return departures;
+}
+
+
+// The API can flag an arrival as real-time even when no vehicle of that
+// line is running (no bus is then visible on the map). With this on,
+// "live" is only shown when a vehicle of the line is in the vehicle
+// list; otherwise the scheduled time is shown. Set to false to trust
+// the API flag blindly.
+const REQUIRE_VEHICLE_FOR_LIVE = true;
+
+const LIVE_DOT =
+  '<span title="Estimare în timp real" style="display:inline-block; width:8px; height:8px; margin-left:4px; border-radius:50%; background:#22c55e; vertical-align:middle;"></span>';
+
+
+function hasVehicleOnRoute(operator, routeId) {
+
+  return allVehicles.some(vehicle =>
+    vehicle.operator === operator &&
+    String(vehicle.routeId) === String(routeId)
+  );
+}
+
+
+function isLive(operator, item) {
+
+  if (!item.realtime) {
+    return false;
+  }
+
+  return (
+    !REQUIRE_VEHICLE_FOR_LIVE ||
+    hasVehicleOnRoute(operator, item.routeId)
+  );
+}
+
+
+// Console helper: open a stop popup, then type  debugLive()
+// It lists what the API says for the stop and whether a vehicle
+// of each line is running.
+function debugLive() {
+
+  if (!openStop) {
+    console.log("Open a stop popup first, then run debugLive() again.");
+    return;
+  }
+
+  const { operator, stop } = openStop;
+  const entry = STOP_TIMES[`${operator}|${stop.id}`];
+  const rows = [];
+
+  (entry?.data ?? []).forEach(group => {
+
+    (group.times ?? []).forEach(time => {
+
+      const routeId = group.route?.routeId;
+
+      rows.push({
+        line: getRouteIndicative(operator, routeId),
+        routeId,
+        pattern: group.route?.index,
+        tripId: time.tripId,
+        scheduled: formatClock(Date.parse(time.scheduledArrival)),
+        delayMin: Math.round(Number(time.arrivalDelay ?? 0) / 60),
+        apiRealtime: Boolean(time.realtime),
+        vehiclesOnRoute: allVehicles.filter(vehicle =>
+          String(vehicle.routeId) === String(routeId)
+        ).length,
+        vehicleOnSameTrip: allVehicles.some(vehicle =>
+          vehicle.tripId === time.tripId
+        )
+      });
+    });
+  });
+
+  console.log(`Stop ${stop.id} ${stop.name}: ${allVehicles.length} vehicles in total`);
+  console.table(rows);
 }
 
 
@@ -1307,10 +1385,24 @@ function createStopPopup(operator, stop) {
   // Extra stops have no API timetable to wait for
   const loading = !stop.extra && apiDepartures === null;
 
+  // Real-time estimate only when a vehicle of the line is running,
+  // otherwise the scheduled time.
   const departures = [
     ...(apiDepartures ?? []),
     ...extraDepartures
-  ].sort((a, b) => a.predicted - b.predicted);
+  ]
+    .map(item => {
+
+      const live = isLive(operator, item);
+
+      return {
+        ...item,
+        live,
+        shown: live ? item.predicted : (item.scheduled ?? item.predicted)
+      };
+    })
+    .filter(item => item.shown >= Date.now() - 60000)
+    .sort((a, b) => a.shown - b.shown);
 
   let timetableHtml;
 
@@ -1342,7 +1434,7 @@ function createStopPopup(operator, stop) {
         }
       }
 
-      const minutes = Math.round((item.predicted - Date.now()) / 60000);
+      const minutes = Math.round((item.shown - Date.now()) / 60000);
 
       const inText = minutes <= 0 ? "acum" : `peste ${minutes} min`;
 
@@ -1351,8 +1443,8 @@ function createStopPopup(operator, stop) {
           ${routeBadge(operator, item.routeId)}
           ${headsign ? `→ ${escapeHtml(headsign)}` : ""}
           <br>
-          <strong>${formatClock(item.predicted)}</strong>
-          (${inText})${item.realtime ? " · live" : ""}
+          <strong>${formatClock(item.shown)}</strong>
+          (${inText})${item.live ? ` · live ${LIVE_DOT}` : ""}
         </li>
       `;
     }).join("");
