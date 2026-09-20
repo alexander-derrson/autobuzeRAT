@@ -51,7 +51,7 @@
           "headsign": "Valea Lungului",
           "stops": [178, 39, 188, 41, 260, 180, 181, 182, 183, 184, 187, "breasta-primarie-tur", "breasta-tur", "valea-lungului-sosire"],
           "duration": 30,
-          "geometry": "ofomGcrgpCm@bHWf@g@bCgAzF]~BQtCMbCMdAGXC?GBGDKPETANH`@TPL@B?DHLp@?fAOtEKnEXlEB~@@xAEhB?@GvAA~ALbEHdADjAObBBxAFvCJpB@d@E~@i@nD}ApJm@tC[|Am@zBiBfG}AfFMd@wE|OuDrOs@rCwHtZ_AvDy@|C[`B_BlFuC`KiBdG_AhDm@jBOf@oD`MsDdMo@rCyF~QcKl]wKh_@yBvHT?DAcUfaHaYx_@m`@zkC",
+          "geometry": "ofomGcrgpCm@bHWf@g@bCgAzF]~BQtCMbCMdAGXC?GBGDKPETANH`@TPL@B?DHLp@?fAOtEKnEXlEB~@@xAEhB?@GvAA~ALbEHdADjAObBBxAFvCJpB@d@E~@i@nD}ApJm@tC[|Am@zBiBfG}AfFMd@wE|OuDrOs@rCwHtZ_AvDy@|C[`B_BlFuC`KiBdG_AhDm@jBOf@oD`MsDdMo@rCyF~QcKl]wKh_@yBvHT?DAmHzSaC|JQbB_QrwDRxGb@~C`GjYbCtIJnAI~Cu@|EaBhEmF~D_CnEYfBWxDAbF_LdA}BhBUjC{Nzy@eC|XmJp`@SdBDbBz@`D|@lB",
           "schedule": {
             "weekday": ["05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30"],
             "saturday": ["05:30", "06:30", "08:30", "11:30", "14:30", "16:30", "19:30"],
@@ -63,7 +63,7 @@
           "headsign": "Teatrul Național",
           "stops": ["valea-lungului-plecare", "breasta-retur", "breasta-primarie-retur", 26, 29, 30, 31, 32, 33, 34, 35, 36, 37],
           "duration": 30,
-          "geometry": "qhumGowloCz_@okCxYs_@|S{aHO?xBwHvKi_@nKi^lFcQn@sCNg@fI}XXeA@Cl@kB~@iDhBeG`F_Qn@qCbBwGzAkG`DeMdEyP~BmJjFoQ~B}HbBcGhAsFbA{FfAeI@q@QyDEyBAcAJiABw@G{@OiCCsA?A@oB?i@De@BoDAkAYqEA_AXkIFq@DqAEgABEDQ?QAS?OPgB\\_FNsAtAoHn@wD@g@P{@BS",
+          "geometry": "qhumGowloCgA{B{@_DEeBTcBhJi`@bCyXvNoy@RmC|BeBfLeADcFXwDZgB`CoErF}DbBiEr@}EHaDKoAeCuIgGmYc@_DSyGfP_xDReB~B}JhH}SO?xBwHvKi_@nKi^lFcQn@sCNg@fI}XXeA@Cl@kB~@iDhBeG`F_Qn@qCbBwGzAkG`DeMdEyP~BmJjFoQ~B}HbBcGhAsFbA{FfAeI@q@QyDEyBAcAJiABw@G{@OiCCsA?A@oB?i@De@BoDAkAYqEA_AXkIFq@DqAEgABEDQ?QAS?OPgB\\_FNsAtAoHn@wD@g@P{@BS",
           "schedule": {
             "weekday": ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"],
             "saturday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"],
