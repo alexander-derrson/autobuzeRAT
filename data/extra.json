@@ -1,5 +1,76 @@
 {
-  "holidays": [],
-  "stops": [],
-  "routes": []
+  "holidays": ["2026-11-30", "2026-12-01", "2026-12-25", "2026-12-26", "2027-01-01", "2027-01-02", "2027-01-06", "2027-01-07", "2027-01-24", "2027-04-30", "2027-05-01", "2027-05-02", "2027-05-03", "2027-06-01", "2027-06-20", "2027-06-21", "2027-08-15", "2027-11-30", "2027-12-01", "2027-12-25", "2027-12-26"],
+  "stops": [
+    {
+      "id": "breasta-primarie-tur",
+      "name": "Primărie Breasta",
+      "latitude": 44.341548,
+      "longitude": 23.691252
+    },
+    {
+      "id": "breasta-primarie-retur",
+      "name": "Primărie Breasta",
+      "latitude": 44.341422,
+      "longitude": 23.69114
+    },
+    {
+      "id": "breasta-tur",
+      "name": "Breasta",
+      "latitude": 44.345717,
+      "longitude": 23.686005
+    },
+    {
+      "id": "breasta-retur",
+      "name": "Breasta",
+      "latitude": 44.345706,
+      "longitude": 23.685923
+    },
+    {
+      "id": "valea-lungului-sosire",
+      "name": "Valea Lungului Sosire",
+      "latitude": 44.351069,
+      "longitude": 23.663461
+    },
+    {
+      "id": "valea-lungului-plecare",
+      "name": "Valea Lungului Plecare",
+      "latitude": 44.350973,
+      "longitude": 23.663442
+    }
+  ],
+  "routes": [
+    {
+      "id": "metro-breasta",
+      "shortName": "Breasta",
+      "longName": "Traseul Metropolitan Breasta",
+      "color": "e65100",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Valea Lungului",
+          "stops": [178, 39, 188, 41, 260, 180, 181, 182, 183, 184, 187, "breasta-primarie-tur", "breasta-tur", "valea-lungului-sosire"],
+          "duration": 30,
+          "geometry": "ofomGcrgpCm@bHWf@g@bCgAzF]~BQtCMbCMdAGXC?GBGDKPETANH`@TPL@B?DHLp@?fAOtEKnEXlEB~@@xAEhB?@GvAA~ALbEHdADjAObBBxAFvCJpB@d@E~@i@nD}ApJm@tC[|Am@zBiBfG}AfFMd@wE|OuDrOs@rCwHtZ_AvDy@|C[`B_BlFuC`KiBdG_AhDm@jBOf@oD`MsDdMo@rCyF~QcKl]wKh_@yBvHT?DAcUfaHaYx_@m`@zkC",
+          "schedule": {
+            "weekday": ["05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30"],
+            "saturday": ["05:30", "06:30", "08:30", "11:30", "14:30", "16:30", "19:30"],
+            "sunday": ["05:30", "06:30", "08:30", "11:30", "14:30", "16:30", "19:30"]
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "Teatrul Național",
+          "stops": ["valea-lungului-plecare", "breasta-retur", "breasta-primarie-retur", 26, 29, 30, 31, 32, 33, 34, 35, 36, 37],
+          "duration": 30,
+          "geometry": "qhumGowloCz_@okCxYs_@|S{aHO?xBwHvKi_@nKi^lFcQn@sCNg@fI}XXeA@Cl@kB~@iDhBeG`F_Qn@qCbBwGzAkG`DeMdEyP~BmJjFoQ~B}HbBcGhAsFbA{FfAeI@q@QyDEyBAcAJiABw@G{@OiCCsA?A@oB?i@De@BoDAkAYqEA_AXkIFq@DqAEgABEDQ?QAS?OPgB\\_FNsAtAoHn@wD@g@P{@BS",
+          "schedule": {
+            "weekday": ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"],
+            "saturday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"],
+            "sunday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"]
+          }
+        }
+      ]
+    }
+  ]
 }
