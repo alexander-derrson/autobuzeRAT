@@ -36,13 +36,115 @@
       "name": "Valea Lungului Plecare",
       "latitude": 44.350973,
       "longitude": 23.663442
+    },
+    {
+      "id": "s200-tur",
+      "name": "S200",
+      "latitude": 44.317528,
+      "longitude": 23.808361
+    },
+    {
+      "id": "s200-retur",
+      "name": "S200",
+      "latitude": 44.317528,
+      "longitude": 23.808417
+    },
+    {
+      "id": "bucovat-gpl-tur",
+      "name": "Bucovat - Statie GPL",
+      "latitude": 44.294472,
+      "longitude": 23.745944
+    },
+    {
+      "id": "bucovat-gpl-retur",
+      "name": "Bucovat - Statie GPL",
+      "latitude": 44.29425,
+      "longitude": 23.745361
+    },
+    {
+      "id": "bucovat-biserica-tur",
+      "name": "Bucovat - Biserica",
+      "latitude": 44.295389,
+      "longitude": 23.742667
+    },
+    {
+      "id": "bucovat-biserica-retur",
+      "name": "Bucovat - Biserica",
+      "latitude": 44.295028,
+      "longitude": 23.742889
+    },
+    {
+      "id": "fantana-mireselor-tur",
+      "name": "Fantana Mireselor Leamna de Jos",
+      "latitude": 44.311083,
+      "longitude": 23.722139
+    },
+    {
+      "id": "fantana-mireselor-retur",
+      "name": "Fantana Mireselor Leamna de Jos",
+      "latitude": 44.311028,
+      "longitude": 23.7225
+    },
+    {
+      "id": "spital-leamna-tur",
+      "name": "Spital Leamna de Sus",
+      "latitude": 44.303667,
+      "longitude": 23.7025
+    },
+    {
+      "id": "spital-leamna-retur",
+      "name": "Spital Leamna de Sus",
+      "latitude": 44.303583,
+      "longitude": 23.702389
+    },
+    {
+      "id": "scoala-leamna-tur",
+      "name": "Scoala Leamna de Sus",
+      "latitude": 44.301889,
+      "longitude": 23.68275
+    },
+    {
+      "id": "scoala-leamna-retur",
+      "name": "Scoala Leamna de Sus",
+      "latitude": 44.301833,
+      "longitude": 23.682917
+    },
+    {
+      "id": "biserica-sarbatoarea-tur",
+      "name": "Biserica Sarbatoarea",
+      "latitude": 44.30025,
+      "longitude": 23.657611
+    },
+    {
+      "id": "biserica-sarbatoarea-retur",
+      "name": "Biserica Sarbatoarea",
+      "latitude": 44.300194,
+      "longitude": 23.657694
+    },
+    {
+      "id": "scoala-sarbatoarea-tur",
+      "name": "Scoala Sarbatoarea",
+      "latitude": 44.2985,
+      "longitude": 23.64825
+    },
+    {
+      "id": "scoala-sarbatoarea-retur",
+      "name": "Scoala Sarbatoarea",
+      "latitude": 44.2985,
+      "longitude": 23.649583
+    },
+    {
+      "id": "sarbatoarea",
+      "name": "Sarbatoarea",
+      "latitude": 44.298583,
+      "longitude": 23.640167
     }
   ],
   "routes": [
     {
       "id": "metro-breasta",
-      "shortName": "M Breasta",
-      "longName": "Metropolitan Craiova-Breasta",
+      "shortName": "Breasta",
+      "longName": "Traseul Metropolitan Breasta",
       "color": "e65100",
       "textColor": "ffffff",
       "patterns": [
@@ -68,6 +170,39 @@
             "weekday": ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"],
             "saturday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"],
             "sunday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "metro-bucovat",
+      "shortName": "Bucovat",
+      "longName": "Traseul Metropolitan Bucovat",
+      "color": "c2185b",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Sarbatoarea",
+          "stops": ["s200-tur", 240, 12, 13, 118, 90, 120, 121, 304, 309, 151, 310, "bucovat-gpl-tur", "bucovat-biserica-tur", "fantana-mireselor-tur", "spital-leamna-tur", "scoala-leamna-tur", "biserica-sarbatoarea-tur", "scoala-sarbatoarea-tur", "sarbatoarea"],
+          "duration": 45,
+          "geometry": "qwnmGgaipCkHvMqCpXzBJfJ~AzHu@Tt@Mz@FV|CnEN`Bd@?vGvAjFhBvB`CnChBzBhCzAHxEORJ|D~NDz@[dAu^fWgAB[x@B^`@`@Fd@rCf\\LpCtOzmB~j@tr@pAlAnEtCxSzPdAxBdMf_@^pBfAxCXhB@tGy@tCmC~CEKi@x@oBd@w@f@i@x@eA?MR[?oBtBuAx@w@Ri@x@?f@aIxH?lAMf@Ld@MR?f@eA`B[?y@x@[?w@f@qEjFoBPMReARMRy@?i@d@i@?MRsARMRi@?[d@i@Rw@lAaBnAw@lAM?iDjFi@rBeAtB?ReAlAw@`BM?aBtBaBz@i@x@y@f@[lA?f@i@`B?d@oBxHLbBLP@dE[lA?|FLR?|CLRL|CZx@?z@ZlA?f@h@tBh@lA?f@Zf@ZlAMRLtBfHtJLtBLRLlArAhCZnAv@`BtH`Zv@bB?Ph@f@Nz@v@lAZlAh@z@h@hCZf@?d@h@tBZf@?z@Zd@?nALRLhCXlAHhCXlA?f@d@`BX|CXx@Az@f@`BJ`BLRAz@LREjFXlAAnAXlAJtBLRAlAXnAAx@XnAAlAXlAAtBXnAChCXlACjFMRCtBMRLRChC]x@?f@JRA|COd@LRKjOHhRMRLR@`BLR@tBKP?tBg@z@u@hC?d@g@bB@d@[nAYd@MnAYd@?z@[d@KbBg@lA?f@aAbEJvULR?x@j@nA@d@x@|C@f@Zx@@lA\\nANtBLR@lAZlANtBNR?`B\\z@NhCLP@z@\\x@?z@j@`BvAtBZlAvAtBj@bBNtBZlA@lALR?`BLR@hCLR?hCfE|N\\R?lALR?|CNR?`BLR?xPMR?hCLRMxd@",
+          "schedule": {
+            "weekday": ["05:00", "06:00", "07:35", "11:00", "15:00", "16:30", "19:00"],
+            "saturday": ["05:00", "06:00", "11:00", "14:30", "19:00"],
+            "sunday": ["05:00", "06:00", "11:00", "14:30", "19:00"]
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "S200",
+          "stops": ["sarbatoarea", "scoala-sarbatoarea-retur", "biserica-sarbatoarea-retur", "scoala-leamna-retur", "spital-leamna-retur", "fantana-mireselor-retur", "bucovat-biserica-retur", "bucovat-gpl-retur", 148, 149, 150, 305, 306, 307, 198, 308, 243, 23, 235, "s200-retur"],
+          "duration": 45,
+          "geometry": "cakmGafhoCJyd@MS@iCLS@yPMS?aBMS?}CMS?mA[SeE}N?iCMS?iCMS?aBMS?mA[mAOuBk@cBwAuB]mAuAuBk@aBA{@[y@A{@MQOiC]{@AaBMSOuB]mA?mAOSOuB[oAAmA]y@?g@{@}C?e@k@oA?y@OSIwU`AcE?g@f@mAJcBZe@A{@Ze@JoAZe@XoA?e@f@cB?e@t@iCf@{@AuBLQAuBMSAaBMSLSIkSJgNMSLg@B}CKQ?g@\\{@BgCMSLSBuBLSDkFYmABiCYmA@uBYoA@mAYoA@y@YmA@oAMSKuBYmA@mAYoADkFKQ?{@KSKaBg@aB@{@Yy@W}Cg@aB?g@YmAIiCYmAKiCMS?mA[g@?y@[g@i@uB?g@]e@i@iCi@{@[mAw@mAM{@i@e@?Sw@aBuHaZw@aB[oAsAgCMoAMSMuBgHsJMwBLQ[oA[e@?g@i@mAi@uB?g@[mA?{@[y@M}CMS?}CMQ?_GZmA?cEMSOaBnByH?g@h@aB?g@ZmAv@g@h@y@`By@`BuBL?Lg@rAuBZS?QdAuBh@uBfDkFL?v@mA`BmAv@mAh@SZg@h@?LSrAQLSh@?h@g@v@?LQdASLSnBSpEiFv@g@Z?v@y@Z?dAaB?g@LSMg@Le@?mA`IyH?g@h@y@v@SrA{@nBsBZ?LSdA?h@y@v@g@nBg@dAaBZSHH`AeA~@wBVaB@eFQkBoAqD_@qBaLq\\_B{DgAqA_R{N_GaEgk@sr@kNmdB_AkN{AoO}@{Lb@iA`a@gYgFyRFYK_@UGc@^eE`@cBQa@i@WsBc@uAsDaHqFcDgBcCcC{BMS?YKEKPsHSoFd@SKcAl@mCo@Ue@Cc@fAiNdAmSc@IBaC",
+          "schedule": {
+            "weekday": ["05:30", "06:45", "08:20", "11:45", "15:45", "17:15", "19:45"],
+            "saturday": ["05:30", "06:45", "11:45", "15:15", "19:45"],
+            "sunday": ["05:30", "06:45", "11:45", "15:15", "19:45"]
           }
         }
       ]
