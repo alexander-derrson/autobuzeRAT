@@ -370,8 +370,7 @@
         {
           "index": 1,
           "headsign": "Malu Mare",
-          "stops": [
-            "s200-tur", 240, 13, 15, 16, 344, 261, "scoala-gimnaziala-tur", "solarex-tur", "magazin-lenys-tur", "scoala-generala-tur", "primaria-malumare-tur", "liceul-agricol-tur", "magazin-aleda-tur"],
+          "stops": ["s200-tur", 240, 13, 15, 16, 344, 261, "scoala-gimnaziala-tur", "solarex-tur", "magazin-lenys-tur", "scoala-generala-tur", "primaria-malumare-tur", "liceul-agricol-tur", "magazin-aleda-tur"],
           "duration": 32,
           "geometry": "awnmGs`ipC@f@?\\A\\C`@Ch@QvECPE`AIrBM~BCf@C\\WlCKhAMhAOzAIv@Kz@ALIj@PDRHbATZF^DJ?PAVCRE\\I?@@??@@??@@?@?@@@?@?@?@A@??A@?@A@A?A\\CD?b@ERAH?LAX?n@?HNDJBLBPDNBJBJDHPTHJv@fAd@n@JLLTBDBH@HHnAd@?FFF@LDRFh@Jj@Hh@H|@P|@Tr@Rl@Vn@Tl@PVL@@PN\\b@Z`@TVRP`@T^RZP\\XRRpA~ALPHFBBLJVHZ?f@?f@?XAz@CVCp@CDAD?D?D@?@@@@@@?@@@@@?@?B?@?@A@?@?@A@A@?@A@C@A?A@A?A@A?A?ATGJEl@MRGTGLOD?dDa@tB[r@Mr@Q`@KdBe@ZIr@YrDcAbAYRG~Bq@PEBAL?D?FATGVEB?@?@?@?@?@?@?@A@?@A@A@AR@~@@`C?nA?j@@H?d@AT?dAAjBAtDBdA?hAAb@?hBCLAbBCp@An@Cf@ErDMfACxAEdBETAlAEF?bCK`ACf@CnAEFAV?h@C`DOVA`AAX?h@AhFSrCMl@AZB\\D?@?@@@?@?@@@?@?@@@@@?@@@@??@@?@@@?@@@?@?@?@?@?@A@?@A@?@A@A?A@A?A?A@A?A@A?A?A@C?A?A?A?A?A?A?A?A?ALGVIRGZKJGVOJGLMXWV_@tBaDPYpDiFJMnCyDp@cArAqBhCgEz@aAhHsKrCkExAwBrAqB@Ar@cAtDuFnCuDb@q@nDcGl@_Ap@cAdCaEdAkBj@_AfCeE|AiCb@u@rBkDxA_CTa@x@sA^m@lCoElCqEjFuIFKdAeBDIt@oA`DaFx@iA^k@lCkDZa@rCuD|@mArAcBvAkBnCqD~EuGFGv@eAb@o@r@aAtAyBjAsBj@{@TSd@c@XQHGRO@ARSBE?CNe@BMBKHc@Je@FWTk@vAaCf@}@f@y@hB}C`BsCFMnAyBnBeDJSnFiJlFcJj@cA^o@Ve@RWPS~@eAzAgA~FqD^UvGcEjAq@\\U`HeEnAw@vA{@hCwAFC`Ak@jDoC~@w@dEaDtB{Ar@_@DCfAe@v@Yh@S@?b@Sd@SXQt@g@lAo@nAe@zCcAdC{@dCcAhIiE^SxCeBrCqBPOxBmBlD_DlCcBPKzBgAd@Uz@_@p@Un@QLAbD]\\E`BQz@IpEe@`@G",
           "schedule": {
