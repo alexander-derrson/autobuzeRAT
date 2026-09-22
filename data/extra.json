@@ -370,7 +370,7 @@
         {
           "index": 1,
           "headsign": "Malu Mare",
-          "stops": ["s200-tur", 240, 13, 15, 16, 344, 261, "scoala-gimnaziala-tur", "solarex-tur", "magazin-lenys-tur", "scoala-generala-tur", "primaria-malumare-tur", "liceul-agricol-tur", "magazin-aleda-tur"],
+          "stops": ["s200-tur", 240, 13, 15, 16, 344, 264, 265, "solarex-tur", "magazin-lenys-tur", "scoala-generala-tur", "primaria-malumare-tur", "liceul-agricol-tur", "magazin-aleda-tur"],
           "duration": 32,
           "geometry": "awnmGs`ipC@f@?\\A\\C`@Ch@QvECPE`AIrBM~BCf@C\\WlCKhAMhAOzAIv@Kz@ALIj@PDRHbATZF^DJ?PAVCRE\\I?@@??@@??@@?@?@@@?@?@?@A@??A@?@A@A?A\\CD?b@ERAH?LAX?n@?HNDJBLBPDNBJBJDHPTHJv@fAd@n@JLLTBDBH@HHnAd@?FFF@LDRFh@Jj@Hh@H|@P|@Tr@Rl@Vn@Tl@PVL@@PN\\b@Z`@TVRP`@T^RZP\\XRRpA~ALPHFBBLJVHZ?f@?f@?XAz@CVCp@CDAD?D?D@?@@@@@@?@@@@@?@?B?@?@A@?@?@A@A@?@A@C@A?A@A?A@A?A?ATGJEl@MRGTGLOD?dDa@tB[r@Mr@Q`@KdBe@ZIr@YrDcAbAYRG~Bq@PEBAL?D?FATGVEB?@?@?@?@?@?@?@A@?@A@A@AR@~@@`C?nA?j@@H?d@AT?dAAjBAtDBdA?hAAb@?hBCLAbBCp@An@Cf@ErDMfACxAEdBETAlAEF?bCK`ACf@CnAEFAV?h@C`DOVA`AAX?h@AhFSrCMl@AZB\\D?@?@@@?@?@@@?@?@@@@@?@@@@??@@?@@@?@@@?@?@?@?@?@A@?@A@?@A@A?A@A?A?A@A?A@A?A?A@C?A?A?A?A?A?A?A?A?ALGVIRGZKJGVOJGLMXWV_@tBaDPYpDiFJMnCyDp@cArAqBhCgEz@aAhHsKrCkExAwBrAqB@Ar@cAtDuFnCuDb@q@nDcGl@_Ap@cAdCaEdAkBj@_AfCeE|AiCb@u@rBkDxA_CTa@x@sA^m@lCoElCqEjFuIFKdAeBDIt@oA`DaFx@iA^k@lCkDZa@rCuD|@mArAcBvAkBnCqD~EuGFGv@eAb@o@r@aAtAyBjAsBj@{@TSd@c@XQHGRO@ARSBE?CNe@BMBKHc@Je@FWTk@vAaCf@}@f@y@hB}C`BsCFMnAyBnBeDJSnFiJlFcJj@cA^o@Ve@RWPS~@eAzAgA~FqD^UvGcEjAq@\\U`HeEnAw@vA{@hCwAFC`Ak@jDoC~@w@dEaDtB{Ar@_@DCfAe@v@Yh@S@?b@Sd@SXQt@g@lAo@nAe@zCcAdC{@dCcAhIiE^SxCeBrCqBPOxBmBlD_DlCcBPKzBgAd@Uz@_@p@Un@QLAbD]\\E`BQz@IpEe@`@G",
           "schedule": {
@@ -382,7 +382,7 @@
         {
           "index": 2,
           "headsign": "S200",
-          "stops": ["magazin-aleda-retur", "liceul-agricol-retur", "primaria-malumare-retur", "scoala-generala-retur", "magazin-lenys-retur", "peco-neagtovo-retur", 63, 264, 344, 20, 21, 243, 235, "s200-retur"],
+          "stops": ["magazin-aleda-retur", "liceul-agricol-retur", "primaria-malumare-retur", "scoala-generala-retur", "magazin-lenys-retur", "peco-neagtovo-retur", 63, 261, 344, 20, 21, 243, 235, "s200-retur"],
           "duration": 33,
           "geometry": "{c}lGwmspCUBqEd@{@HaBP]DcD\\M@o@Pq@T{@^e@T{BfAQJmCbBmD~CyBlBQNsCpByCdB_@RiIhEeCbAeCz@{CbAoAd@mAn@u@f@YPe@Rc@RA?i@Rw@XgAd@EBs@^uBzAeE`D_Av@kDnCaAj@GBiCvAwAz@oAv@aHdE]TkAp@wGbE_@T_GpD{AfA_AdAQRSVWd@_@n@k@bAmFbJoFhJKRoBdDoAxBGLaBrCiB|Cg@x@g@|@wA`CUj@GVKd@Ib@CJCLOd@?BCDSRA@SNIFYPe@b@URk@z@kArBuAxBs@`Ac@n@w@dAGF_FtGoCpDwAjBsAbB}@lAsCtD[`@mCjD_@j@y@hAaD`Fu@nAEHeAdBGJkFtImCpEmCnE_@l@y@rAU`@yA~BsBjDc@t@}AhCgCdEk@~@eAjBeC`Eq@bAm@~@oDbGc@p@oCtDuDtFs@bAA@sApByAvBsCjEiHrK{@`AiCfEsApBq@bAoCxDKLqDhFQXuB`DW^YVMLKFWN_@@MB]De@JAAA?AAA?A?A?A?A?A??@A?A@A?A@?@A?i@?iAFsEPmBFw@Be@@iA@kELcENcAHoAD]@[?oADS@qBHmADyBBoBHC?u@Bo@D}AB{@BsBBmB@}@@oJ@U?o@?g@@wAA}B@WCQCICYMAAACACAAAAAAA?AAA?A?A?A?A?A@A?A@A??@A?A@A@?@A@A@?BA@?@?@A@?@?@?@EFGDEBGDODCDILC@QD_Cp@SFcAXsDbAs@X[HeBd@a@Js@Ps@LuBZeD`@E?OAkAPK@C@]DAA?AAAAAAAAAA??AA?CAA??AA?A?A?A?A?A??@A?A??@A?A@A@?@A??@A@?@?@A??@?@EBGBC@C@}AJgAN[BQ@S?MAKAKAICGCEECACCIICECCGOEOCQCIAOAUEa@CI?EGSGSO]mAyBw@yAUk@Wa@CGUS{@e@mBcAYMSOSW]i@S[[e@YW{@u@OQKIACIKKOMYSBI?{COu@@q@@a@Fc@Da@Dy@Fo@Dk@HOB]DE@UDSDSBQAWCUEyBc@a@IGAk@Ic@IeASMKm@OCAKKJcA`@kF`@}Db@aEh@kF^oDFm@@M?ANmA|@cHTsBBWJ_AJCFA@?NBPHNN@`@J~CB`CAd@FnB",
           "schedule": {
