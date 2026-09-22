@@ -1,5 +1,27 @@
 {
-  "holidays": ["2026-11-30", "2026-12-01", "2026-12-25", "2026-12-26", "2027-01-01", "2027-01-02", "2027-01-06", "2027-01-07", "2027-01-24", "2027-04-30", "2027-05-01", "2027-05-02", "2027-05-03", "2027-06-01", "2027-06-20", "2027-06-21", "2027-08-15", "2027-11-30", "2027-12-01", "2027-12-25", "2027-12-26"],
+  "holidays": [
+    "2026-11-30",
+    "2026-12-01",
+    "2026-12-25",
+    "2026-12-26",
+    "2027-01-01",
+    "2027-01-02",
+    "2027-01-06",
+    "2027-01-07",
+    "2027-01-24",
+    "2027-04-30",
+    "2027-05-01",
+    "2027-05-02",
+    "2027-05-03",
+    "2027-06-01",
+    "2027-06-20",
+    "2027-06-21",
+    "2027-08-15",
+    "2027-11-30",
+    "2027-12-01",
+    "2027-12-25",
+    "2027-12-26"
+  ],
   "stops": [
     {
       "id": "breasta-primarie-tur",
@@ -186,6 +208,78 @@
       "name": "Termo",
       "latitude": 44.390682,
       "longitude": 23.721623
+    },
+    {
+      "id": "solarex-tur",
+      "name": "Solarex",
+      "latitude": 44.2632646653251,
+      "longitude": 23.830683300687475
+    },
+    {
+      "id": "peco-neagtovo-retur",
+      "name": "Peco Neagtovo",
+      "latitude": 44.263367304994816,
+      "longitude": 23.83072717522688
+    },
+    {
+      "id": "magazin-lenys-tur",
+      "name": "Magazin Lenys",
+      "latitude": 44.252448246093394,
+      "longitude": 23.84611036862974
+    },
+    {
+      "id": "magazin-lenys-retur",
+      "name": "Magazin Lenys",
+      "latitude": 44.25247967219873,
+      "longitude": 23.846258079593817
+    },
+    {
+      "id": "scoala-generala-tur",
+      "name": "Scoala Generala",
+      "latitude": 44.244818101747896,
+      "longitude": 23.851488358346508
+    },
+    {
+      "id": "scoala-generala-retur",
+      "name": "Scoala Generala",
+      "latitude": 44.244948493260644,
+      "longitude": 23.851529871325482
+    },
+    {
+      "id": "primaria-malumare-tur",
+      "name": "Primaria Malu Mare",
+      "latitude": 44.23769738442982,
+      "longitude": 23.855913445836666
+    },
+    {
+      "id": "primaria-malumare-retur",
+      "name": "Primaria Malu Mare",
+      "latitude": 44.237940475607644,
+      "longitude": 23.855910763628792
+    },
+    {
+      "id": "liceul-agricol-tur",
+      "name": "Liceul Agricol",
+      "latitude": 44.2331321441266,
+      "longitude": 23.85917059502854
+    },
+    {
+      "id": "liceul-agricol-retur",
+      "name": "Liceul Agricol",
+      "latitude": 44.23320887590589,
+      "longitude": 23.859233157632865
+    },
+    {
+      "id": "magazin-aleda-tur",
+      "name": "Magazin Aleda",
+      "latitude": 44.22717526841065,
+      "longitude": 23.861538483710962
+    },
+    {
+      "id": "magazin-aleda-retur",
+      "name": "Magazin Aleda",
+      "latitude": 44.22734406537742,
+      "longitude": 23.861653524403412
     }
   ],
   "routes": [
@@ -199,25 +293,120 @@
         {
           "index": 1,
           "headsign": "Valea Lungului",
-          "stops": [178, 39, 188, 41, 260, 180, 181, 182, 183, 184, 187, "breasta-primarie-tur", "breasta-tur", "valea-lungului-sosire"],
+          "stops": [
+            178,
+            39,
+            188,
+            41,
+            260,
+            180,
+            181,
+            182,
+            183,
+            184,
+            187,
+            "breasta-primarie-tur",
+            "breasta-tur",
+            "valea-lungului-sosire"
+          ],
           "duration": 30,
           "geometry": "ofomGcrgpCm@bHWf@g@bCgAzF]~BQtCMbCMdAGXC?GBGDKPETANH`@TPL@B?DHLp@?fAOtEKnEXlEB~@@xAEhB?@GvAA~ALbEHdADjAObBBxAFvCJpB@d@E~@i@nD}ApJm@tC[|Am@zBiBfG}AfFMd@wE|OuDrOs@rCwHtZ_AvDy@|C[`B_BlFuC`KiBdG_AhDm@jBOf@oD`MsDdMo@rCyF~QcKl]wKh_@yBvHT?DAmHzSaC|JQbB_QrwDRxGb@~C`GjYbCtIJnAI~Cu@|EaBhEmF~D_CnEYfBWxDAbF_LdA}BhBUjC{Nzy@eC|XmJp`@SdBDbBz@`D|@lB",
           "schedule": {
-            "weekday": ["05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30"],
-            "saturday": ["05:30", "06:30", "08:30", "11:30", "14:30", "16:30", "19:30"],
-            "sunday": ["05:30", "06:30", "08:30", "11:30", "14:30", "16:30", "19:30"]
+            "weekday": [
+              "05:30",
+              "06:30",
+              "07:30",
+              "08:30",
+              "09:30",
+              "10:30",
+              "11:30",
+              "12:30",
+              "13:30",
+              "14:30",
+              "15:30",
+              "16:30",
+              "17:30",
+              "18:30",
+              "19:30",
+              "20:30"
+            ],
+            "saturday": [
+              "05:30",
+              "06:30",
+              "08:30",
+              "11:30",
+              "14:30",
+              "16:30",
+              "19:30"
+            ],
+            "sunday": [
+              "05:30",
+              "06:30",
+              "08:30",
+              "11:30",
+              "14:30",
+              "16:30",
+              "19:30"
+            ]
           }
         },
         {
           "index": 2,
           "headsign": "Teatrul Național",
-          "stops": ["valea-lungului-plecare", "breasta-retur", "breasta-primarie-retur", 26, 29, 30, 31, 32, 33, 34, 35, 36, 37],
+          "stops": [
+            "valea-lungului-plecare",
+            "breasta-retur",
+            "breasta-primarie-retur",
+            26,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37
+          ],
           "duration": 30,
           "geometry": "qhumGowloCgA{B{@_DEeBTcBhJi`@bCyXvNoy@RmC|BeBfLeADcFXwDZgB`CoErF}DbBiEr@}EHaDKoAeCuIgGmYc@_DSyGfP_xDReB~B}JhH}SO?xBwHvKi_@nKi^lFcQn@sCNg@fI}XXeA@Cl@kB~@iDhBeG`F_Qn@qCbBwGzAkG`DeMdEyP~BmJjFoQ~B}HbBcGhAsFbA{FfAeI@q@QyDEyBAcAJiABw@G{@OiCCsA?A@oB?i@De@BoDAkAYqEA_AXkIFq@DqAEgABEDQ?QAS?OPgB\\_FNsAtAoHn@wD@g@P{@BS",
           "schedule": {
-            "weekday": ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"],
-            "saturday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"],
-            "sunday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"]
+            "weekday": [
+              "06:00",
+              "07:00",
+              "08:00",
+              "09:00",
+              "10:00",
+              "11:00",
+              "12:00",
+              "13:00",
+              "14:00",
+              "15:00",
+              "16:00",
+              "17:00",
+              "18:00",
+              "19:00",
+              "20:00",
+              "21:00"
+            ],
+            "saturday": [
+              "06:00",
+              "07:00",
+              "09:00",
+              "12:00",
+              "15:00",
+              "17:00",
+              "20:00"
+            ],
+            "sunday": [
+              "06:00",
+              "07:00",
+              "09:00",
+              "12:00",
+              "15:00",
+              "17:00",
+              "20:00"
+            ]
           }
         }
       ]
@@ -232,25 +421,107 @@
         {
           "index": 1,
           "headsign": "Sarbatoarea",
-          "stops": ["s200-tur", 240, 12, 13, 118, 90, 120, 121, 304, 309, 151, 310, "bucovat-gpl-tur", "bucovat-biserica-tur", "fantana-mireselor-tur", "spital-leamna-tur", "scoala-leamna-tur", "biserica-sarbatoarea-tur", "scoala-sarbatoarea-tur", "sarbatoarea"],
+          "stops": [
+            "s200-tur",
+            240,
+            12,
+            13,
+            118,
+            90,
+            120,
+            121,
+            304,
+            309,
+            151,
+            310,
+            "bucovat-gpl-tur",
+            "bucovat-biserica-tur",
+            "fantana-mireselor-tur",
+            "spital-leamna-tur",
+            "scoala-leamna-tur",
+            "biserica-sarbatoarea-tur",
+            "scoala-sarbatoarea-tur",
+            "sarbatoarea"
+          ],
           "duration": 45,
           "geometry": "qwnmGgaipCkHvMqCpXzBJfJ~AzHu@Tt@Mz@FV|CnEN`Bd@?vGvAjFhBvB`CnChBzBhCzAHxEORJ|D~NDz@[dAu^fWgAB[x@B^`@`@Fd@rCf\\LpCtOzmB~j@tr@pAlAnEtCxSzPdAxBdMf_@^pBfAxCXhB@tGy@tCmC~CEKi@x@oBd@w@f@i@x@eA?MR[?oBtBuAx@w@Ri@x@?f@aIxH?lAMf@Ld@MR?f@eA`B[?y@x@[?w@f@qEjFoBPMReARMRy@?i@d@i@?MRsARMRi@?[d@i@Rw@lAaBnAw@lAM?iDjFi@rBeAtB?ReAlAw@`BM?aBtBaBz@i@x@y@f@[lA?f@i@`B?d@oBxHLbBLP@dE[lA?|FLR?|CLRL|CZx@?z@ZlA?f@h@tBh@lA?f@Zf@ZlAMRLtBfHtJLtBLRLlArAhCZnAv@`BtH`Zv@bB?Ph@f@Nz@v@lAZlAh@z@h@hCZf@?d@h@tBZf@?z@Zd@?nALRLhCXlAHhCXlA?f@d@`BX|CXx@Az@f@`BJ`BLRAz@LREjFXlAAnAXlAJtBLRAlAXnAAx@XnAAlAXlAAtBXnAChCXlACjFMRCtBMRLRChC]x@?f@JRA|COd@LRKjOHhRMRLR@`BLR@tBKP?tBg@z@u@hC?d@g@bB@d@[nAYd@MnAYd@?z@[d@KbBg@lA?f@aAbEJvULR?x@j@nA@d@x@|C@f@Zx@@lA\\nANtBLR@lAZlANtBNR?`B\\z@NhCLP@z@\\x@?z@j@`BvAtBZlAvAtBj@bBNtBZlA@lALR?`BLR@hCLR?hCfE|N\\R?lALR?|CNR?`BLR?xPMR?hCLRMxd@",
           "schedule": {
-            "weekday": ["05:00", "06:00", "07:35", "11:00", "15:00", "16:30", "19:00"],
-            "saturday": ["05:00", "06:00", "11:00", "14:30", "19:00"],
-            "sunday": ["05:00", "06:00", "11:00", "14:30", "19:00"]
+            "weekday": [
+              "05:00",
+              "06:00",
+              "07:35",
+              "11:00",
+              "15:00",
+              "16:30",
+              "19:00"
+            ],
+            "saturday": [
+              "05:00",
+              "06:00",
+              "11:00",
+              "14:30",
+              "19:00"
+            ],
+            "sunday": [
+              "05:00",
+              "06:00",
+              "11:00",
+              "14:30",
+              "19:00"
+            ]
           }
         },
         {
           "index": 2,
           "headsign": "S200",
-          "stops": ["sarbatoarea", "scoala-sarbatoarea-retur", "biserica-sarbatoarea-retur", "scoala-leamna-retur", "spital-leamna-retur", "fantana-mireselor-retur", "bucovat-biserica-retur", "bucovat-gpl-retur", 148, 149, 150, 305, 306, 307, 198, 308, 243, 23, 235, "s200-retur"],
+          "stops": [
+            "sarbatoarea",
+            "scoala-sarbatoarea-retur",
+            "biserica-sarbatoarea-retur",
+            "scoala-leamna-retur",
+            "spital-leamna-retur",
+            "fantana-mireselor-retur",
+            "bucovat-biserica-retur",
+            "bucovat-gpl-retur",
+            148,
+            149,
+            150,
+            305,
+            306,
+            307,
+            198,
+            308,
+            243,
+            23,
+            235,
+            "s200-retur"
+          ],
           "duration": 45,
           "geometry": "cakmGafhoCJyd@MS@iCLS@yPMS?aBMS?}CMS?mA[SeE}N?iCMS?iCMS?aBMS?mA[mAOuBk@cBwAuB]mAuAuBk@aBA{@[y@A{@MQOiC]{@AaBMSOuB]mA?mAOSOuB[oAAmA]y@?g@{@}C?e@k@oA?y@OSIwU`AcE?g@f@mAJcBZe@A{@Ze@JoAZe@XoA?e@f@cB?e@t@iCf@{@AuBLQAuBMSAaBMSLSIkSJgNMSLg@B}CKQ?g@\\{@BgCMSLSBuBLSDkFYmABiCYmA@uBYoA@mAYoA@y@YmA@oAMSKuBYmA@mAYoADkFKQ?{@KSKaBg@aB@{@Yy@W}Cg@aB?g@YmAIiCYmAKiCMS?mA[g@?y@[g@i@uB?g@]e@i@iCi@{@[mAw@mAM{@i@e@?Sw@aBuHaZw@aB[oAsAgCMoAMSMuBgHsJMwBLQ[oA[e@?g@i@mAi@uB?g@[mA?{@[y@M}CMS?}CMQ?_GZmA?cEMSOaBnByH?g@h@aB?g@ZmAv@g@h@y@`By@`BuBL?Lg@rAuBZS?QdAuBh@uBfDkFL?v@mA`BmAv@mAh@SZg@h@?LSrAQLSh@?h@g@v@?LQdASLSnBSpEiFv@g@Z?v@y@Z?dAaB?g@LSMg@Le@?mA`IyH?g@h@y@v@SrA{@nBsBZ?LSdA?h@y@v@g@nBg@dAaBZSHH`AeA~@wBVaB@eFQkBoAqD_@qBaLq\\_B{DgAqA_R{N_GaEgk@sr@kNmdB_AkN{AoO}@{Lb@iA`a@gYgFyRFYK_@UGc@^eE`@cBQa@i@WsBc@uAsDaHqFcDgBcCcC{BMS?YKEKPsHSoFd@SKcAl@mCo@Ue@Cc@fAiNdAmSc@IBaC",
           "schedule": {
-            "weekday": ["05:30", "06:45", "08:20", "11:45", "15:45", "17:15", "19:45"],
-            "saturday": ["05:30", "06:45", "11:45", "15:15", "19:45"],
-            "sunday": ["05:30", "06:45", "11:45", "15:15", "19:45"]
+            "weekday": [
+              "05:30",
+              "06:45",
+              "08:20",
+              "11:45",
+              "15:45",
+              "17:15",
+              "19:45"
+            ],
+            "saturday": [
+              "05:30",
+              "06:45",
+              "11:45",
+              "15:15",
+              "19:45"
+            ],
+            "sunday": [
+              "05:30",
+              "06:45",
+              "11:45",
+              "15:15",
+              "19:45"
+            ]
           }
         }
       ]
@@ -265,25 +536,186 @@
         {
           "index": 1,
           "headsign": "Primaria Isalnita",
-          "stops": [210, 8, 9, 10, 178, 229, 230, 231, 278, 279, 280, 281, 282, 283, "termo-tur", "g-enescu-tur", "m-eminescu-tur", "primaria-isalnita-tur"],
+          "stops": [
+            210,
+            8,
+            9,
+            10,
+            178,
+            229,
+            230,
+            231,
+            278,
+            279,
+            280,
+            281,
+            282,
+            283,
+            "termo-tur",
+            "g-enescu-tur",
+            "m-eminescu-tur",
+            "primaria-isalnita-tur"
+          ],
           "duration": 35,
           "geometry": "k}pmG_pjpCQh@|@r@dA`AfHnV@`@EDGR?VLVLBTVRXTf@Ln@BBp@fCxAlGlAdEhA|EZ|@\\n@dAxA|@fAhDxDrArA`Ax@dB|@ZJ~EpARJhBXoA|NM`Am@rDcAfFW`B[rFIv@_@bBg@nAcB`Cs@t@_FpCc@d@_BpC_BxC_AnBg@nA}AzE{BxHuAlEQt@Gf@KxA]rPOpA}ApIo@`D}@hFm@`CUp@}A~CcAbBwElFgElFaN~Oa@l@q@zA{AtFUh@o@hAqAlBwBhCoAnAsDhDCNGFg]dZoFjEgBlAcVfOmBbAoHvEkWrOy@\\eGjB}@\\GCU@o@RcG|BqEhCkAv@mCzAyCtBi@b@aQbQg@h@eA|ASR]PIPi@h@gAt@{^b_@}bAzdAaKfKcAz@gBpAmP`JoWzNqCzAHO?HGFQ@_ExBe@H[\\uBdAYDKWuAwEm@cCGe@IOsBuIMqAAmCIe@CgFKs@?[PmAAS^]De@hAeCXeANObAiCNMXgATi@r@eDFEP{@C]NaACU^}@FgBp@oGDkABILEDeB",
           "schedule": {
-            "weekday": ["06:20", "11:15", "14:15", "18:15"],
-            "saturday": ["12:15"],
-            "sunday": ["12:15"]
+            "weekday": [
+              "06:20",
+              "11:15",
+              "14:15",
+              "18:15"
+            ],
+            "saturday": [
+              "12:15"
+            ],
+            "sunday": [
+              "12:15"
+            ]
           }
         },
         {
           "index": 2,
           "headsign": "Gara",
-          "stops": ["primaria-isalnita-retur", "m-eminescu-retur", "g-enescu-retur", "termo-retur", 272, 97, 273, 99, 274, 275, 276, 216, 73, 52, 37, 24, 25, 244],
+          "stops": [
+            "primaria-isalnita-retur",
+            "m-eminescu-retur",
+            "g-enescu-retur",
+            "termo-retur",
+            272,
+            97,
+            273,
+            99,
+            274,
+            275,
+            276,
+            216,
+            73,
+            52,
+            37,
+            24,
+            25,
+            244
+          ],
           "duration": 35,
           "geometry": "ch}mGwxzoCHHEnBMDCHEjAq@nGGfB_@|@BTO`AB\\Qz@GDs@dDUh@YfAOLcAhCONYdAiAdCEd@_@\\@RQlA?ZJr@BfFHd@@lCLpArBtIHNFd@l@bCtAvEJVXEtBeAZ]d@I~DyBPAFG?IINjBcAZg@d@Gj@YbAk@zJkGl]eRjoAqrAp[k]fj@se@lIeD~OaFpJ_HLd@tVoOxCaBrK{Gb@Et@Q@BNBHCFGBUjBcBX[HOpAy@fG_F~]yZPDfByAhCaCrAyAbDmF^y@rB_GdAmBnKqMhDwDpJoLtAiCdAaCZaA^yAXwAp@_FdBiJZwCHuBNoJDqAH_AHe@zCyK~BcIr@mBpB_EnCuEj@y@rB}Ax@e@|@o@fCkDZo@d@eBJq@`@{GTuAfBaJbAwF^aDj@qGm@?wAIi@Bk@KoEqAeB}@aAy@{@{@aEqEqBgCa@o@Ys@o@_Cy@iD}@}CoAoF_@gBE}@DEDSAKEK[SSYSc@Mc@@QEWUq@kHmWKsACKk@q@",
           "schedule": {
-            "weekday": ["05:45", "07:00", "12:00", "15:00", "19:00"],
-            "saturday": ["07:00", "13:00"],
-            "sunday": ["07:00", "13:00"]
+            "weekday": [
+              "05:45",
+              "07:00",
+              "12:00",
+              "15:00",
+              "19:00"
+            ],
+            "saturday": [
+              "07:00",
+              "13:00"
+            ],
+            "sunday": [
+              "07:00",
+              "13:00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "metro-malumare",
+      "shortName": "M Malu Mare",
+      "longName": "Metropolitan Craiova-Malu Mare",
+      "color": "2e7d32",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Malu Mare",
+          "stops": [
+            "s200-tur",
+            240,
+            13,
+            15,
+            16,
+            344,
+            261,
+            "scoala-gimnaziala-tur",
+            "solarex-tur",
+            "magazin-lenys-tur",
+            "scoala-generala-tur",
+            "primaria-malumare-tur",
+            "liceul-agricol-tur",
+            "magazin-aleda-tur"
+          ],
+          "duration": 32,
+          "geometry": "awnmGs`ipC@f@?\\A\\C`@Ch@QvECPE`AIrBM~BCf@C\\WlCKhAMhAOzAIv@Kz@ALIj@PDRHbATZF^DJ?PAVCRE\\I?@@??@@??@@?@?@@@?@?@?@A@??A@?@A@A?A\\CD?b@ERAH?LAX?n@?HNDJBLBPDNBJBJDHPTHJv@fAd@n@JLLTBDBH@HHnAd@?FFF@LDRFh@Jj@Hh@H|@P|@Tr@Rl@Vn@Tl@PVL@@PN\\b@Z`@TVRP`@T^RZP\\XRRpA~ALPHFBBLJVHZ?f@?f@?XAz@CVCp@CDAD?D?D@?@@@@@@?@@@@@?@?B?@?@A@?@?@A@A@?@A@C@A?A@A?A@A?A?ATGJEl@MRGTGLOD?dDa@tB[r@Mr@Q`@KdBe@ZIr@YrDcAbAYRG~Bq@PEBAL?D?FATGVEB?@?@?@?@?@?@?@A@?@A@A@AR@~@@`C?nA?j@@H?d@AT?dAAjBAtDBdA?hAAb@?hBCLAbBCp@An@Cf@ErDMfACxAEdBETAlAEF?bCK`ACf@CnAEFAV?h@C`DOVA`AAX?h@AhFSrCMl@AZB\\D?@?@@@?@?@@@?@?@@@@@?@@@@??@@?@@@?@@@?@?@?@?@?@A@?@A@?@A@A?A@A?A?A@A?A@A?A?A@C?A?A?A?A?A?A?A?A?ALGVIRGZKJGVOJGLMXWV_@tBaDPYpDiFJMnCyDp@cArAqBhCgEz@aAhHsKrCkExAwBrAqB@Ar@cAtDuFnCuDb@q@nDcGl@_Ap@cAdCaEdAkBj@_AfCeE|AiCb@u@rBkDxA_CTa@x@sA^m@lCoElCqEjFuIFKdAeBDIt@oA`DaFx@iA^k@lCkDZa@rCuD|@mArAcBvAkBnCqD~EuGFGv@eAb@o@r@aAtAyBjAsBj@{@TSd@c@XQHGRO@ARSBE?CNe@BMBKHc@Je@FWTk@vAaCf@}@f@y@hB}C`BsCFMnAyBnBeDJSnFiJlFcJj@cA^o@Ve@RWPS~@eAzAgA~FqD^UvGcEjAq@\\U`HeEnAw@vA{@hCwAFC`Ak@jDoC~@w@dEaDtB{Ar@_@DCfAe@v@Yh@S@?b@Sd@SXQt@g@lAo@nAe@zCcAdC{@dCcAhIiE^SxCeBrCqBPOxBmBlD_DlCcBPKzBgAd@Uz@_@p@Un@QLAbD]\\E`BQz@IpEe@`@G",
+          "schedule": {
+            "weekday": [
+              "06:15",
+              "07:45",
+              "09:45",
+              "11:15",
+              "12:45",
+              "14:15",
+              "15:45",
+              "17:15",
+              "18:45",
+              "20:30"
+            ],
+            "saturday": [
+              "06:15",
+              "12:30",
+              "16:00"
+            ],
+            "sunday": [
+              "06:15",
+              "12:30",
+              "16:00"
+            ]
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "S200",
+          "stops": [
+            "magazin-aleda-retur",
+            "liceul-agricol-retur",
+            "primaria-malumare-retur",
+            "scoala-generala-retur",
+            "magazin-lenys-retur",
+            "peco-neagtovo-retur",
+            63",
+            264,
+            344,
+            20,
+            21,
+            243,
+            235,
+            "s200-retur"
+          ],
+          "duration": 33,
+          "geometry": "{c}lGwmspCUBqEd@{@HaBP]DcD\\M@o@Pq@T{@^e@T{BfAQJmCbBmD~CyBlBQNsCpByCdB_@RiIhEeCbAeCz@{CbAoAd@mAn@u@f@YPe@Rc@RA?i@Rw@XgAd@EBs@^uBzAeE`D_Av@kDnCaAj@GBiCvAwAz@oAv@aHdE]TkAp@wGbE_@T_GpD{AfA_AdAQRSVWd@_@n@k@bAmFbJoFhJKRoBdDoAxBGLaBrCiB|Cg@x@g@|@wA`CUj@GVKd@Ib@CJCLOd@?BCDSRA@SNIFYPe@b@URk@z@kArBuAxBs@`Ac@n@w@dAGF_FtGoCpDwAjBsAbB}@lAsCtD[`@mCjD_@j@y@hAaD`Fu@nAEHeAdBGJkFtImCpEmCnE_@l@y@rAU`@yA~BsBjDc@t@}AhCgCdEk@~@eAjBeC`Eq@bAm@~@oDbGc@p@oCtDuDtFs@bAA@sApByAvBsCjEiHrK{@`AiCfEsApBq@bAoCxDKLqDhFQXuB`DW^YVMLKFWN_@@MB]De@JAAA?AAA?A?A?A?A?A??@A?A@A?A@?@A?i@?iAFsEPmBFw@Be@@iA@kELcENcAHoAD]@[?oADS@qBHmADyBBoBHC?u@Bo@D}AB{@BsBBmB@}@@oJ@U?o@?g@@wAA}B@WCQCICYMAAACACAAAAAAA?AAA?A?A?A?A?A@A?A@A??@A?A@A@?@A@A@?BA@?@?@A@?@?@?@EFGDEBGDODCDILC@QD_Cp@SFcAXsDbAs@X[HeBd@a@Js@Ps@LuBZeD`@E?OAkAPK@C@]DAA?AAAAAAAAAA??AA?CAA??AA?A?A?A?A?A??@A?A??@A?A@A@?@A??@A@?@?@A??@?@EBGBC@C@}AJgAN[BQ@S?MAKAKAICGCEECACCIICECCGOEOCQCIAOAUEa@CI?EGSGSO]mAyBw@yAUk@Wa@CGUS{@e@mBcAYMSOSW]i@S[[e@YW{@u@OQKIACIKKOMYSBI?{COu@@q@@a@Fc@Da@Dy@Fo@Dk@HOB]DE@UDSDSBQAWCUEyBc@a@IGAk@Ic@IeASMKm@OCAKKJcA`@kF`@}Db@aEh@kF^oDFm@@M?ANmA|@cHTsBBWJ_AJCFA@?NBPHNN@`@J~CB`CAd@FnB",
+          "schedule": {
+            "weekday": [
+              "05:30",
+              "07:00",
+              "08:30",
+              "10:30",
+              "12:00",
+              "13:30",
+              "15:00",
+              "16:30",
+              "18:00",
+              "19:30",
+              "21:15"
+            ],
+            "saturday": [
+              "07:00",
+              "13:15",
+              "16:45"
+            ],
+            "sunday": [
+              "07:00",
+              "13:15",
+              "16:45"
+            ]
           }
         }
       ]
