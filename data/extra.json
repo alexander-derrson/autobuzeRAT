@@ -138,6 +138,54 @@
       "name": "Sarbatoarea",
       "latitude": 44.298583,
       "longitude": 23.640167
+    },
+    {
+      "id": "g-enescu-tur",
+      "name": "G. Enescu",
+      "latitude": 44.394194,
+      "longitude": 23.725583
+    },
+    {
+      "id": "g-enescu-retur",
+      "name": "G. Enescu",
+      "latitude": 44.394222,
+      "longitude": 23.725417
+    },
+    {
+      "id": "m-eminescu-tur",
+      "name": "M. Eminescu",
+      "latitude": 44.392306,
+      "longitude": 23.732111
+    },
+    {
+      "id": "m-eminescu-retur",
+      "name": "M. Eminescu",
+      "latitude": 44.392333,
+      "longitude": 23.732167
+    },
+    {
+      "id": "primaria-isalnita-tur",
+      "name": "Primaria Isalnita",
+      "latitude": 44.391806,
+      "longitude": 23.735222
+    },
+    {
+      "id": "primaria-isalnita-retur",
+      "name": "Primaria Isalnita",
+      "latitude": 44.391857,
+      "longitude": 23.735321
+    },
+    {
+      "id": "termo-tur",
+      "name": "Termo",
+      "latitude": 44.390671,
+      "longitude": 23.721667
+    },
+    {
+      "id": "termo-retur",
+      "name": "Termo",
+      "latitude": 44.390682,
+      "longitude": 23.721623
     }
   ],
   "routes": [
@@ -203,6 +251,39 @@
             "weekday": ["05:30", "06:45", "08:20", "11:45", "15:45", "17:15", "19:45"],
             "saturday": ["05:30", "06:45", "11:45", "15:15", "19:45"],
             "sunday": ["05:30", "06:45", "11:45", "15:15", "19:45"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "metro-isalnita",
+      "shortName": "M Isalnita",
+      "longName": "Metropolitan Craiova-Isalnita",
+      "color": "6d4c41",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Primaria Isalnita",
+          "stops": [210, 8, 9, 10, 178, 229, 230, 231, 278, 279, 280, 281, 282, 283, "termo-tur", "g-enescu-tur", "m-eminescu-tur", "primaria-isalnita-tur"],
+          "duration": 35,
+          "geometry": "k}pmG_pjpCQh@|@r@dA`AfHnV@`@EDGR?VLVLBTVRXTf@Ln@BBp@fCxAlGlAdEhA|EZ|@\\n@dAxA|@fAhDxDrArA`Ax@dB|@ZJ~EpARJhBXoA|NM`Am@rDcAfFW`B[rFIv@_@bBg@nAcB`Cs@t@_FpCc@d@_BpC_BxC_AnBg@nA}AzE{BxHuAlEQt@Gf@KxA]rPOpA}ApIo@`D}@hFm@`CUp@}A~CcAbBwElFgElFaN~Oa@l@q@zA{AtFUh@o@hAqAlBwBhCoAnAsDhDCNGFg]dZoFjEgBlAcVfOmBbAoHvEkWrOy@\\eGjB}@\\GCU@o@RcG|BqEhCkAv@mCzAyCtBi@b@aQbQg@h@eA|ASR]PIPi@h@gAt@{^b_@}bAzdAaKfKcAz@gBpAmP`JoWzNqCzAHO?HGFQ@_ExBe@H[\\uBdAYDKWuAwEm@cCGe@IOsBuIMqAAmCIe@CgFKs@?[PmAAS^]De@hAeCXeANObAiCNMXgATi@r@eDFEP{@C]NaACU^}@FgBp@oGDkABILEDeB",
+          "schedule": {
+            "weekday": ["06:20", "11:15", "14:15", "18:15"],
+            "saturday": ["12:15"],
+            "sunday": ["12:15"]
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "Gara",
+          "stops": ["primaria-isalnita-retur", "m-eminescu-retur", "g-enescu-retur", "termo-retur", 272, 97, 273, 99, 274, 275, 276, 216, 73, 52, 37, 24, 25, 244],
+          "duration": 35,
+          "geometry": "ch}mGwxzoCHHEnBMDCHEjAq@nGGfB_@|@BTO`AB\\Qz@GDs@dDUh@YfAOLcAhCONYdAiAdCEd@_@\\@RQlA?ZJr@BfFHd@@lCLpArBtIHNFd@l@bCtAvEJVXEtBeAZ]d@I~DyBPAFG?IINjBcAZg@d@Gj@YbAk@zJkGl]eRjoAqrAp[k]fj@se@lIeD~OaFpJ_HLd@tVoOxCaBrK{Gb@Et@Q@BNBHCFGBUjBcBX[HOpAy@fG_F~]yZPDfByAhCaCrAyAbDmF^y@rB_GdAmBnKqMhDwDpJoLtAiCdAaCZaA^yAXwAp@_FdBiJZwCHuBNoJDqAH_AHe@zCyK~BcIr@mBpB_EnCuEj@y@rB}Ax@e@|@o@fCkDZo@d@eBJq@`@{GTuAfBaJbAwF^aDj@qGm@?wAIi@Bk@KoEqAeB}@aAy@{@{@aEqEqBgCa@o@Ys@o@_Cy@iD}@}CoAoF_@gBE}@DEDSAKEK[SSYSc@Mc@@QEWUq@kHmWKsACKk@q@",
+          "schedule": {
+            "weekday": ["05:45", "07:00", "12:00", "15:00", "19:00"],
+            "saturday": ["07:00", "13:00"],
+            "sunday": ["07:00", "13:00"]
           }
         }
       ]
