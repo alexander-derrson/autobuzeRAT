@@ -554,7 +554,7 @@
           "duration": 21,
           "geometry": "cwnmG{`ipCBn@EFCJUd@K?sCMUGNmA|@cHTsBBWJ_ANmAf@yEBW@QFc@d@_Ej@mENmAFg@@YHs@t@sGn@aFj@_FVqB^gDD_@Hy@h@eDnAsH\\sBF_@R}AJcANiAFw@LgAp@{KB]Bk@JmBHiADi@TqDB_@BWBa@@O@QDk@@S@M@QLmBFgA?MB_@Dy@@]JqBDo@Bm@?CRyC\\qEJgC@IHgB@SB??A@?@A@A?A@??A@??A?A@??A?A@??A?A@A?A?A?A?A@A?A?A?A?A?AA??A?A?A?A?AAA?A?AA??A?AA??AAA?AA??A?O?IFoBBw@RwGDiALeE@c@?a@?M?EAG?C?EAA?AAAFkBD_BF{A?KDoBBwAD_JB_F@aM@iE@oC?yA?w@?w@@wG?sAA{E?W?_A?gH?eBA{ACuAAqAAmAAk@CyB@kB?]@{A@s@@s@@w@AwA@Y?S@MBWJ_ANgAx@uFXwBPsAPe@@G@WBYASAi@E{@Ai@OeBOoBBy@By@HyA?OAg@FwAD_AFuBFmBDyCB_C?s@I{BG_FAoCKwGCmC?KEuDAuAIwF?AK}EGgCIqECcBAa@KaEAc@@??A@A?A?A?i@EaEAi@AUCu@K}DIwA?MCq@?AAm@Ag@AQ?S?SBQ@M?Q@?@A?A@??A@?FCLEJGHGT?ZATARCTCNABAJCNEJGBCBERO@APQ^i@dBaChEcGd@o@x@iAzCgEBCvDmF|@mA`AwAn@}@|B{CZa@NONM\\Q`@OTGtBm@Ds@ZiCD]h@uGB]HkABa@N{BHkAJqAXoDBOV}CNuBBYRsCLcB@KLgBRcCDq@Dg@BYNgCyCuAg@UqOkHSImAQ",
           "schedule": {
-            "weekday": ["06:30", "10:00", "11:30", "16:30", "18:30"],
+            "weekday": ["06:30", "10:00", "11:30", "15:00", "18:30"],
             "saturday": ["09:30"],
             "sunday": []
           }
@@ -566,7 +566,7 @@
           "duration": 20,
           "geometry": "_wlmGab}pCgAUmAY{AYGAeDk@CAiEq@WE_@IE?C@c@TuDnBC@aB|@aAh@MFqAx@q@b@m@`@IHKRGPGXKGEGEIEE@A?G@E?G?A?CAG?ECEAE?ACCCCCCCCCAEAC?E?C@E@CBCBCBCDAB?@ADADAF?D?D?@@D@F@D@DBBBDBBB@@?@D?B@@@B?B@B@TBZ@J@R?PFNFxABz@JlD?J@@HnD?@HlCVnIVxPFzETzJNhGDnBBbARdIBp@@p@DbB?DJ|D@PPdEAL?P?R?P@RAZ?T?V@J@N?L@H@TBRA??@?@A@?@?@?@?@?@?@?@?@?@@??@?@@@?@@@?@@?ATARAX@N?@@^?R@\\@j@B~@?@?N?T@RBx@D`BBhB@TDfARfE?@@@?@?@@??@@?@b@J`E@`@BbBHpEFfCJ|E?@HvF@tADtD?JBlCJvG@nCF~EHzB?r@C~BExCGlBGtBE~@GvAId@CPMpA?`@A\\Az@@XB\\Dr@?BL|ADdAB\\?j@?d@A\\C`@?B@B@LQrAYvBy@tFOfAK~@CVAL?RAX@vAAv@Ar@Ar@AzA?\\AjBBxB@j@@lA@pABtA@zA?dB?fH?~@?V@zE?rAAvG?v@?v@?xAAnCAhEA`MC~EE~ICvAEnB?JGzAE~AGjBA@?@A@?DABAJC`@?TC~@EpAEpAA`@Cj@EpAOnECb@KdBARCNA@A??@A??@A@A@?@A??@?@A@?@A@?@?@?@A@?@?@?@?@?@?@?@?@@@?@?@?@?@@@?@@@?@@@?@@??@@@AZKvCCd@WdDEt@?DEp@C^Cd@QtCK`BMrBAPC\\IfAO`CKbBGfA_@rFQnCQjCS`Ca@fGC`@WlCSrBIr@CNEXO~@s@pEeAjGQhAOfAK|@APg@dEc@pDIp@i@tECZ[dCAHWhBK~@Ep@In@q@pFg@dEGb@JNDLDTBT@L@j@B~@?z@BrB@`@J~CB`CAd@DfB",
           "schedule": {
-            "weekday": ["06:51", "10:21", "11:51", "16:51", "18:51"],
+            "weekday": ["06:51", "10:21", "11:51", "15:21", "18:51"],
             "saturday": ["09:51"],
             "sunday": []
           }
