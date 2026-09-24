@@ -873,6 +873,11 @@ function getExtraDepartures(operator, stop, nowMs = Date.now()) {
     { shift: 1440, info: getBucharestNow(nowMs + 86400000) }
   ].map(day => ({ shift: day.shift, type: getDayType(day.info) }));
 
+  // The real API only ever hands back the next couple of arrivals per
+  // line; extra (schedule-only) lines otherwise dump every departure in
+  // the next 24h, which drowns out the real lines. Match the API here.
+  const EXTRA_DEPARTURES_PER_PATTERN = 2;
+
   const results = [];
   const seen = new Set();
 
@@ -891,6 +896,8 @@ function getExtraDepartures(operator, stop, nowMs = Date.now()) {
     if (!pattern || !pattern.extra || !pattern.offsets) {
       return;
     }
+
+    const patternResults = [];
 
     pattern.stops.forEach((stopId, index) => {
 
@@ -930,7 +937,7 @@ function getExtraDepartures(operator, stop, nowMs = Date.now()) {
             return;
           }
 
-          results.push({
+          patternResults.push({
             routeId: pattern.routeId,
             pattern,
             predicted,
@@ -940,6 +947,11 @@ function getExtraDepartures(operator, stop, nowMs = Date.now()) {
         });
       });
     });
+
+    patternResults
+      .sort((a, b) => a.predicted - b.predicted)
+      .slice(0, EXTRA_DEPARTURES_PER_PATTERN)
+      .forEach(result => results.push(result));
   });
 
   return results;
