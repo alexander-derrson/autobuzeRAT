@@ -258,6 +258,108 @@
       "name": "Magazin Aleda",
       "latitude": 44.22734406537742,
       "longitude": 23.861653524403412
+    },
+    {
+      "id": "aviatorilor2-tur",
+      "name": "Aviatorilor 2",
+      "latitude": 44.322221,
+      "longitude": 23.881381
+    },
+    {
+      "id": "aviatorilor2-retur",
+      "name": "Aviatorilor 2",
+      "latitude": 44.322291,
+      "longitude": 23.881015
+    },
+    {
+      "id": "aviatorilor1-tur",
+      "name": "Aviatorilor 1",
+      "latitude": 44.327465,
+      "longitude": 23.888861
+    },
+    {
+      "id": "aviatorilor1-retur",
+      "name": "Aviatorilor 1",
+      "latitude": 44.327473,
+      "longitude": 23.888701
+    },
+    {
+      "id": "strand-tur",
+      "name": "Strand",
+      "latitude": 44.351758,
+      "longitude": 23.886605
+    },
+    {
+      "id": "strand-retur",
+      "name": "Strand",
+      "latitude": 44.351768,
+      "longitude": 23.886427
+    },
+    {
+      "id": "primarie-ghercesti-tur",
+      "name": "Primarie",
+      "latitude": 44.355491,
+      "longitude": 23.895546
+    },
+    {
+      "id": "primarie-ghercesti-retur",
+      "name": "Primarie",
+      "latitude": 44.355649,
+      "longitude": 23.895302
+    },
+    {
+      "id": "baragan-tur",
+      "name": "Baragan",
+      "latitude": 44.360695,
+      "longitude": 23.890206
+    },
+    {
+      "id": "baragan-retur",
+      "name": "Baragan",
+      "latitude": 44.360705,
+      "longitude": 23.89012
+    },
+    {
+      "id": "teisani",
+      "name": "Teisani",
+      "latitude": 44.366453,
+      "longitude": 23.883076
+    },
+    {
+      "id": "mocanei-tur",
+      "name": "Mocanei",
+      "latitude": 44.349865,
+      "longitude": 23.902463
+    },
+    {
+      "id": "mocanei-retur",
+      "name": "Mocanei",
+      "latitude": 44.354543,
+      "longitude": 23.89641
+    },
+    {
+      "id": "girlesti-tur",
+      "name": "Girlesti",
+      "latitude": 44.348936,
+      "longitude": 23.910655
+    },
+    {
+      "id": "girlesti-retur",
+      "name": "Girlesti",
+      "latitude": 44.348991,
+      "longitude": 23.910731
+    },
+    {
+      "id": "cornet-tur",
+      "name": "Cornet",
+      "latitude": 44.34851,
+      "longitude": 23.920774
+    },
+    {
+      "id": "cornet-retur",
+      "name": "Cornet",
+      "latitude": 44.348583,
+      "longitude": 23.92082
     }
   ],
   "routes": [
@@ -389,6 +491,39 @@
             "weekday": ["05:30", "07:00", "08:30", "10:30", "12:00", "13:30", "15:00", "16:30", "18:00", "19:30", "21:15"],
             "saturday": ["07:00", "13:15", "16:45"],
             "sunday": ["07:00", "13:15", "16:45"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "metro-ghercesti",
+      "shortName": "M Ghercesti",
+      "longName": "Metropolitan Craiova-Ghercesti",
+      "color": "827717",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Cornet",
+          "stops": [210, 165, 138, 145, 77, 78, 79, "aviatorilor2-tur", "aviatorilor1-tur", "strand-tur", "primarie-ghercesti-tur", "baragan-tur", "teisani", "mocanei-tur", "girlesti-tur", "cornet-tur"],
+          "duration": 55,
+          "geometry": "k}pmG_pjpCV{@|@x@V\\b@LRCl@eB?[s@aCCc@B]pFsPzCoIjSyn@d@gA`DqDjOyLrBmAnBw@nA]lLoBl@Ip@A`CYz@S~@Md@VFJD^IrAOl@WNUE]W\\{F\\qEXmGFCL_@EWEI?Qt@cXA]CIZcLLwSDe^?m`@IqIIcDAiCD_Kd@oDxAoJPsAPe@DmAGeBa@_GLcEAs@ZiKF{GKaKJrIAnDKfGK|CB?Bg@NcFHyG?s@I{BG_FAoCKwGGcH_@v~@eB@c@D[Hk@ZmBhBwEzE{@j@c@P_@Hm@Dm@?kDSqQsA{@ACCiADSCYBy@UM?q@K{DIi@o@Sg@PeFP{GXkWh@sl@AeBCu@IaAG_@Sw@Ws@a@y@[e@yCyDoFuGeQsTmCaDa@a@c@U[ASBg@T}@|@cCrCeFlGQNG?a@MoC_BiD_BmNaGqCqAq@_@_@U_@a@gAwBY_@USc@QWCuCLkCXYH[VQ`@Or@MrCIt@Mp@Wz@{@fBc@^wKlF]@e@Kg@e@o@w@sCsFUOQC[F]\\oDbJ]n@QLQB[Cu@]YIW?yFl@sQvAmBb@u@h@}DsJI]o@wTKsCGeAIu@Ww@w@mA_AiAkEwEsAcBwFjEsAz@mBfA{D|Cy@v@gBfDiBpEc@nAk@|@UT[NeBJmBBy@Ta@`@{CxDa@dA{AjFWp@}@bAyElEyA~AgAxBg@lAkIxPYb@a@V`@WXc@jIyPf@mAfAyBxA_BxEmE|@cAVq@zAkFRi@L[v@cAbBuB`@a@x@UlBCdBKZOTUj@}@b@oAhBqEfBgDx@w@zD}ClBgArA{@vFkEnDcDj@o@pIgLn@aAh@aArAoCbBsCrGaJ`@a@p@i@hCY`Dk@lAOrAG`AFhBX^IT]@g@U_@]_@wDeGsCqDq@aA{DeIc@aAGSCSAm@DoAP}BHeB?sBIoBi@cGGsAs@iZ?{@Da@`DeLXy@",
+          "schedule": {
+            "weekday": ["06:00", "07:30", "11:00", "14:30", "16:30", "19:30"],
+            "saturday": ["12:00", "19:30"],
+            "sunday": ["12:00", "19:30"]
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "Gara",
+          "stops": ["cornet-retur", "girlesti-retur", "mocanei-retur", "teisani", "baragan-retur", "primarie-ghercesti-retur", "strand-retur", "aviatorilor1-retur", "aviatorilor2-retur", 224, 225, 226, 134, 135, 209, 244],
+          "duration": 52,
+          "geometry": "kytmGy__qCWt@aDdLE`@?z@r@hZFrAh@bGHnB?rBIdBQ|BEnA@l@BRFRb@`AzDdIp@`ArCpDvDdG\\^T^Af@U\\_@HiBYaAGsAFmANaDj@iCXq@h@a@`@sG`JcBrCsAnCi@`Ao@`AqIfLk@n@oDbDwFjEsAz@mBfA{D|Cy@v@gBfDiBpEc@nAk@|@UT[NeBJmBBy@Ta@`@cBtBw@bAMZSh@{AjFWp@}@bAyElEyA~AgAxBg@lAkIxPYb@a@V`@WXc@jIyPf@mAfAyBxA_BxEmE|@cAVq@zAkF`@eAzCyD`@a@x@UlBCdBKZOTUj@}@b@oAhBqEfBgDx@w@zD}ClBgArA{@vFkErAbBjEvE~@hAv@lAVv@Ht@FdAJrCn@vTH\\|DrJt@i@lBc@rQwAxFm@V?XHt@\\ZBPCPM\\o@nDcJ\\]ZGPBTNrCrFn@v@f@d@d@J\\AvKmFb@_@z@gBV{@Lq@Hu@LsCNs@Pa@ZWXIjCYtCMVBb@PTRX^fAvB^`@^Tp@^pCpAlN`GhD~AnC~A`@LF?POdFmGbCsC|@}@f@URCZ@b@T`@`@lC`DdQrTnFtGxCxDZd@`@x@Vr@Rv@F^H`ABt@@dBi@rl@YjWQzGQdFRf@h@n@nCDj@Bn@HLXPp@rAa@lAMBER?f@@pQrAjDRl@?l@E^Ib@Qz@k@vE{ElBiBj@[RGj@GZ?lBoz@NpLB`DC@JjIAnDMbHKbDGzAI`@MxAA~@?tA`@vG?pAE~@BTQrAyBxNGpACrI@hCHbDFtFB|WGpi@MvS]fLCJu@zTQhCIHEJALF\\BDQxEEBS\\SRm@^c@t@MrAGRIz@Q`@MPy@Pm@V{MxBoA\\oBv@sBlAkOxLaDpDe@fAkSxn@{CnIqFrPC\\Bb@r@`C?Zm@dBSBc@MW]}@y@Wz@jAk@",
+          "schedule": {
+            "weekday": ["05:30", "06:45", "08:15", "11:45", "15:15", "17:15", "20:15"],
+            "saturday": ["06:30", "12:45", "20:15"],
+            "sunday": ["06:30", "12:45", "20:15"]
           }
         }
       ]
