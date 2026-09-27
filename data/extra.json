@@ -727,7 +727,7 @@
         {
           "index": 1,
           "headsign": "Campeni",
-          "stops": ["s200-tur", 75, 227, 77, 79, 83, "il-capo-tour-tur", "vlasca-tur", "geolgau117-tur", "primarie-pielesti-tur", "geolgau265-tur", "geolgau320-tur", "geolgau400-tur", "geolgau441-tur", "dn65-robanesti-tur", "campeni1-tur", "campeni2-tur", "campeni3-tur"],
+          "stops": ["s200-tur", 218, 76, 77, 79, 83, "il-capo-tour-tur", "vlasca-tur", "geolgau117-tur", "primarie-pielesti-tur", "geolgau265-tur", "geolgau320-tur", "geolgau400-tur", "geolgau441-tur", "dn65-robanesti-tur", "campeni1-tur", "campeni2-tur", "campeni3-tur"],
           "duration": 60,
           "geometry": "qwnmGgaipCBn@_@x@yDUpNsqA~CiRl@kF|IqiATa@K_Ar@sVEmA^{NHaQDqi@M{d@L}MTsCtCkRg@yJt@cSJmIe@el@g@e\\?}Gm@kOByAHY]cAm@_LwBgo@yBwv@@kCT[?i@_@a@e@X_@SoA{AsJ}H{qAsdAmW_TYg@Ms@qAeQoDiW{@kFkBgH_IyEsGwCgCMwBxBJuVdDcM`BuHVmBsA{RDsG`AwZRaCzByJTmEAuNnByOVq@d@AbZjJzATz@Gt@Y~CmBtAOVc@NmA~AUf@WXiA^qJ`@oE|J{c@Zu@f@e@rFw@r@i@mA{BcAgDuAqRm@wE{FcXiI_c@oAcEiMwRsBeCwB}@kF_@y@e@q@cAw@eE}@aIKuLOqC{H}b@ka@eIkDZoDaAoEoBo@EmG`A_BKs@k@g@}@wBqHgAgBuWgLs_@uOm@H_@f@sMn^m@x@[DmGy@yKnAeIyAsFi@",
           "schedule": {
@@ -739,7 +739,7 @@
         {
           "index": 2,
           "headsign": "S200",
-          "stops": ["campeni3-retur", "campeni2-retur", "campeni1-retur", "dn65-robanesti-retur", "geolgau441-retur", "geolgau400-retur", "geolgau320-retur", "geolgau265-retur", "primarie-pielesti-retur", "geolgau117-retur", "vlasca-retur", "agroconcept-retur", 83, 79, 77, 227, 75, "s200-retur"],
+          "stops": ["campeni3-retur", "campeni2-retur", "campeni1-retur", "dn65-robanesti-retur", "geolgau441-retur", "geolgau400-retur", "geolgau320-retur", "geolgau265-retur", "primarie-pielesti-retur", "geolgau117-retur", "vlasca-retur", "agroconcept-retur", 83, 224, 226, 227, 75, "s200-retur"],
           "duration": 60,
           "geometry": "msxmG_rpqCtFf@fIxA|KqAnGv@ZEl@y@xMq^^g@l@Il_@vOpWfLfAfBrBrHf@|@r@j@~AJlGaAn@DlEnBlD`AjD[fa@dIvHzb@NpCHvL|@`Ij@fDp@tAdAp@hF^vB|@rBdCdMtRnAbEdI~b@vGr[jB`VXtAfBfE_@TqFr@u@z@gDtNuFbXuHmEw@a@g@?}Ax@_DZgDz@kExI}A`CMtAy@hDeJ{Ce@@Wp@sB|OCvNWlE{B|JS`CiA~a@tAnTWlBaBtHeD`MKtVvByBfCLrGxC~HxEjBhHz@jFpDjWpAdQLr@Xf@lWbTj}AtnAfBnC`@bAVjEn@nWdAf[lD~u@B`DR`CCbAhA`Yb@b\\\\xm@a@|NOvC]hCEzB^rHEfD}BhOUrCO|MPng@E`y@oAdd@O|CUl@Jh@UxEaJ`hAaEjWgIvq@\\tA\\fV",
           "schedule": {
