@@ -372,6 +372,150 @@
       "name": "Magnolia",
       "latitude": 44.30716684241457,
       "longitude": 23.910938801567063
+    },
+    {
+      "id": "il-capo-tour-tur",
+      "name": "Il Capo Tour",
+      "latitude": 44.3136377375889,
+      "longitude": 23.904456727317008
+    },
+    {
+      "id": "agroconcept-retur",
+      "name": "Agroconcept",
+      "latitude": 44.31377330461643,
+      "longitude": 23.904501616308313
+    },
+    {
+      "id": "vlasca-tur",
+      "name": "Vlasca",
+      "latitude": 44.316826526596735,
+      "longitude": 23.912345432703404
+    },
+    {
+      "id": "vlasca-retur",
+      "name": "Vlasca",
+      "latitude": 44.31699329851399,
+      "longitude": 23.91235748902349
+    },
+    {
+      "id": "geolgau117-tur",
+      "name": "Gheorghita Geolgau 117",
+      "latitude": 44.3403638308157,
+      "longitude": 23.938258526744878
+    },
+    {
+      "id": "geolgau117-retur",
+      "name": "Gheorghita Geolgau 117",
+      "latitude": 44.34042357087179,
+      "longitude": 23.938428802994054
+    },
+    {
+      "id": "primarie-pielesti-tur",
+      "name": "Primarie Pielesti",
+      "latitude": 44.339276464665964,
+      "longitude": 23.94913747027669
+    },
+    {
+      "id": "primarie-pielesti-retur",
+      "name": "Primarie Pielesti",
+      "latitude": 44.339334080250204,
+      "longitude": 23.949152686633976
+    },
+    {
+      "id": "geolgau265-tur",
+      "name": "Gheorghita Geolgau 265",
+      "latitude": 44.33842983725282,
+      "longitude": 23.9568642632064
+    },
+    {
+      "id": "geolgau265-retur",
+      "name": "Gheorghita Geolgau 265",
+      "latitude": 44.33848876084745,
+      "longitude": 23.956922535407543
+    },
+    {
+      "id": "geolgau320-tur",
+      "name": "Gheorghita Geolgau 320",
+      "latitude": 44.33633351671812,
+      "longitude": 23.963674385427503
+    },
+    {
+      "id": "geolgau320-retur",
+      "name": "Gheorghita Geolgau 320",
+      "latitude": 44.336184348622645,
+      "longitude": 23.96370302798239
+    },
+    {
+      "id": "geolgau400-tur",
+      "name": "Gheorghita Geolgau 400",
+      "latitude": 44.32939564929427,
+      "longitude": 23.96656946461472
+    },
+    {
+      "id": "geolgau400-retur",
+      "name": "Gheorghita Geolgau 400",
+      "latitude": 44.32945992490895,
+      "longitude": 23.966558735779188
+    },
+    {
+      "id": "geolgau441-tur",
+      "name": "Gheorghita Geolgau 441",
+      "latitude": 44.327606137137266,
+      "longitude": 23.97223459923711
+    },
+    {
+      "id": "geolgau441-retur",
+      "name": "Gheorghita Geolgau 441",
+      "latitude": 44.32767497657235,
+      "longitude": 23.972269467952565
+    },
+    {
+      "id": "dn65-robanesti-tur",
+      "name": "Int. DN65 Robanesti",
+      "latitude": 44.32689797697773,
+      "longitude": 23.97927310037679
+    },
+    {
+      "id": "dn65-robanesti-retur",
+      "name": "Int. DN65 Robanesti",
+      "latitude": 44.327179712089865,
+      "longitude": 23.97974033205336
+    },
+    {
+      "id": "campeni1-tur",
+      "name": "Campeni 1",
+      "latitude": 44.34464928248885,
+      "longitude": 24.008096315195285
+    },
+    {
+      "id": "campeni1-retur",
+      "name": "Campeni 1",
+      "latitude": 44.34460063374329,
+      "longitude": 24.007976374496703
+    },
+    {
+      "id": "campeni2-tur",
+      "name": "Campeni 2",
+      "latitude": 44.35933138041879,
+      "longitude": 24.015147189104418
+    },
+    {
+      "id": "campeni2-retur",
+      "name": "Campeni 2",
+      "latitude": 44.359258351385655,
+      "longitude": 24.01508305571797
+    },
+    {
+      "id": "campeni3-tur",
+      "name": "Campeni 3",
+      "latitude": 44.36806052242726,
+      "longitude": 24.010832766613124
+    },
+    {
+      "id": "campeni3-retur",
+      "name": "Campeni 3",
+      "latitude": 44.368074145014596,
+      "longitude": 24.010724721510897
     }
   ],
   "routes": [
@@ -568,6 +712,39 @@
           "schedule": {
             "weekday": ["06:51", "10:21", "11:51", "15:21", "18:51"],
             "saturday": ["09:51"],
+            "sunday": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "metro-pielesti",
+      "shortName": "M Pielesti",
+      "longName": "Metropolitan Craiova-Pielesti",
+      "color": "6a1b9a",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Campeni",
+          "stops": ["s200-tur", 75, 227, 77, 79, 83, "il-capo-tour-tur", "vlasca-tur", "geolgau117-tur", "primarie-pielesti-tur", "geolgau265-tur", "geolgau320-tur", "geolgau400-tur", "geolgau441-tur", "dn65-robanesti-tur", "campeni1-tur", "campeni2-tur", "campeni3-tur"],
+          "duration": 60,
+          "geometry": "qwnmGgaipCBn@_@x@yDUpNsqA~CiRl@kF|IqiATa@K_Ar@sVEmA^{NHaQDqi@M{d@L}MTsCtCkRg@yJt@cSJmIe@el@g@e\\?}Gm@kOByAHY]cAm@_LwBgo@yBwv@@kCT[?i@_@a@e@X_@SoA{AsJ}H{qAsdAmW_TYg@Ms@qAeQoDiW{@kFkBgH_IyEsGwCgCMwBxBJuVdDcM`BuHVmBsA{RDsG`AwZRaCzByJTmEAuNnByOVq@d@AbZjJzATz@Gt@Y~CmBtAOVc@NmA~AUf@WXiA^qJ`@oE|J{c@Zu@f@e@rFw@r@i@mA{BcAgDuAqRm@wE{FcXiI_c@oAcEiMwRsBeCwB}@kF_@y@e@q@cAw@eE}@aIKuLOqC{H}b@ka@eIkDZoDaAoEoBo@EmG`A_BKs@k@g@}@wBqHgAgBuWgLs_@uOm@H_@f@sMn^m@x@[DmGy@yKnAeIyAsFi@",
+          "schedule": {
+            "weekday": ["05:00", "07:30", "10:30", "14:30", "17:00", "19:00"],
+            "saturday": [],
+            "sunday": []
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "S200",
+          "stops": ["campeni3-retur", "campeni2-retur", "campeni1-retur", "dn65-robanesti-retur", "geolgau441-retur", "geolgau400-retur", "geolgau320-retur", "geolgau265-retur", "primarie-pielesti-retur", "geolgau117-retur", "vlasca-retur", "agroconcept-retur", 83, 79, 77, 227, 75, "s200-retur"],
+          "duration": 60,
+          "geometry": "msxmG_rpqCtFf@fIxA|KqAnGv@ZEl@y@xMq^^g@l@Il_@vOpWfLfAfBrBrHf@|@r@j@~AJlGaAn@DlEnBlD`AjD[fa@dIvHzb@NpCHvL|@`Ij@fDp@tAdAp@hF^vB|@rBdCdMtRnAbEdI~b@vGr[jB`VXtAfBfE_@TqFr@u@z@gDtNuFbXuHmEw@a@g@?}Ax@_DZgDz@kExI}A`CMtAy@hDeJ{Ce@@Wp@sB|OCvNWlE{B|JS`CiA~a@tAnTWlBaBtHeD`MKtVvByBfCLrGxC~HxEjBhHz@jFpDjWpAdQLr@Xf@lWbTj}AtnAfBnC`@bAVjEn@nWdAf[lD~u@B`DR`CCbAhA`Yb@b\\\\xm@a@|NOvC]hCEzB^rHEfD}BhOUrCO|MPng@E`y@oAdd@O|CUl@Jh@UxEaJ`hAaEjWgIvq@\\tA\\fV",
+          "schedule": {
+            "weekday": ["05:40", "08:30", "11:30", "15:30", "18:30", "20:00"],
+            "saturday": [],
             "sunday": []
           }
         }
