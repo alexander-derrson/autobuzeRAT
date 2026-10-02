@@ -47,6 +47,12 @@ const STOP_TIMES_TTL = 20000;
 
 let selectedVehicleKey = null;
 let drawnPatternKey = null;
+
+// Temporary "focus" on the line of the vehicle whose popup is open:
+// while it is set, the map only shows the vehicles of that line.
+let focusedVehicleKey = null;
+let focusedRoute = null;
+let renderingMarkers = false;
 let transportDataPromise = null;
 
 
@@ -2134,6 +2140,49 @@ function getIcon(vehicle) {
 
 
 // ============================================================
+// FOCUS ON THE LINE OF THE OPENED VEHICLE
+// ============================================================
+
+function focusVehicleLine(vehicleKey) {
+
+  // A line picked in the route list already filters the map
+  if (selectedRoute !== "all") {
+    return;
+  }
+
+  const vehicle = allVehicles.find(
+    item => vehicleKeyOf(item) === vehicleKey
+  );
+
+  if (!vehicle) {
+    return;
+  }
+
+  focusedVehicleKey = vehicleKey;
+  focusedRoute = String(vehicle.routeId);
+
+  displayVehicles();
+}
+
+
+function releaseVehicleLine(vehicleKey) {
+
+  if (focusedVehicleKey !== vehicleKey) {
+    return;
+  }
+
+  focusedVehicleKey = null;
+  focusedRoute = null;
+
+  // If the popup closed because displayVehicles() removed the marker,
+  // that call is already running: don't start a second one inside it.
+  if (!renderingMarkers) {
+    displayVehicles();
+  }
+}
+
+
+// ============================================================
 // CREATE / UPDATE MARKER
 // ============================================================
 
@@ -2193,14 +2242,20 @@ function updateMarker(vehicle) {
     createPopup(vehicle)
   );
 
-  // Draw the route line when the vehicle is clicked,
-  // remove it when its popup is closed.
-  marker.on("click", () => showVehicleRoute(vehicleKey));
+  // Popup opened (by clicking the vehicle or from the vehicle list):
+  // draw its route and show only the vehicles of its line.
+  // Popup closed: back to the normal view.
+  marker.on("popupopen", () => {
+    showVehicleRoute(vehicleKey);
+    focusVehicleLine(vehicleKey);
+  });
 
   marker.on("popupclose", () => {
     if (selectedVehicleKey === vehicleKey) {
       clearVehicleRoute();
     }
+
+    releaseVehicleLine(vehicleKey);
   });
 
   marker.addTo(map);
@@ -2404,7 +2459,7 @@ function formatAgo(timestamp, now) {
 
 // ---------------- rendering ----------------
 
-function vehicleListRow({ operator, label, routeId, model, t }, live, now) {
+function vehicleListRow({ operator, label, routeId, model, t, key }, live, now) {
 
   const line = routeId === null || routeId === undefined
     ? ""
@@ -2416,7 +2471,12 @@ function vehicleListRow({ operator, label, routeId, model, t }, live, now) {
   const details = [line, modelText].filter(Boolean).join(" ");
 
   return `
-    <div class="vehicle-item ${live ? "active" : "inactive"}">
+    <div
+      class="vehicle-item ${live ? "active" : "inactive"}"
+      ${live && key
+        ? `data-vehicle-key="${escapeHtml(key)}" title="Show on the map"`
+        : ""}
+    >
 
       <div class="vehicle-info">
         <span class="vehicle-plate">${escapeHtml(label)}</span>
@@ -2463,6 +2523,7 @@ function renderVehicleList(activeVehicles) {
           label: vehicle.label,
           routeId: vehicle.routeId,
           model: vehicle.model,
+          key: vehicleKeyOf(vehicle),
           t: Number.isFinite(parsed) ? parsed : now
         },
         true,
@@ -2519,40 +2580,109 @@ function renderVehicleList(activeVehicles) {
 
 
 // ============================================================
+// CLICK A VEHICLE IN THE LIST -> GO TO IT ON THE MAP
+// ============================================================
+
+function goToVehicle(vehicleKey) {
+
+  const marker = markers[vehicleKey];
+
+  if (!marker) {
+    return;
+  }
+
+  // The list is under the map: bring the map back into view
+  document.getElementById("map").scrollIntoView({
+    behavior: "smooth",
+    block: "nearest"
+  });
+
+  map.setView(
+    marker.getLatLng(),
+    Math.max(map.getZoom(), 16),
+    { animate: false }
+  );
+
+  // Opens the popup (which also draws its route and focuses its line)
+  marker.openPopup();
+}
+
+
+function setupVehicleList() {
+
+  const list = document.getElementById("vehicleList");
+
+  if (!list) {
+    return;
+  }
+
+  // Delegated: the list is rebuilt on every refresh
+  list.addEventListener("click", event => {
+
+    const item = event.target.closest("[data-vehicle-key]");
+
+    if (item) {
+      goToVehicle(item.dataset.vehicleKey);
+    }
+  });
+}
+
+
+// ============================================================
 // DISPLAY VEHICLES
 // ============================================================
 
 function displayVehicles() {
 
-  const filteredVehicles =
-    allVehicles.filter(vehicle => {
+  // Keep the focus on the line the vehicle is on right now
+  // (a vehicle can start a trip on another line)
+  if (focusedVehicleKey) {
 
-      // Route filter
-      if (
-        selectedRoute !== "all" &&
-        String(vehicle.routeId) !== String(selectedRoute)
-      ) {
-        return false;
-      }
+    const focused = allVehicles.find(
+      vehicle => vehicleKeyOf(vehicle) === focusedVehicleKey
+    );
+
+    focusedRoute = focused ? String(focused.routeId) : null;
+
+    if (!focused) {
+      focusedVehicleKey = null;
+    }
+  }
+
+  // The route filter wins; otherwise the opened vehicle's line, if any
+  const mapRoute =
+    selectedRoute !== "all" ? String(selectedRoute) : focusedRoute;
+
+  const mapVehicles = allVehicles.filter(
+    vehicle => !mapRoute || String(vehicle.routeId) === mapRoute
+  );
+
+  // The list under the map only follows the route filter
+  const listVehicles = allVehicles.filter(
+    vehicle =>
+      selectedRoute === "all" ||
+      String(vehicle.routeId) === String(selectedRoute)
+  );
 
 
-      return true;
+  renderingMarkers = true;
+
+  try {
+
+    removeOldMarkers(mapVehicles);
+
+    mapVehicles.forEach(vehicle => {
+      updateMarker(vehicle);
     });
 
-
-  removeOldMarkers(filteredVehicles);
-
-
-  filteredVehicles.forEach(vehicle => {
-
-    updateMarker(vehicle);
-
-  });
+  } finally {
+    renderingMarkers = false;
+  }
 
 
-  updateStatus(filteredVehicles);
+  updateStatus(mapVehicles);
 
-  renderVehicleList(filteredVehicles);
+  renderVehicleList(listVehicles);
 }
 
 
@@ -3085,6 +3215,7 @@ document
 // ============================================================
 
 setupStopSearch();
+setupVehicleList();
 
 
 // ============================================================

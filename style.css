@@ -286,3 +286,11 @@ main {
   font-size: 13px;
   color: #777;
 }
+
+.vehicle-item[data-vehicle-key] {
+  cursor: pointer;
+}
+
+.vehicle-item[data-vehicle-key]:hover {
+  background: #d7eed9;
+}
