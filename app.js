@@ -2585,6 +2585,20 @@ function renderVehicleList(activeVehicles) {
 
 function goToVehicle(vehicleKey) {
 
+  // While another vehicle's popup is open, the map only holds the vehicles
+  // of that line, so this vehicle may have no marker at the moment.
+  // Closing the popup lifts the focus and brings every marker back.
+  if (!markers[vehicleKey] && focusedVehicleKey) {
+
+    map.closePopup();
+
+    if (!markers[vehicleKey]) {
+      focusedVehicleKey = null;
+      focusedRoute = null;
+      displayVehicles();
+    }
+  }
+
   const marker = markers[vehicleKey];
 
   if (!marker) {
