@@ -516,6 +516,210 @@
       "name": "Campeni 3",
       "latitude": 44.368074145014596,
       "longitude": 24.010724721510897
+    },
+    {
+      "id": "albesti1-tur",
+      "name": "Albesti #1",
+      "latitude": 44.34805277777778,
+      "longitude": 23.78767777777778
+    },
+    {
+      "id": "albesti1-retur",
+      "name": "Albesti #1",
+      "latitude": 44.34796666666667,
+      "longitude": 23.787594444444448
+    },
+    {
+      "id": "albesti2-tur",
+      "name": "Albesti #2",
+      "latitude": 44.36327222222222,
+      "longitude": 23.78373888888889
+    },
+    {
+      "id": "albesti2-retur",
+      "name": "Albesti #2",
+      "latitude": 44.36327777777778,
+      "longitude": 23.783644444444445
+    },
+    {
+      "id": "albesti3-tur",
+      "name": "Albesti #3",
+      "latitude": 44.369844444444446,
+      "longitude": 23.782016666666667
+    },
+    {
+      "id": "albesti3-retur",
+      "name": "Albesti #3",
+      "latitude": 44.36983055555556,
+      "longitude": 23.781894444444443
+    },
+    {
+      "id": "albesti4-tur",
+      "name": "Albesti #4",
+      "latitude": 44.37621202124857,
+      "longitude": 23.7803935346935
+    },
+    {
+      "id": "albesti4-retur",
+      "name": "Albesti #4",
+      "latitude": 44.37634846256697,
+      "longitude": 23.780254176954028
+    },
+    {
+      "id": "dudovicesti1-tur",
+      "name": "Dudovicesti #1",
+      "latitude": 44.38263727497845,
+      "longitude": 23.779286966984372
+    },
+    {
+      "id": "dudovicesti1-retur",
+      "name": "Dudovicesti #1",
+      "latitude": 44.382709561018025,
+      "longitude": 23.779185822957846
+    },
+    {
+      "id": "dudovicesti2-tur",
+      "name": "Dudovicesti #2",
+      "latitude": 44.38488037590049,
+      "longitude": 23.77923485166681
+    },
+    {
+      "id": "dudovicesti2-retur",
+      "name": "Dudovicesti #2",
+      "latitude": 44.38494746596837,
+      "longitude": 23.77913091606796
+    },
+    {
+      "id": "floresti-tur",
+      "name": "Floresti",
+      "latitude": 44.39420446859588,
+      "longitude": 23.782559136039072
+    },
+    {
+      "id": "floresti-retur",
+      "name": "Floresti",
+      "latitude": 44.39416050909612,
+      "longitude": 23.78237805512886
+    },
+    {
+      "id": "romanesti-tur",
+      "name": "Romanesti",
+      "latitude": 44.40296370207315,
+      "longitude": 23.78874138918884
+    },
+    {
+      "id": "romanesti-retur",
+      "name": "Romanesti",
+      "latitude": 44.40298188058315,
+      "longitude": 23.78862073278649
+    },
+    {
+      "id": "izvor1-tur",
+      "name": "Izvor #1",
+      "latitude": 44.409026021109774,
+      "longitude": 23.791930856222343
+    },
+    {
+      "id": "izvor1-retur",
+      "name": "Izvor #1",
+      "latitude": 44.4090317693176,
+      "longitude": 23.791844354982015
+    },
+    {
+      "id": "izvor2-tur",
+      "name": "Izvor #2",
+      "latitude": 44.42042000508623,
+      "longitude": 23.78685217988615
+    },
+    {
+      "id": "izvor2-retur",
+      "name": "Izvor #2",
+      "latitude": 44.42031943095457,
+      "longitude": 23.7868173111692
+    },
+    {
+      "id": "lesile1-tur",
+      "name": "Lesile #1",
+      "latitude": 44.42497932773453,
+      "longitude": 23.783590792047328
+    },
+    {
+      "id": "lesile1-retur",
+      "name": "Lesile #1",
+      "latitude": 44.42495346940441,
+      "longitude": 23.783514138248897
+    },
+    {
+      "id": "lesile2-tur",
+      "name": "Lesile #2",
+      "latitude": 44.43141757128142,
+      "longitude": 23.781837797758445
+    },
+    {
+      "id": "lesile2-retur",
+      "name": "Lesile #2",
+      "latitude": 44.43112122256933,
+      "longitude": 23.781656304534245
+    },
+    {
+      "id": "cornetu-tur",
+      "name": "Cornetu",
+      "latitude": 44.437776092150585,
+      "longitude": 23.783414726785715
+    },
+    {
+      "id": "cornetu-retur",
+      "name": "Cornetu",
+      "latitude": 44.437850013726695,
+      "longitude": 23.783322419394107
+    },
+    {
+      "id": "milesti1-tur",
+      "name": "Milesti #1",
+      "latitude": 44.44419779558178,
+      "longitude": 23.781772263002633
+    },
+    {
+      "id": "milesti1-retur",
+      "name": "Milesti #1",
+      "latitude": 44.44434430775796,
+      "longitude": 23.7816283808634
+    },
+    {
+      "id": "milesti2-tur",
+      "name": "Milesti #2",
+      "latitude": 44.448349157916546,
+      "longitude": 23.779551459729614
+    },
+    {
+      "id": "milesti2-retur",
+      "name": "Milesti #2",
+      "latitude": 44.44826889480627,
+      "longitude": 23.77949318350826
+    },
+    {
+      "id": "milesti3-tur",
+      "name": "Milesti #3",
+      "latitude": 44.45193813725178,
+      "longitude": 23.7773110855295
+    },
+    {
+      "id": "milesti3-retur",
+      "name": "Milesti #3",
+      "latitude": 44.45240769050126,
+      "longitude": 23.77691175887109
+    },
+    {
+      "id": "dutulesti-tur",
+      "name": "Dutulesti",
+      "latitude": 44.45938942246131,
+      "longitude": 23.77271980069678
+    },
+    {
+      "id": "dutulesti-retur",
+      "name": "Dutulesti",
+      "latitude": 44.459070380886786,
+      "longitude": 23.772770672205034
     }
   ],
   "routes": [
@@ -746,6 +950,39 @@
             "weekday": ["05:40", "08:30", "11:30", "15:30", "18:30", "20:00"],
             "saturday": [],
             "sunday": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "metro-simnic",
+      "shortName": "M Dutulesti",
+      "longName": "Metropolitan Craiova-Dutulesti",
+      "color": "283593",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Dutulesti",
+          "stops": [210, 166, 167, "albesti1-tur", "albesti2-tur", "albesti3-tur", "albesti4-tur", "dudovicesti1-tur", "dudovicesti2-tur", "floresti-tur", "romanesti-tur", "izvor1-tur", "izvor2-tur", "lesile1-tur", "lesile2-tur", "cornetu-tur", "milesti1-tur", "milesti2-tur", "milesti3-tur", "dutulesti-tur"],
+          "duration": 38,
+          "geometry": "s|pmGqmjpCRNRPXV?L?@?B?@@D?BDT@FGR[dAG`@IXa@lAk@~AMb@ADABSr@A?A?C?ABA?ABAB?B?B?@@@?B@@@@W`AAFmAnE_AdD[fA[tA[jAe@|AoAdFw@hC[lAI\\cDfMGT_@tAOn@Md@cAxDk@rBQp@WbASr@Sz@uAlFi@xBc@dB]nA_ApDS|@WlASdAStACVKdAWjAETA??@A?A??@A?A@A@?@A??@A@?@A@?@A@?@?@?@?@e@NW?S@UBI@IBIDGFGFu@dA]b@WRYJ]D_@EUIYQiDqBiDuBUMOKo@[]IYEYA]@U@KBe@Fc@TSJQHUPWVEFEFGFKPEHCFIRIVMj@Op@Id@ETE^C\\OxAAJAFE\\Cd@c@hEEXOpAEh@Kn@Sv@Qd@?@Sb@GJMLKHIFKHKFOHOHKBUDYFYDoARC?u@L}@L}@NoARkBZIAAAC@_@BI?G@UAAAAAAAAAA??AA?A?AAA?A?A?A?A?A@A?A@A??@A?A@?@A@A@A@?@ABWNEBA@C@WF?@A?ABwAT}Dj@qF|@gBXkBZmBZC?}@N_@Fg@JgEt@wB^w@LaANkAPkCb@IB[Da@H_@FkARUDuB\\MB{AXc@Hg@HiCb@a@F?@SBC@I@m@JMBm@H_ANgARyB\\mCd@iLjBC@s@LQBMBKB{AVgCb@sB\\qBZoBZ}@NqIzA_ANk@JeDf@]FWDUDK@mCd@{Dj@iLdBe@JoC`@iF|@W@cB\\wDn@_El@oARkAR[Fy@Lw@JE@iAD{A@eABwDJ[@M?mCDcCDwGBcB@S?gJ?kB?c@?}H?W?C?cA@U?SAA?OCKCICGCSMQOSSQSc@k@m@q@Q_@KKKGy@u@eA{@GISQkAkA_@_@]]KKYYCCcBeBOOMK[]cAy@u@i@}@i@eAo@sCcBq@a@QKg@]eCyAiDwBYQIEcAk@MI}BwAuD}BUOaFwCuGaEq@_@}@k@_Ak@i@]yCeA}Ai@UI]Kc@Qk@UMEe@S[OeAa@c@SwB}@eAc@o@Wo@We@OYIMC}@Qe@I_@Gs@Ie@I[?]BK@KBKBKDGDa@VWTSRGDk@d@MHy@j@IDA@m@ZwAj@m@Vy@X}Al@a@Pa@Pk@Ry@Z}Al@}D`BcBn@y@TQFs@Ru@RiEjA_B\\QFOHMFc@VoBlAcAp@oAv@eC~Ag@ZWPs@b@_@V_@VuAz@_CzAuBrA_CvAUNiBnAo@b@oAx@iC|AGDq@b@y@b@c@Tu@Va@HaAJ{ALk@FqDZkAHsALc@@Y?I?Y?OAYAcAMcAQuB_@wAWiCc@oF_AGAAAG?oCg@a@G{@OiB[kB]CAo@Ki@Io@Gs@Cc@AcCPy@HUBc@DG@[B{@HsALa@Dc@DSB[F_Ch@{Dz@cE~@g@JmEdAsBf@gAXoAb@C@i@TmLrGSHA@SJOHi@XcM~GcExBo@\\gAj@gAh@QJEB[PgCrA_Bx@yBhAoBdAaBz@wC|AmM~Gi@XSL",
+          "schedule": {
+            "weekday": ["06:00", "07:00", "09:00", "10:15", "11:45", "13:15", "14:45", "16:00", "17:00", "18:00", "19:00", "20:00"],
+            "saturday": [ "07:00", "12:00", "14:00", "18:00", "20:00"],
+            "sunday": [ "07:00", "12:00", "14:00", "18:00", "20:00"]
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "Gara",
+          "stops": ["dutulesti-retur", "milesti3-retur", "milesti2-retur", "milesti1-retur", "cornetu-retur", "lesile2-retur", "lesile1-retur", "izvor2-retur", "izvor1-retur", "romanesti-retur", "floresti-retur", "dudovicesti2-retur", "dudovicesti1-retur", "albesti4-retur", "albesti3-retur",  "albesti2-retur", "albesti1-retur", 168, 106, 244],
+          "duration": 38,
+          "geometry": "emjnGubbpCRMh@YlM_HvC}A`B{@nBeAxBiA~Ay@fCsAZQDCPKfAi@fAk@n@]bEyBbM_Hh@YNIRK@ARIlLsGh@UBAnAc@fAYrBg@lEeAf@KbE_AzD{@~Bi@ZGRCb@E`@ErAMz@IZCFAb@ETCx@IbCQb@@r@Bn@Fh@Hn@JB@jB\\hBZz@N`@FnCf@F?@@F@nF~@hCb@vAVtB^bAPbALX@N@X?H?X?b@ArAMjAIpD[j@GzAM`AK`@It@Wb@Ux@c@p@c@FEhC}AnAy@n@c@hBoATO~BwAtBsA~B{AtA{@^W^Wr@c@VQf@[dC_BnAw@bAq@nBmAb@WLGNIPG~A]hEkAt@Sr@SPGx@UbBo@|DaB|Am@x@[j@S`@Q`@Q|Am@x@Yl@WvAk@l@[@AHEx@k@LIj@e@FERSVU`@WFEJEJCJCJA\\CZ?d@Hr@H^Fd@H|@PLBXHd@Nn@Vn@VdAb@vB|@b@RdA`@ZNd@RLDj@Tb@P\\JTH|Ah@xCdAh@\\~@j@|@j@p@^tG`E`FvCTNtD|B|BvALHbAj@HDXPhDvBdCxAf@\\PJp@`@rCbBdAn@|@h@t@h@bAx@Z\\LJNNbBdBBBXXJJ\\\\^^jAjARPFHdAz@x@t@JFJJP^l@p@b@j@PRRRPNRLFBHBJBNB@?R@T?bAAB?V?|H?b@?jB?fJ?R?bBAvGCbCElCEL?ZAvDKdACzAAhAEDAv@Kx@MZGjASnAS~Dm@vDo@bB]VAhF}@nCa@d@KhLeBzDk@lCe@JATEVE\\GdDg@j@K~@OpI{A|@OnB[pB[rB]fCc@zAWJCLCPCr@MBAhLkBlCe@xB]fAS~@Ol@ILCl@KHABARC?A`@GhCc@f@Ib@IzAYLCtB]TEjAS^G`@IZEHCjCc@jAQ`AOv@MvB_@fEu@f@K^G|@OB?lB[jB[fBYpF}@|Dk@vAU@@@?P?JAF?J?LB@??@@@@@@@@??@@?@@@?@?@?@?@?@?@A@?@A@?@ABE?A@??A@A?A?C@A?A?ARGLGJCJCLC@A@?FEjB[nAS|@O|@Mt@MB?nASXEXGTEJCNINIJGJIHGJILMFKRc@?APe@Rw@Jo@Di@NqADYb@iEBe@D]@G@KNyAB]D_@DUHe@Nq@Lk@HWHSBGDIJQFGDGDGVWTQPIRKb@Ud@GJCTA\\AX@XD\\Hn@ZNJTLhDtBhDpBXPTH^D\\EXKVS\\c@t@eAFGFGHEHCHATCRAV?h@F?@@@?@@??@@@@@@@@?@@@?@?@?@?@?@?@??A@?@?@A@A?A@??A@A@A?A?A@A?A?A@A?A?A?A?A?A?A?A?A?AAA?A?A?AAA?AAAAA?AAABU@]Bs@JeABWRuAReAVmAR}@~@qD\\oAb@eBh@yBtAmFR{@Rs@VcAPq@j@sBbAyDLe@No@^uAFUbDgMH]ZmAv@iCnAeFd@}AZkAZuAZgA~@eDlAoE@GVaA@@@?@?@?@?@A@??A@A?A@C?C?EACACAAAARs@@C@ELc@j@_B`@mAHYRUp@qBJ[IYAGAGG}@AG?EACAGCISSCC",
+          "schedule": {
+            "weekday": ["05:30", "06:00", "06:45", "08:00", "09:30", "11:00", "12:30", "14:00", "15:15", "17:00", "18:00", "19:00", "19:45"],
+            "saturday": ["06:00", "08:00", "13:00", "15:00", "19:00"],
+            "sunday": ["06:00", "08:00", "13:00", "15:00", "19:00"]
           }
         }
       ]
