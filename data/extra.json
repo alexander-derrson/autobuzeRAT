@@ -720,7 +720,139 @@
       "name": "Dutulesti",
       "latitude": 44.459070380886786,
       "longitude": 23.772770672205034
-    }
+    },
+    {
+      "id": "cartier-magnolia-tur",
+      "name": "Cartier Magnolia",
+      "latitude": 44.30498743186482,
+      "longitude": 23.897726647688373
+	},
+    {
+      "id": "cartier-magnolia-retur",
+      "name": "Cartier Magnolia",
+      "latitude": 44.30505871773854,
+      "longitude": 23.772770672205034
+	},
+    {
+      "id": "hanul-cu-ponei-tur",
+      "name": "Hanul cu Ponei",
+      "latitude": 44.286756636235374,
+      "longitude": 23.900202936527972
+	},
+    {
+      "id": "hanul-cu-ponei-retur",
+      "name": "Hanul cu Ponei",
+      "latitude": 44.286632260528506,
+      "longitude": 23.90027907166805
+	},
+    {
+      "id": "pepiniera-tur",
+      "name": "Pepiniera",
+      "latitude": 44.282725288581986,
+      "longitude": 23.895143925165698
+	},
+    {
+      "id": "pepiniera-retur",
+      "name": "Pepiniera",
+      "latitude": 44.28165544509679,
+      "longitude": 23.894809632513137
+	},
+    {
+      "id": "top-gel-tur",
+      "name": "Top Gel",
+      "latitude": 44.276246792974376,
+      "longitude": 23.895621729142412
+	},
+    {
+      "id": "top-gel-retur",
+      "name": "Top Gel",
+      "latitude": 44.27710054321841,
+      "longitude": 23.895455039797117
+	},
+    {
+      "id": "liceu-tehnologic-tur",
+      "name": "Liceul Tehnologic",
+      "latitude": 44.27410497974123,
+      "longitude": 23.897477088370188
+	},
+    {
+      "id": "liceu-tehnologic-retur",
+      "name": "Liceul Tehnologic",
+      "latitude": 44.27437496658827,
+      "longitude": 23.89862126594967
+	},
+    {
+      "id": "primarie-carcea-tur",
+      "name": "Primaria Carcea",
+      "latitude": 44.27239345082118,
+      "longitude": 23.89829904364558
+	},
+    {
+      "id": "primarie-carcea-retur",
+      "name": "Primaria Carcea",
+      "latitude": 44.27161831801502,
+      "longitude": 23.898358656142253
+	},
+    {
+      "id": "centru-cultural-tur",
+      "name": "Centrul Cultural",
+      "latitude": 44.269418977600715,
+      "longitude": 23.899775133625408
+	},
+    {
+      "id": "centru-cultural-retur",
+      "name": "Centrul Cultural",
+      "latitude": 44.26992201890602,
+      "longitude": 23.899731434829388
+	},
+    {
+      "id": "profi-carcea-tur",
+      "name": "Profi Carcea",
+      "latitude": 44.26508825713663,
+      "longitude": 23.90029213609127
+	},
+    {
+      "id": "profi-carcea-retur",
+      "name": "Profi Carcea",
+      "latitude": 44.26527172399923,
+      "longitude": 23.90044284006226
+	},
+    {
+      "id": "cismea-tur",
+      "name": "Cismea",
+      "latitude": 44.268887147169195,
+      "longitude": 23.883306303985492
+	},
+    {
+      "id": "cismea-retur",
+      "name": "Cismea",
+      "latitude": 44.268785352393955,
+      "longitude": 23.883283505216607
+	},
+    {
+      "id": "penitenciar-tur",
+      "name": "Penitenciar",
+      "latitude": 44.27415500633054,
+      "longitude": 23.875666582135164
+	},
+    {
+      "id": "penitenciar-retur",
+      "name": "Penitenciar",
+      "latitude": 44.27409627635138,
+      "longitude": 23.87556058677291
+	},
+    {
+      "id": "fantana-de-piatra-tur",
+      "name": "Fantana de Piatra",
+      "latitude": 44.282830912172976,
+      "longitude": 23.860414145157094
+	},
+    {
+      "id": "fantana-de-piatra-retur",
+      "name": "Fantana de Piatra",
+      "latitude": 44.28252113881537,
+      "longitude": 23.86055637254422
+	}
   ],
   "routes": [
     {
@@ -983,6 +1115,72 @@
             "weekday": ["05:30", "06:00", "06:45", "08:00", "09:30", "11:00", "12:30", "14:00", "15:15", "17:00", "18:00", "19:00", "19:45"],
             "saturday": ["06:00", "08:00", "13:00", "15:00", "19:00"],
             "sunday": ["06:00", "08:00", "13:00", "15:00", "19:00"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "metro-carcea",
+      "shortName": "M Carcea",
+      "longName": "Metropolitan Craiova-Carcea",
+      "color": "283593",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Primarie Carcea",
+          "stops": ["s200-tur", 74, 218, 76, 77, 78, 79, 219, 81, 82, 83, "cartier-magnolia-tur", "hanul-cu-ponei-tur", "pepiniera-tur", "top-gel-tur", "liceu-tehnologic-tur", "primarie-carcea-tur"],
+          "duration": 38,
+          "geometry": "qzjmGwpnpC??fEJj@DRK??rBWFC`@KRC\\O\\WFUFYHu@HUl@qBXaAhA}Dh@}AXy@Z}@`@eA|B{Fv@wBXw@PWBG@A??`Ao@j@YfBw@~@c@n@k@??jAiBDQFe@P}@Ja@XeAd@aAZi@??NUtAeA??v@m@Zc@Xe@dCqCfAmAr@u@??^]tBuBf@c@TU??lAmAzA_Bz@kAf@}@Tc@Pc@LWJYL]?A?EN]hD}G??jB{DhCqF`DsH\\q@n@qADKTm@??FQBO??LW@U?M?a@?M@Ub@kBFSHUDO??D_@Da@??FYR[??p@m@RSh@g@??f@g@`@g@??|@sAFMVa@??ZYRO??NWj@_A??nBwCJWL[??d@gA`@eANW??RUDG??^UbCqBPMZSrAw@~@c@d@UXKb@Wp@Wb@MXG??VENCNA|Au@nAs@??lAo@~@c@bAc@??v@[dD}AdDoAp@WtCaA`Ay@XWFI??d@wAb@mAVo@??^wAj@aB??Pc@Lk@Ba@?a@?Y@_@@A@eB@MFKDE??HC~@QzAUlDi@zDm@hAQ`CY|B]??lFy@~De@nDe@dCWxCWjEYt@C\\@^@tADbAN~@P??^Nj@Pz@Z??bAZbA\\t@TdAZ`BZ??`@Hj@L`@Jr@Nj@N??x@Rl@Lv@Pr@N??jAXnAZ`@J??vARz@Px@Nd@J??\\FXFXFj@HPDr@Lz@Pj@P~@\\??h@Th@Pp@^d@T??b@Vl@Tr@Vt@XbA^??jB`A|@`@`@PLHHF??ZPBBBB",
+          "schedule": {
+            "weekday": ["05:30", "06:30", "07:30", "10:30", "14:30"],
+            "saturday": ["07:30"],
+            "sunday": []
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "S200",
+          "stops": ["primarie-carcea-tur", "centru-cultural-tur", "profi-carcea-tur", "cismea-tur", "penitenciar-tur", "fantana-de-piatra-tur", 256, 373, 152, 227, 75, 228, "s200-retur"],    
+          "duration": 30,
+          "geometry": "quxlGgikpC??@@j@LXFPD??f@Jb@JPDRF??ZJXHd@Pj@P??h@Vd@TPJx@d@??h@^`B|@tCzA??p@`@f@XRL~@d@??h@Tf@PdBh@??vAZz@Lv@HtBN??dAFdBF??dEh@??r@TrAn@z@h@f@^~BrB??`@^|@|@??~AtB?BV~@HdA@^A~@E~@??GhBGhAIhAIlAIdAKvAI~@??KhACXGl@OhBI`AEb@??EXExAKlBK`AEb@??ChACPAz@E~BQhG??ElAG`AKlA[dBi@|AQb@??UXyBkCMMMI??UMg@UmA[sA[}@Si@O??uA_@aAWc@Mc@IWI??g@Ou@Q_Bc@sB_@??kA[eAWuBc@??mA[sA_@??uDkAqAi@??}@g@_@WYUMO??_@m@Q]Yo@Qi@??Me@q@wCM]WYy@q@??wAyAMI??_C{BuAmAuAeASGMOqAyAEI??[o@MWwAwB??_AsAUc@MY}@kAQW]a@}@kA??iCqDmBwCk@gA_@}@Mg@COm@mC_@eBuA{G??Si@c@_AaByD}A{CeBuD??qB{Dc@kAOi@??{@gDg@sAGQEM??UcACUEu@??AQb@??AmAUqIEaB??AkAAu@Co@MoC??]}G?QI{H?M?GAMCYCU??GU}@kDOi@MUSUYSMG??cCeAaB{@??w@_@cA_@??QGc@QiAg@??_AWOG??WGm@QwA]OE??c@KcAU_@IWEOA",
+          "schedule": {
+            "weekday": ["06:00", "07:00", "08:00", "11:00", "15:00"],
+            "saturday": ["08:00"],
+            "sunday": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "metro-carcea",
+      "shortName": "M Carcea",
+      "longName": "Metropolitan Craiova-Carcea",
+      "color": "283593",
+      "textColor": "ffffff",
+      "patterns": [
+        {
+          "index": 1,
+          "headsign": "Primarie Carcea",
+          "stops": ["s200-tur", 74, 218, 76, 207, 205, 146, "fantana-de-piatra-retur", "penitenciar-retur", "cismea-retur", "profi-carcea-retur", "centru-cultural-retur", "primarie-carcea-retur"],
+          "duration": 30,
+          "geometry": "qzjmGwpnpC??fEJj@DRK??rBWFC`@KRC\\O\\WFUFYHu@HUl@qBXaAhA}Dh@}AXy@Z}@`@eA|B{Fv@wBXw@PWBG@A??`Ao@j@YfBw@~@c@n@k@??jAiBDQFe@P}@Ja@XeAd@aAZi@??NUtAeA??v@m@Zc@Xe@dCqCfAmAr@u@??^]tBuBf@c@TU??lAmAzA_Bz@kAf@}@Tc@Pc@LWJYL]?A?EN]hD}G??jB{DhCqF`DsH\\q@n@qADKTm@??FQBO??LW@U?M?a@?M@Ub@kBFSHUDO??D_@Da@??FYR[??p@m@RSh@g@??f@g@`@g@??|@sAFMVa@??ZYRO??NWj@_A??nBwCJWL[??d@gA`@eANW??RUDG??`@_C??HiA?]?[Ae@@g@BYBWR}ARaAHk@Hs@??Hq@L}@Jk@Lo@??Pw@^qANo@Lk@Fa@??Fe@L}@PmABc@??FoABg@?]@u@?Y@c@Bg@??VcCDc@??N}ANu@??HYZ_AFWJ[??RSDC",
+          "schedule": {
+            "weekday": ["11:30", "13:30", "15:30", "16:30", "18:30", "20:30"],
+            "saturday": ["11:30"],
+            "sunday": []
+          }
+        },
+        {
+          "index": 2,
+          "headsign": "S200",
+          "stops": ["primarie-carcea-retur", "liceu-tehnologic-retur", "top-gel-retur", "pepiniera-retur", "hanul-cu-ponei-retur", "cartier-magnolia-retur", 83, 220, 221, 224, 225, 226, 227, 75, "s200-retur"],
+          "duration": 30,
+          "geometry": "quxlGgikpC??RWd@_BTw@??Hi@FUZ{@??FSDIb@kA??AKBMNc@Ni@P[??Zk@BIFITs@??ZaAL[Rg@??Vk@^q@??Ha@HWJUh@eA??^k@^c@??H[DUHWFQ??FUN]Rm@??Nc@^iA??XcAZaA??p@kBNc@??Vk@`@u@??Pc@PY??RYNQ??FKb@a@XQ??LMHQJUHUHU??LSTk@LUJS??Z]r@m@z@g@??t@e@^S\\QNK??RM`AY|D{A??p@U`CeAx@g@??d@c@Zc@j@mA??lCqFNU??Pc@HYj@yB??FYFe@Xy@??NY\\q@h@aA??Xg@LYZo@??RY\\_@HM^Y??FGb@g@^Ut@_@??\\QHK|AgA??`Au@~@q@z@}@Zk@Nk@??HiAFi@Du@??Fw@HeAD{@??Bq@P}CTeC??JwANsB??F_ADq@Dq@??Ba@@g@LsB??JiAJw@??Dc@F[Rc@^k@??f@e@`@Y`@Q??~@g@`BaA??ZQZS??FKBI??fAs@z@m@l@c@??ZUj@a@??`@SRM??LGl@c@??t@c@l@a@??j@_@|@m@z@i@??bB{Af@a@l@i@??Z[~@mAb@m@??N[Z{@F]??D]F_AJqBHiC??DqAF}@F_A??F{@HsA?QRqAV}@??DMBE??Tg@h@gA??`AuBHM??^u@`AsBh@eA??Pc@Vg@L[??Jg@P}@JsAN_D??RuDBYJeAHu@??DU`@sAl@_B??Pm@Jk@F]??Hu@FaA@c@??@a@@m@Bm@??Pu@Vq@Pa@??F]JiA@]??By@HaDDkB??@c@?e@@c@?c@??A_@Ag@C}@C}@???UAOAQAM??IaAGs@CYQcB??Ia@MaAOw@??YsAs@aDc@kBe@cCKi@??ISKeASmA??WkAg@sBWu@??}@oC{@oC??uAiEIYa@_B??]uAEU[uA??Wq@UaAIg@QkA??EUAO??Qu@MSMQ??GEGCIE??][OMICMG??IEICIC??C?A@C@A@??C@C@E@??A@?@A@??G@C@A@??A@A@A@??C@A@A@??G@E@A@??EBCB??GBGB??]JOF??eB^KB??EBKB??GBWJ??_@LQH??c@PQJ??EBMF??EDCB??KHIH??UTMJ??ECCCCC??EEEEGE??GEGEGE??KKEE??KKMM??IIGG??EGGG??AACC??ECGE??EEAC??EEGG??CAAC??EGCC??ECCC??CEEG??CCAC??CEAC??EGCE??EICE??KICG??KIII??GGCC??UUMM??YSKI??MKKI??SOKI",
+          "schedule": {
+            "weekday": ["12:00", "14:00", "16:00", "17:00", "19:00", "21:00"],
+            "saturday": ["12:00"],
+            "sunday": []
           }
         }
       ]
