@@ -726,133 +726,133 @@
       "name": "Cartier Magnolia",
       "latitude": 44.30498743186482,
       "longitude": 23.897726647688373
-	},
+    },
     {
       "id": "cartier-magnolia-retur",
       "name": "Cartier Magnolia",
       "latitude": 44.3050546132713,
-      "longitude": 23.897800560628138
-	},
+      "longitude": 23.89780056062813
+    },
     {
       "id": "hanul-cu-ponei-tur",
       "name": "Hanul cu Ponei",
       "latitude": 44.286756636235374,
       "longitude": 23.900202936527972
-	},
+    },
     {
       "id": "hanul-cu-ponei-retur",
       "name": "Hanul cu Ponei",
       "latitude": 44.286632260528506,
       "longitude": 23.90027907166805
-	},
+    },
     {
       "id": "pepiniera-tur",
       "name": "Pepiniera",
       "latitude": 44.282725288581986,
       "longitude": 23.895143925165698
-	},
+    },
     {
       "id": "pepiniera-retur",
       "name": "Pepiniera",
       "latitude": 44.28165544509679,
       "longitude": 23.894809632513137
-	},
+    },
     {
       "id": "top-gel-tur",
       "name": "Top Gel",
       "latitude": 44.276246792974376,
       "longitude": 23.895621729142412
-	},
+    },
     {
       "id": "top-gel-retur",
       "name": "Top Gel",
       "latitude": 44.27710054321841,
       "longitude": 23.895455039797117
-	},
+    },
     {
       "id": "liceu-tehnologic-tur",
       "name": "Liceul Tehnologic",
       "latitude": 44.27410497974123,
       "longitude": 23.897477088370188
-	},
+    },
     {
       "id": "liceu-tehnologic-retur",
       "name": "Liceul Tehnologic",
       "latitude": 44.27437496658827,
       "longitude": 23.89862126594967
-	},
+    },
     {
       "id": "primarie-carcea-tur",
       "name": "Primaria Carcea",
       "latitude": 44.27239345082118,
       "longitude": 23.89829904364558
-	},
+    },
     {
       "id": "primarie-carcea-retur",
       "name": "Primaria Carcea",
       "latitude": 44.27161831801502,
       "longitude": 23.898358656142253
-	},
+    },
     {
       "id": "centru-cultural-tur",
       "name": "Centrul Cultural",
       "latitude": 44.269418977600715,
       "longitude": 23.899775133625408
-	},
+    },
     {
       "id": "centru-cultural-retur",
       "name": "Centrul Cultural",
       "latitude": 44.26992201890602,
       "longitude": 23.899731434829388
-	},
+    },
     {
       "id": "profi-carcea-tur",
       "name": "Profi Carcea",
       "latitude": 44.26508825713663,
       "longitude": 23.90029213609127
-	},
+    },
     {
       "id": "profi-carcea-retur",
       "name": "Profi Carcea",
       "latitude": 44.26527172399923,
       "longitude": 23.90044284006226
-	},
+    },
     {
       "id": "cismea-tur",
       "name": "Cismea",
       "latitude": 44.268887147169195,
       "longitude": 23.883306303985492
-	},
+    },
     {
       "id": "cismea-retur",
       "name": "Cismea",
       "latitude": 44.268785352393955,
       "longitude": 23.883283505216607
-	},
+    },
     {
       "id": "penitenciar-tur",
       "name": "Penitenciar",
       "latitude": 44.27415500633054,
       "longitude": 23.875666582135164
-	},
+    },
     {
       "id": "penitenciar-retur",
       "name": "Penitenciar",
       "latitude": 44.27409627635138,
       "longitude": 23.87556058677291
-	},
+    },
     {
       "id": "fantana-de-piatra-tur",
       "name": "Fantana de Piatra",
       "latitude": 44.282830912172976,
       "longitude": 23.860414145157094
-	},
+    },
     {
       "id": "fantana-de-piatra-retur",
       "name": "Fantana de Piatra",
       "latitude": 44.28252113881537,
       "longitude": 23.86055637254422
-	}
+    }
   ],
   "routes": [
     {
@@ -1016,7 +1016,7 @@
             "weekday": ["05:30", "06:45", "08:15", "11:45", "15:15", "17:15", "20:15"],
             "saturday": ["06:30", "12:45", "20:15"],
             "sunday": ["06:30", "12:45", "20:15"]
-        }
+          }
         }
       ]
     },
@@ -1101,14 +1101,14 @@
           "geometry": "s|pmGqmjpCRNRPXV?L?@?B?@@D?BDT@FGR[dAG`@IXa@lAk@~AMb@ADABSr@A?A?C?ABA?ABAB?B?B?@@@?B@@@@W`AAFmAnE_AdD[fA[tA[jAe@|AoAdFw@hC[lAI\\cDfMGT_@tAOn@Md@cAxDk@rBQp@WbASr@Sz@uAlFi@xBc@dB]nA_ApDS|@WlASdAStACVKdAWjAETA??@A?A??@A?A@A@?@A??@A@?@A@?@A@?@?@?@?@e@NW?S@UBI@IBIDGFGFu@dA]b@WRYJ]D_@EUIYQiDqBiDuBUMOKo@[]IYEYA]@U@KBe@Fc@TSJQHUPWVEFEFGFKPEHCFIRIVMj@Op@Id@ETE^C\\OxAAJAFE\\Cd@c@hEEXOpAEh@Kn@Sv@Qd@?@Sb@GJMLKHIFKHKFOHOHKBUDYFYDoARC?u@L}@L}@NoARkBZIAAAC@_@BI?G@UAAAAAAAAAA??AA?A?AAA?A?A?A?A?A@A?A@A??@A?A@?@A@A@A@?@ABWNEBA@C@WF?@A?ABwAT}Dj@qF|@gBXkBZmBZC?}@N_@Fg@JgEt@wB^w@LaANkAPkCb@IB[Da@H_@FkARUDuB\\MB{AXc@Hg@HiCb@a@F?@SBC@I@m@JMBm@H_ANgARyB\\mCd@iLjBC@s@LQBMBKB{AVgCb@sB\\qBZoBZ}@NqIzA_ANk@JeDf@]FWDUDK@mCd@{Dj@iLdBe@JoC`@iF|@W@cB\\wDn@_El@oARkAR[Fy@Lw@JE@iAD{A@eABwDJ[@M?mCDcCDwGBcB@S?gJ?kB?c@?}H?W?C?cA@U?SAA?OCKCICGCSMQOSSQSc@k@m@q@Q_@KKKGy@u@eA{@GISQkAkA_@_@]]KKYYCCcBeBOOMK[]cAy@u@i@}@i@eAo@sCcBq@a@QKg@]eCyAiDwBYQIEcAk@MI}BwAuD}BUOaFwCuGaEq@_@}@k@_Ak@i@]yCeA}Ai@UI]Kc@Qk@UMEe@S[OeAa@c@SwB}@eAc@o@Wo@We@OYIMC}@Qe@I_@Gs@Ie@I[?]BK@KBKBKDGDa@VWTSRGDk@d@MHy@j@IDA@m@ZwAj@m@Vy@X}Al@a@Pa@Pk@Ry@Z}Al@}D`BcBn@y@TQFs@Ru@RiEjA_B\\QFOHMFc@VoBlAcAp@oAv@eC~Ag@ZWPs@b@_@V_@VuAz@_CzAuBrA_CvAUNiBnAo@b@oAx@iC|AGDq@b@y@b@c@Tu@Va@HaAJ{ALk@FqDZkAHsALc@@Y?I?Y?OAYAcAMcAQuB_@wAWiCc@oF_AGAAAG?oCg@a@G{@OiB[kB]CAo@Ki@Io@Gs@Cc@AcCPy@HUBc@DG@[B{@HsALa@Dc@DSB[F_Ch@{Dz@cE~@g@JmEdAsBf@gAXoAb@C@i@TmLrGSHA@SJOHi@XcM~GcExBo@\\gAj@gAh@QJEB[PgCrA_Bx@yBhAoBdAaBz@wC|AmM~Gi@XSL",
           "schedule": {
             "weekday": ["06:00", "07:00", "09:00", "10:15", "11:45", "13:15", "14:45", "16:00", "17:00", "18:00", "19:00", "20:00"],
-            "saturday": [ "07:00", "12:00", "14:00", "18:00", "20:00"],
-            "sunday": [ "07:00", "12:00", "14:00", "18:00", "20:00"]
+            "saturday": ["07:00", "12:00", "14:00", "18:00", "20:00"],
+            "sunday": ["07:00", "12:00", "14:00", "18:00", "20:00"]
           }
         },
         {
           "index": 2,
           "headsign": "Gara",
-          "stops": ["dutulesti-retur", "milesti3-retur", "milesti2-retur", "milesti1-retur", "cornetu-retur", "lesile2-retur", "lesile1-retur", "izvor2-retur", "izvor1-retur", "romanesti-retur", "floresti-retur", "dudovicesti2-retur", "dudovicesti1-retur", "albesti4-retur", "albesti3-retur",  "albesti2-retur", "albesti1-retur", 168, 106, 244],
+          "stops": ["dutulesti-retur", "milesti3-retur", "milesti2-retur", "milesti1-retur", "cornetu-retur", "lesile2-retur", "lesile1-retur", "izvor2-retur", "izvor1-retur", "romanesti-retur", "floresti-retur", "dudovicesti2-retur", "dudovicesti1-retur", "albesti4-retur", "albesti3-retur", "albesti2-retur", "albesti1-retur", 168, 106, 244],
           "duration": 38,
           "geometry": "emjnGubbpCRMh@YlM_HvC}A`B{@nBeAxBiA~Ay@fCsAZQDCPKfAi@fAk@n@]bEyBbM_Hh@YNIRK@ARIlLsGh@UBAnAc@fAYrBg@lEeAf@KbE_AzD{@~Bi@ZGRCb@E`@ErAMz@IZCFAb@ETCx@IbCQb@@r@Bn@Fh@Hn@JB@jB\\hBZz@N`@FnCf@F?@@F@nF~@hCb@vAVtB^bAPbALX@N@X?H?X?b@ArAMjAIpD[j@GzAM`AK`@It@Wb@Ux@c@p@c@FEhC}AnAy@n@c@hBoATO~BwAtBsA~B{AtA{@^W^Wr@c@VQf@[dC_BnAw@bAq@nBmAb@WLGNIPG~A]hEkAt@Sr@SPGx@UbBo@|DaB|Am@x@[j@S`@Q`@Q|Am@x@Yl@WvAk@l@[@AHEx@k@LIj@e@FERSVU`@WFEJEJCJCJA\\CZ?d@Hr@H^Fd@H|@PLBXHd@Nn@Vn@VdAb@vB|@b@RdA`@ZNd@RLDj@Tb@P\\JTH|Ah@xCdAh@\\~@j@|@j@p@^tG`E`FvCTNtD|B|BvALHbAj@HDXPhDvBdCxAf@\\PJp@`@rCbBdAn@|@h@t@h@bAx@Z\\LJNNbBdBBBXXJJ\\\\^^jAjARPFHdAz@x@t@JFJJP^l@p@b@j@PRRRPNRLFBHBJBNB@?R@T?bAAB?V?|H?b@?jB?fJ?R?bBAvGCbCElCEL?ZAvDKdACzAAhAEDAv@Kx@MZGjASnAS~Dm@vDo@bB]VAhF}@nCa@d@KhLeBzDk@lCe@JATEVE\\GdDg@j@K~@OpI{A|@OnB[pB[rB]fCc@zAWJCLCPCr@MBAhLkBlCe@xB]fAS~@Ol@ILCl@KHABARC?A`@GhCc@f@Ib@IzAYLCtB]TEjAS^G`@IZEHCjCc@jAQ`AOv@MvB_@fEu@f@K^G|@OB?lB[jB[fBYpF}@|Dk@vAU@@@?P?JAF?J?LB@??@@@@@@@@??@@?@@@?@?@?@?@?@?@A@?@A@?@ABE?A@??A@A?A?C@A?A?ARGLGJCJCLC@A@?FEjB[nAS|@O|@Mt@MB?nASXEXGTEJCNINIJGJIHGJILMFKRc@?APe@Rw@Jo@Di@NqADYb@iEBe@D]@G@KNyAB]D_@DUHe@Nq@Lk@HWHSBGDIJQFGDGDGVWTQPIRKb@Ud@GJCTA\\AX@XD\\Hn@ZNJTLhDtBhDpBXPTH^D\\EXKVS\\c@t@eAFGFGHEHCHATCRAV?h@F?@@@?@@??@@@@@@@@?@@@?@?@?@?@?@?@??A@?@?@A@A?A@??A@A@A?A?A@A?A?A@A?A?A?A?A?A?A?A?A?AAA?A?A?AAA?AAAAA?AAABU@]Bs@JeABWRuAReAVmAR}@~@qD\\oAb@eBh@yBtAmFR{@Rs@VcAPq@j@sBbAyDLe@No@^uAFUbDgMH]ZmAv@iCnAeFd@}AZkAZuAZgA~@eDlAoE@GVaA@@@?@?@?@?@A@??A@A?A@C?C?EACACAAAARs@@C@ELc@j@_B`@mAHYRUp@qBJ[IYAGAGG}@AG?EACAGCISSCC",
           "schedule": {
@@ -1131,7 +1131,7 @@
           "headsign": "Primarie Carcea",
           "stops": ["s200-tur", 74, 218, 76, 77, 78, 79, 219, 81, 82, 83, "cartier-magnolia-tur", "hanul-cu-ponei-tur", "pepiniera-tur", "top-gel-tur", "liceu-tehnologic-tur", "primarie-carcea-tur"],
           "duration": 38,
-          "geometry": "awnmGq`ipC@d@EFCJUd@K?sCMUGNmA|@cHTsBBWJ_ANmAf@yEBW@QFc@d@_Ej@mENmAFg@@YHs@t@sGn@aFj@_FVqB^gDD_@Hy@h@eDnAsH\sBF_@R}AJcANiAFw@LgAp@{KB]Bk@JmBHiADi@TqDB_@BWBa@@O@QDk@@S@M@QLmBFgA?MB_@Dy@@]JqBDo@Bm@?CRyC\qEJgC@IHgB@SB??A@?@A@A?A@??A@??A?A@??A?A@??A?A@A?A?A?A?A@A?A?A?A?A?AA??A?A?A?A?AAA?A?AA??A?AA??AAA?AA??A?O?IFoBBw@RwGDiALeE@c@?a@?M?EAG?C?EAA?AAAFkBD_BF{A?KDoBBwAD_JB_F@aM@iE@oC?yA?w@?w@@wG?sAA{E?W?_A?gH?eBA{ACuAAqAAmAAk@CyB@kB?]@{A@s@@s@@w@AwA@Y?S@MBWJ_ANgAx@uFXwBPsAPe@@G@WBYASAi@E{@Ai@OeBOoBBy@By@HyA?OAg@FwAD_AFuBFmBDyCB_C?s@I{BG_FAoCKwGCmC?KEuDAuAIwF?AK}EGgCIqECcBAa@KaEAc@@??A@A?A?A?i@EaEAi@AUCu@K}DIwA?MCq@?AAm@Ag@AQ?S?SBQ@M?Q@?@A?A@??A@?FCLEJGHGT?ZATARCTCNABAJCNEJGBCBERO@APQ^i@dBaChEcGd@o@x@iAzCgEBCvDmF|@mA`AwAn@}@|B{CZa@NONM\Q`@OTGtBm@j@Q@?t@SB?|EwAbEkA^K`@KXEXEh@?j@Br@Ft@Fn@@@?`A?fBCdACHA^?RAN?RAr@AnFKj@AxACrIOnF?xCCJAV?b@Ab@Ab@?fACb@EVENELGVOVYR[Re@Rk@@CHWT]V[NKVIX?bF^t@D`@D`F`@dAHz@Fd@FR@d@DtCVd@HVHB@VPV`@`@v@FJTb@NXNTPRPLLHNFFBZJ~@VB@dCp@^LRLHHFF@BLNFN@@FNBJ?B@J?FCXGd@AJk@pFMrAATBPBTDLDJFJHJDDBDLHLDL@PBrCFd@@`CLzAHJ?v@Fh@BTATEzA]^IpBi@dCo@tCu@hCo@ZKf@Wb@]|CuBx@k@RMJKNKJMFMBM?MAMGWYeAU_AQ{@RCVAN@pAFlAHv@D|AJJ@xADlBDB?",
+          "geometry": "qwnmGgaipC@d@_@x@uDUlOkqA~CkRn@kFlDai@tBy_@Ta@K_At@qVEmA`@{NH}PHoi@AaUOwNF{MRsCpCiRk@wJl@aSHkIs@al@q@c\\AqFe@uPDyAr@_@`DYz@u@x\\ce@xD{EjYeIrHVlr@_ApBi@j@u@hAkC~@q@l\\fCxAf@dBbDr@v@hHxBt@r@VdAkAfLLt@`@n@z@ThOn@hDo@vPkEzHqFn@u@@i@oByEdMn@",
           "schedule": {
             "weekday": ["05:30", "06:30", "07:30", "10:30", "14:30"],
             "saturday": ["07:30"],
@@ -1141,9 +1141,9 @@
         {
           "index": 2,
           "headsign": "S200",
-          "stops": ["primarie-carcea-tur", "centru-cultural-tur", "profi-carcea-tur", "cismea-tur", "penitenciar-tur", "fantana-de-piatra-tur", 256, 373, 152, 227, 75, 228, "s200-retur"],    
+          "stops": ["primarie-carcea-tur", "centru-cultural-tur", "profi-carcea-tur", "cismea-tur", "penitenciar-tur", "fantana-de-piatra-tur", 256, 373, 152, 227, 75, 228, "s200-retur"],
           "duration": 30,
-          "geometry": "ixemGiszpC|AAr@BPATCLCJILKHKFOFOBQ@QBc@B[B[BSDOJOHGjA[rAYx@QJCb@Iz@O|@Kn@Ej@CpEShCG|@CfAAnA@r@Bb@RLVDHBLBJDJSjAENMx@]vBw@nG?@YzBAJCJY~BMx@E\AFGh@In@y@zGSlBIbAKlAK|AQ~BItB?@I~DCz@Cj@GlDG|BE`@Eb@E\?DKh@[nAWv@]z@_@l@Y^QTwAxAIJu@v@g@j@SVa@h@EFk@|@gApBCDu@rAo@lAEHCD_CtE}@hBm@hA}BnEa@v@gArBw@rAkAbBsA`BoApAGD{@bAIF}@`AeBnBUVsBxByBbCcAbAiAnAUX[b@Y`@IJOVg@x@u@`BO^Ut@ABIX]vAMl@CHOp@Ml@AB_C|JGVgDnOSz@CLMf@IVGTIRMVMVQ\q@fAOXSLA?A@A@iJrNuBbDeCvDA@_CjDCDCDKNIJKPELAFIRk@r@yBhDIJe@t@_CpDiBtCo@`AeCxD[f@[b@}BnDcBjCy@pAU^qB~C_@n@y@pAIJEJGHs@lA[f@y@lA]b@KFGBE@G@C?M?A?AA?AA?AAA?A?A?A?A?A?A?A@A@C?A@A@A@?@A@A@A@?@AB?@A@?B?@?BA@?B?@@D?B?@@B?@@@?B@@@@?@@@@@@@@@@?CZCNOf@EJ[r@uBnFoB|EuAlDSh@IT]z@[t@ABcFfMcAjC{BtFSh@kArCyAxDe@jAO^_AzBO\Wt@[x@Wr@U|@Mh@GVKp@G`@Gj@KdAMdBS^GFCDEBC@GBKB]EIC}B]qCc@gEs@_JyAuB_@{@OaB[uAUi@EyEy@}Dm@qB[eAQy@MuB_@e@Kq@OwB]KAsEk@WEYCSAS?W?YDWB]Fc@DcAPe@H_APUBSBc@HAAA?AACACAIEEEACACCGCICI?KAK?GAKFw@BS@GBEBGBEFKLCHAB?D?B@D@FDHHBB@BHXDHEt@?DEp@C^Cd@QtCK`BMrBAPC\IfAO`CKbBGfA_@rFQnCQjCS`Ca@fGC`@WlCSrBIr@CNEXO~@s@pEeAjGQhAOfAK|@APg@dEc@pDIp@i@tECZ[dCAHWhBK~@Ep@In@q@pFg@dEGb@JNDLDTBT@L@j@B~@?z@BrB@`@J~CB`CAd@FpB",
+          "geometry": "m}emGkszpCbGChA_At@qCX_@zJgBxRq@bCDb@RR`@Lb@gAjGiF`b@s@lJm@dU]rCs@dC}@hBmFzFgBdCmSp`@cCvDeX`ZmC~DgBtEwKbf@_@tAw@`BaZxc@]z@kX|a@iNtTwApBa@Ng@ESPCf@PXWrAif@vmA_ArEa@vE_@l@{@Fo`AaPoJqAyAEmJtA]SOc@Ck@TaBJQj@Af@z@qF|z@w@tHuDvUeI`r@ZvA`@tV",
           "schedule": {
             "weekday": ["06:00", "07:00", "08:00", "11:00", "15:00"],
             "saturday": ["08:00"],
@@ -1164,7 +1164,7 @@
           "headsign": "Primarie Carcea",
           "stops": ["s200-tur", 74, 218, 76, 207, 205, 146, "fantana-de-piatra-retur", "penitenciar-retur", "cismea-retur", "profi-carcea-retur", "centru-cultural-retur", "primarie-carcea-retur"],
           "duration": 30,
-          "geometry": "awnmGq`ipC@d@EFCJUd@K?sCMUGNmA|@cHTsBBWJ_ANmAf@yEBW@QFc@d@_Ej@mENmAFg@@YHs@t@sGn@aFj@_FVqB^gDD_@Hy@h@eDnAsH\sBF_@R}AJcANiAFw@LgAp@{KB]Bk@JmBHiADi@TqDB_@BWBa@@O@QDk@@S@M@QLmBFgA?MB_@Dy@@A@A@ABCBEHQDG^_@^UJMFI@G@IBMD[PgBBODKDKJODEJILIpAQ`@E\AN?N@\BZDx@L~Cf@hDf@f@HrF|@nHjA`C^n@NrATd@D|@LpATvCf@nCb@nCd@dBV|Dn@~Ch@zB^T@\HVD?@@??@@@@@@??@@?@@@A@?@?@??A@??A@??A@??A@A?A?A?A@??A?A?A?A?A?AA??A?A?ARuDDi@NuAJ_ANq@DQRq@J_@\_Ab@mAlAyCN[f@mAvAuD`A}BLYRi@zBwF~@_CxDuJp@aBRg@`@gAVo@pAgDp@_BfAqCt@qBZw@JU`@aAXo@\{@@E?Y@?@?@A@?@A@??A@A@E@C@C@C?ABKZ[NQxAoB\g@^i@^q@FO\i@nDuFT_@x@sAt@gAj@}@R[jBwCZc@bDeFn@cAjFgIj@}@@AxBiDJOh@u@DEJOJSNWFIzBoDdCwDp@cAbA_Bv@mAnHkL@A?ALYNYp@gAP]LWLWHSFUHWLg@BMR{@fDoOFW~B}J@CLm@Nq@BILm@\wAHY@CTu@N_@t@aBf@y@NWHKXa@Zc@TYhAoAbAcAxBcCrByBTWdBoB|@aAHGz@cAFEnAqArAaBjAcBv@sAfAsB`@w@|BoEl@iA|@iB~BuEBEDIn@mAt@sABEfAqBj@}@DG`@i@RWf@k@t@w@HKvAyAPUX_@^m@\{@Vw@ZoAJi@?ED]Dc@Da@F}BFmDBk@B{@H_E?AHuBP_CJ}AJmAHcARmBx@{GHo@Fi@@GD]Ly@X_CBK@KX{B?Av@oG\wBLy@DORkAP{@FSOEGCOAM?U?S?s@CoAAgA@}@BiCFqERk@Bo@D}@J{@Nc@HKBy@PsAXkAZIFKNENCRCZCZCb@APCPGNGNIJMJKHMBUBQ@s@C}A@",
+          "geometry": "qwnmGgaipC@d@_@x@uDUlOiqA~CmRp@kF~Don@pBwBn@kEj@i@rBWzABxlArR`AZLGv@oKv@uC~f@}nA@]~EwG|~@cxA`B{CdAyCvKaf@fBsElC}DfXaZbCyDnSs`@dBgC~DkEjAcBpAeE\\sCh@oUfA_NpE__@~A_JkHQgM`@iD`@uG|AQ^WrCs@`AkEF",
           "schedule": {
             "weekday": ["11:30", "13:30", "15:30", "16:30", "18:30", "20:30"],
             "saturday": ["11:30"],
@@ -1176,7 +1176,7 @@
           "headsign": "S200",
           "stops": ["primarie-carcea-retur", "liceu-tehnologic-retur", "top-gel-retur", "pepiniera-retur", "hanul-cu-ponei-retur", "cartier-magnolia-retur", 83, 220, 221, 224, 225, 226, 227, 75, "s200-retur"],
           "duration": 30,
-          "geometry": "ixemGiszpCC?mBEyAEKA}AKw@EmAIqAGOAW@SBPz@T~@XdAFV@L?LCLGLKLOJKJSLy@j@}CtBc@\g@V[JiCn@uCt@eCn@qBh@_@H{A\UDU@i@Cw@GK?{AIaCMe@AsCGQCMAMEMICEEEIKGKEKEMCUCQ@ULsAj@qF@KFe@BY?GAK?CCKGOAAGOMOACGGIISM_@MeCq@CA_AW[KGCOGMIQMQSOUOYUc@GKa@w@Wa@WQCAWIe@IuCWe@ESAe@G{@GeAIaFa@a@Eu@EcF_@Y?WHOJWZU\IVABSj@Sd@SZWXWNMFODWDc@DgABc@?c@@c@@W?K@yCBoF?sINyABk@@oFJs@@S@O?S@_@?I@eABgBBaA?A?o@Au@Gs@Gk@Ci@?YDYDa@J_@JcEjA}EvAC?u@RA?k@PuBl@UFa@N]POLON[`@}BzCo@|@aAvA}@lAwDlFCB{CfEy@hAe@n@iEbGeB`C_@h@QPA@SNCDCBKFODKBC@O@UBSBU@[@U?WCUE?AAAA??AA?AAA?AAA?A?A??@A?A??@A?A@A@?@A??@?@A??@?@A@?@?@?@?@?@?@?@?@?@@??@?@@@?@@@?@@?ATARAX@N?@@^?R@\@j@B~@?@?N?T@RBx@D`BBhB@TDfARfE?@@@?@?@@??@@?@b@J`E@`@BbBHpEFfCJ|E?@HvF@tADtD?JBlCJvG@nCF~EHzB?r@C~BExCGlBGtBE~@GvAId@CPMpA?`@A\Az@@XB\Dr@?BL|ADdAB\?j@?d@A\C`@?B@B@LQrAYvBy@tFOfAK~@CVAL?RAX@vAAv@Ar@Ar@AzA?\AjBBxB@j@@lA@pABtA@zA?dB?fH?~@?V@zE?rAAvG?v@?v@?xAAnCAhEA`MC~EE~ICvAEnB?JGzAE~AGjBA@?@A@?DABAJC`@?TC~@EpAEpAA`@Cj@EpAOnECb@KdBARCNA@A??@A??@A@A@?@A??@?@A@?@A@?@?@?@A@?@?@?@?@?@?@?@?@@@?@?@?@?@@@?@@@?@@@?@@??@@@AZKvCCd@WdDEt@?DEp@C^Cd@QtCK`BMrBAPC\IfAO`CKbBGfA_@rFQnCQjCS`Ca@fGC`@WlCSrBIr@CNEXO~@s@pEeAjGQhAOfAK|@APg@dEc@pDIp@i@tECZ[dCAHWhBK~@Ep@In@q@pFg@dEGb@JNDLDTBT@L@j@B~@?z@BrB@`@J~CB`CAd@FpB",
+          "geometry": "sxemGwszpC_Qo@hAhFKh@g@d@wHdFyU|FeOm@{@Ua@o@Mu@hAeLWeAu@s@kH{Bs@w@gBcDyAg@o\\gC_Ap@iAjCk@t@qBh@qr@~@sHUkYdIyDzEy\\de@o@l@k@PkBLoASQHX|R`@nHn@`\\t@tm@Y|NMvC[hCEzBb@nHAfDuBhOSrCG|MNtNAvf@Ylp@oAl]Q|CUl@Jh@QxEkGb`Au@tHuDxUeI`r@ZvA`@tV",
           "schedule": {
             "weekday": ["12:00", "14:00", "16:00", "17:00", "19:00", "21:00"],
             "saturday": ["12:00"],
