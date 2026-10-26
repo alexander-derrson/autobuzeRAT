@@ -189,40 +189,28 @@ main {
   color: #fff;
 }
 
-/* Active / All vehicles buttons */
+/* Section rows inside the table */
 
-.vehicle-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0 16px 12px;
-}
-
-.vehicle-tab {
-  padding: 7px 14px;
-  border: 1px solid #333;
-  border-radius: 6px;
-  background: #0b0c10;
-  color: #aaa;
+.vehicle-section td {
+  padding: 10px 16px;
+  background: #0f1420;
+  border-top: 1px solid #1f1f1f;
+  border-bottom: 1px solid #1f1f1f;
+  color: #fff;
   font-size: 14px;
   font-weight: bold;
 }
 
-.vehicle-tab:hover {
-  background: #15171d;
-  color: #fff;
-}
-
-.vehicle-tab.selected {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-  color: #fff;
-}
-
-.vehicle-tab-count {
-  margin-left: 4px;
+.vehicle-section-count {
+  margin-left: 6px;
   font-weight: normal;
-  opacity: 0.75;
+  opacity: 0.6;
+}
+
+.vehicle-section-empty td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #888;
 }
 
 /* Table */
@@ -252,10 +240,6 @@ main {
   vertical-align: middle;
 }
 
-.vehicle-table tbody tr:nth-child(even) {
-  background: #0a0b0e;
-}
-
 .vehicle-table .col-seen {
   text-align: right;
   white-space: nowrap;
@@ -271,6 +255,10 @@ main {
 
 .vehicle-row[data-vehicle-key] {
   cursor: pointer;
+}
+
+.vehicle-row:nth-child(even) {
+  background: #0a0b0e;
 }
 
 .vehicle-row[data-vehicle-key]:hover {
