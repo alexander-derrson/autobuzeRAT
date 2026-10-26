@@ -77,81 +77,12 @@ main {
   margin: 5px 0;
 }
 
-.vehicle-menu {
-  background: white;
-  border-radius: 8px;
-  padding: 12px;
-  margin-top: 10px;
-  max-height: 500px;
-  overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
 .vehicle-menu-header {
   margin-bottom: 10px;
 }
 
 .vehicle-menu-header h3 {
   margin: 0;
-}
-
-.vehicle-list-section {
-  margin-bottom: 15px;
-}
-
-.vehicle-list-section:last-child {
-  margin-bottom: 0;
-}
-
-.vehicle-list-section h4 {
-  margin: 8px 0;
-  font-size: 14px;
-}
-
-.vehicle-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 8px 10px;
-  margin-bottom: 4px;
-
-  border-radius: 5px;
-
-  background: #f2f2f2;
-}
-
-.vehicle-item.active {
-  background: #e8f5e9;
-}
-
-.vehicle-item.inactive {
-  color: #999;
-  background: #f3f3f3;
-}
-
-.vehicle-item.unknown {
-  color: #999;
-  background: #eeeeee;
-}
-
-.vehicle-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.vehicle-plate {
-  font-weight: bold;
-}
-
-.vehicle-line {
-  font-size: 13px;
-  margin-top: 2px;
-}
-
-.vehicle-status {
-  font-size: 12px;
-  color: #777;
 }
 
 /* ---------- Stop search ---------- */
@@ -242,55 +173,187 @@ main {
 
 /* ---------- Vehicle list ---------- */
 
-.vehicle-line {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.vehicle-menu {
+  background: #000;
+  color: #ddd;
+  border-radius: 8px;
+  padding: 12px 0 0;
+  margin-top: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.vehicle-status {
-  padding-left: 12px;
+.vehicle-menu-header h3 {
+  margin: 0 16px 10px;
+  color: #fff;
+}
+
+/* Active / All vehicles buttons */
+
+.vehicle-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 16px 12px;
+}
+
+.vehicle-tab {
+  padding: 7px 14px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0b0c10;
+  color: #aaa;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.vehicle-tab:hover {
+  background: #15171d;
+  color: #fff;
+}
+
+.vehicle-tab.selected {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+
+.vehicle-tab-count {
+  margin-left: 4px;
+  font-weight: normal;
+  opacity: 0.75;
+}
+
+/* Table */
+
+.vehicle-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.vehicle-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 10px 16px;
+  background: #000;
+  border-top: 1px solid #1f1f1f;
+  border-bottom: 1px solid #1f1f1f;
+  color: #bbb;
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.vehicle-table td {
+  padding: 10px 16px;
+  vertical-align: middle;
+}
+
+.vehicle-table tbody tr:nth-child(even) {
+  background: #0a0b0e;
+}
+
+.vehicle-table .col-seen {
   text-align: right;
   white-space: nowrap;
 }
 
-.vehicle-status-label {
-  margin-bottom: 1px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: #999;
+.vehicle-row.is-offline td {
+  color: #777;
+}
+
+.vehicle-row.is-offline .vehicle-time {
+  color: #888;
+}
+
+.vehicle-row[data-vehicle-key] {
+  cursor: pointer;
+}
+
+.vehicle-row[data-vehicle-key]:hover {
+  background: #14231a;
+}
+
+.col-vehicle {
+  white-space: nowrap;
+}
+
+.vehicle-type-icon {
+  width: 26px;
+  height: 26px;
+  margin-right: 8px;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+.vehicle-plate {
+  font-weight: bold;
+  vertical-align: middle;
+  color: #eee;
+}
+
+.vehicle-row.is-offline .vehicle-plate {
+  color: #888;
+}
+
+.vehicle-destination {
+  margin-left: 4px;
+  color: #ddd;
+}
+
+.vehicle-row.is-offline .vehicle-destination {
+  color: #777;
+}
+
+.vehicle-muted {
+  color: #666;
 }
 
 .vehicle-time {
   font-weight: bold;
-  color: #222;
+  color: #eee;
 }
 
-.vehicle-item.inactive .vehicle-time {
+.vehicle-ago {
   color: #888;
+  font-size: 13px;
 }
 
-.live-dot {
+.seen-dot {
   display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-right: 5px;
+  width: 9px;
+  height: 9px;
+  margin-right: 8px;
   border-radius: 50%;
-  background: #22c55e;
   vertical-align: middle;
 }
 
+.seen-dot.live {
+  background: #22c55e;
+}
+
+.seen-dot.off {
+  background: #6b7280;
+}
+
 .vehicle-empty {
-  padding: 8px 10px;
+  padding: 14px 16px;
   font-size: 13px;
-  color: #777;
+  color: #888;
 }
 
-.vehicle-item[data-vehicle-key] {
-  cursor: pointer;
-}
+@media (max-width: 700px) {
 
-.vehicle-item[data-vehicle-key]:hover {
-  background: #d7eed9;
+  .vehicle-table th,
+  .vehicle-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .vehicle-menu {
+    overflow-x: auto;
+  }
 }

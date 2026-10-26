@@ -2417,7 +2417,7 @@ function formatLastUpdate(timestamp, now) {
     new Date(value).toLocaleDateString("en-CA", { timeZone: BUCHAREST });
 
   if (dayOf(timestamp) === dayOf(now)) {
-    return time;
+    return `Today, ${time}`;
   }
 
   const date = new Date(timestamp).toLocaleDateString("en-GB", {
@@ -2457,43 +2457,372 @@ function formatAgo(timestamp, now) {
 }
 
 
+// ---------------- all-time "last seen" ----------------
+// Used by the "All vehicles" table. Two sources are merged (newest wins):
+//  1. this browser (localStorage), updated on every refresh
+//  2. data/lastseen.json, written by collector.js running on a server, so
+//     vehicles are also pinged when nobody has the website open
+// The table itself is built from data/vehicles.json: a vehicle removed
+// from that file disappears from the table.
+
+const LAST_SEEN_KEY = "ratTracker.lastSeen.v1";
+const LAST_SEEN_URL = "data/lastseen.json";
+const LAST_SEEN_REFRESH_MS = 60000;
+
+let lastSeenLocal = loadLastSeenLocal();
+let lastSeenServer = {};
+let lastSeenServerTime = 0;
+
+// Which table is shown: "active" | "all"
+let vehicleView = "active";
+
+// Vehicles passed to the last renderVehicleList() call (for tab switches)
+let lastListVehicles = [];
+
+
+function loadLastSeenLocal() {
+
+  try {
+
+    const stored = JSON.parse(
+      localStorage.getItem(LAST_SEEN_KEY) ?? "{}"
+    );
+
+    const result = {};
+
+    Object.entries(stored ?? {}).forEach(([key, entry]) => {
+
+      if (entry && Number.isFinite(entry.t)) {
+        result[key] = { t: entry.t, routeId: entry.routeId ?? null };
+      }
+    });
+
+    return result;
+
+  } catch (error) {
+
+    return {};
+  }
+}
+
+
+function saveLastSeenLocal() {
+
+  try {
+    localStorage.setItem(LAST_SEEN_KEY, JSON.stringify(lastSeenLocal));
+  } catch (error) {
+    // Storage unavailable: kept in memory only
+  }
+}
+
+
+// Called after every fetch with ALL vehicles of the feed
+function recordLastSeen(vehicles) {
+
+  const now = Date.now();
+
+  vehicles.forEach(vehicle => {
+
+    const parsed = Date.parse(vehicle.lastUpdated);
+    const key = vehicleKeyOf(vehicle);
+
+    lastSeenLocal[key] = {
+      routeId: vehicle.routeId ?? null,
+      t: Math.max(
+        lastSeenLocal[key]?.t ?? 0,
+        Number.isFinite(parsed) ? parsed : now
+      )
+    };
+  });
+
+  // Forget vehicles that were removed from vehicles.json
+  Object.keys(lastSeenLocal).forEach(key => {
+
+    const known = Object.keys(VEHICLES[OPERATOR] ?? {}).some(
+      label => `${OPERATOR}-${label}` === key
+    );
+
+    if (!known) {
+      delete lastSeenLocal[key];
+    }
+  });
+
+  saveLastSeenLocal();
+}
+
+
+async function refreshServerLastSeen(force = false) {
+
+  if (!force && Date.now() - lastSeenServerTime < LAST_SEEN_REFRESH_MS) {
+    return;
+  }
+
+  lastSeenServerTime = Date.now();
+
+  try {
+
+    const response = await fetch(
+      `${LAST_SEEN_URL}?_=${Date.now()}`,
+      { cache: "no-store" }
+    );
+
+    // No collector set up (yet): the browser's own record is used
+    if (!response.ok) {
+      return;
+    }
+
+    const data = await response.json();
+
+    lastSeenServer = data && typeof data === "object" ? data : {};
+
+    if (vehicleView === "all") {
+      renderVehicleList(lastListVehicles);
+    }
+
+  } catch (error) {
+
+    // Missing or invalid file: ignore
+  }
+}
+
+
+function getLastSeen(operator, label) {
+
+  const local = lastSeenLocal[`${operator}-${label}`];
+  const server = lastSeenServer?.[operator]?.[String(label)];
+
+  const t = Math.max(
+    Number.isFinite(local?.t) ? local.t : 0,
+    Number.isFinite(Number(server?.t)) ? Number(server.t) : 0
+  );
+
+  return {
+    t: t > 0 ? t : null,
+    routeId: local?.routeId ?? server?.routeId ?? null
+  };
+}
+
+
 // ---------------- rendering ----------------
 
-function vehicleListRow({ operator, label, routeId, model, t, key }, live, now) {
+function vehicleTypeIcon(type) {
 
-  const line = routeId === null || routeId === undefined
-    ? ""
-    : routeBadge(operator, routeId);
+  const tram = type === "tram";
 
-  const modelText =
-    model && model !== "Unknown" ? escapeHtml(model) : "";
+  return `<img class="vehicle-type-icon" src="${tram ? "markerTram.png" : "markerBus.png"}" alt="${tram ? "Tram" : "Bus"}" title="${tram ? "Tram" : "Bus"}">`;
+}
 
-  const details = [line, modelText].filter(Boolean).join(" ");
+
+function vehicleDestination(vehicle) {
+
+  const pattern = getPattern(vehicle);
+
+  return (
+    getStop(vehicle.operator, pattern?.toStopId)?.name ||
+    vehicle.headsign ||
+    ""
+  );
+}
+
+
+// dot: "live" (green) | "off" (gray) | null (no dot)
+function vehicleTableRow(row, dot, now) {
+
+  const route = row.routeId === null || row.routeId === undefined
+    ? '<span class="vehicle-muted">&ndash;</span>'
+    : `${routeBadge(row.operator, row.routeId)}${
+        row.destination
+          ? ` <span class="vehicle-destination">&rarr; ${escapeHtml(row.destination)}</span>`
+          : ""
+      }`;
+
+  const model = row.model && row.model !== "Unknown"
+    ? escapeHtml(row.model)
+    : '<span class="vehicle-muted">&ndash;</span>';
+
+  const seen = row.t
+    ? `<span class="vehicle-time">${escapeHtml(formatLastUpdate(row.t, now))}</span>
+       <span class="vehicle-ago">&middot; ${escapeHtml(formatAgo(row.t, now))}</span>`
+    : '<span class="vehicle-muted">Never seen</span>';
+
+  const dotHtml = dot
+    ? `<span class="seen-dot ${dot}" title="${dot === "live" ? "On the map now" : "Offline"}"></span>`
+    : "";
 
   return `
-    <div
-      class="vehicle-item ${live ? "active" : "inactive"}"
-      ${live && key
-        ? `data-vehicle-key="${escapeHtml(key)}" title="Show on the map"`
+    <tr
+      class="vehicle-row ${row.live ? "is-live" : "is-offline"}"
+      ${row.live && row.key
+        ? `data-vehicle-key="${escapeHtml(row.key)}" title="Show on the map"`
         : ""}
     >
-
-      <div class="vehicle-info">
-        <span class="vehicle-plate">${escapeHtml(label)}</span>
-        <span class="vehicle-line">${details}</span>
-      </div>
-
-      <div class="vehicle-status">
-        <div class="vehicle-status-label">Last update</div>
-        <div>
-          ${live ? '<span class="live-dot" title="On the map now"></span>' : ""}
-          <span class="vehicle-time">${escapeHtml(formatLastUpdate(t, now))}</span>
-          &middot; ${escapeHtml(formatAgo(t, now))}
-        </div>
-      </div>
-
-    </div>
+      <td class="col-vehicle">
+        ${vehicleTypeIcon(row.type)}
+        <span class="vehicle-plate">${escapeHtml(row.label)}</span>
+      </td>
+      <td class="col-model">${model}</td>
+      <td class="col-route">${route}</td>
+      <td class="col-seen">${dotHtml}${seen}</td>
+    </tr>
   `;
+}
+
+
+function vehicleTable(rowsHtml) {
+
+  return `
+    <table class="vehicle-table">
+      <thead>
+        <tr>
+          <th>Vehicle</th>
+          <th>Model</th>
+          <th>Route</th>
+          <th class="col-seen">Last seen</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+  `;
+}
+
+
+// "Active vehicles": on the map now (green dot) + seen in the last 24 h
+// but not on the map any more (gray dot). Follows the Route filter.
+function buildActiveTable(activeVehicles, now) {
+
+  const inFeed = new Set(allVehicles.map(vehicleKeyOf));
+
+  const live = [...activeVehicles]
+    .sort((a, b) => compareIndicatives(a.label, b.label))
+    .map(vehicle => {
+
+      const parsed = Date.parse(vehicle.lastUpdated);
+
+      return {
+        operator: vehicle.operator,
+        label: vehicle.label,
+        routeId: vehicle.routeId,
+        model: vehicle.model,
+        type: vehicle.vehicleType,
+        destination: vehicleDestination(vehicle),
+        key: vehicleKeyOf(vehicle),
+        t: Number.isFinite(parsed) ? parsed : now,
+        live: true
+      };
+    });
+
+  const offline = Object.entries(vehicleHistory)
+    .filter(([key, entry]) =>
+      !inFeed.has(key) &&
+      (
+        selectedRoute === "all" ||
+        String(entry.routeId) === String(selectedRoute)
+      )
+    )
+    .map(([, entry]) => entry)
+    .sort((a, b) => b.t - a.t)
+    .map(entry => {
+
+      const info = VEHICLES[entry.operator]?.[String(entry.label)];
+
+      return {
+        operator: entry.operator,
+        label: entry.label,
+        routeId: entry.routeId,
+        model: info?.model,
+        type: info?.type ?? "bus",
+        destination: "",
+        key: null,
+        t: entry.t,
+        live: false
+      };
+    });
+
+  const rows = [...live, ...offline];
+
+  const body = rows.length === 0
+    ? `<div class="vehicle-empty">${
+        selectedRoute === "all"
+          ? "No active vehicles right now."
+          : "No active vehicles on this route right now."
+      }</div>`
+    : vehicleTable(
+        rows.map(row =>
+          vehicleTableRow(row, row.live ? "live" : "off", now)
+        ).join("")
+      );
+
+  return { html: body, count: rows.length };
+}
+
+
+// "All vehicles": everything listed in vehicles.json, no dots. The last
+// seen time is the last time the vehicle was ever on the GPS map.
+function buildAllTable(now) {
+
+  const feed = new Map(
+    allVehicles.map(vehicle => [vehicleKeyOf(vehicle), vehicle])
+  );
+
+  const rows = Object.entries(VEHICLES[OPERATOR] ?? {})
+    .sort(([a], [b]) => compareIndicatives(a, b))
+    .map(([label, info]) => {
+
+      const key = `${OPERATOR}-${label}`;
+      const current = feed.get(key);
+      const seen = getLastSeen(OPERATOR, label);
+
+      const parsed = current ? Date.parse(current.lastUpdated) : NaN;
+
+      const t = current
+        ? Math.max(
+            seen.t ?? 0,
+            Number.isFinite(parsed) ? parsed : now
+          )
+        : seen.t;
+
+      return {
+        operator: OPERATOR,
+        label,
+        routeId: current ? current.routeId : seen.routeId,
+        model: info.model,
+        type: info.type,
+        destination: current ? vehicleDestination(current) : "",
+        key: current ? key : null,
+        t,
+        live: Boolean(current)
+      };
+    });
+
+  const body = rows.length === 0
+    ? '<div class="vehicle-empty">No vehicles are listed in vehicles.json.</div>'
+    : vehicleTable(rows.map(row => vehicleTableRow(row, null, now)).join(""));
+
+  return { html: body, count: rows.length };
+}
+
+
+function updateVehicleTabs(activeCount, allCount) {
+
+  const setCount = (id, value) => {
+
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.textContent = value;
+    }
+  };
+
+  setCount("tabCountActive", activeCount);
+  setCount("tabCountAll", allCount);
+
+  document.querySelectorAll(".vehicle-tab").forEach(tab => {
+
+    const selected = tab.dataset.view === vehicleView;
+
+    tab.classList.toggle("selected", selected);
+    tab.setAttribute("aria-selected", String(selected));
+  });
 }
 
 
@@ -2506,76 +2835,16 @@ function renderVehicleList(activeVehicles) {
     return;
   }
 
+  lastListVehicles = activeVehicles;
+
   const now = Date.now();
 
-  // Everything currently in the feed, whatever the route filter says
-  const inFeed = new Set(allVehicles.map(vehicleKeyOf));
+  const active = buildActiveTable(activeVehicles, now);
+  const all = buildAllTable(now);
 
-  const active = [...activeVehicles]
-    .sort((a, b) => compareIndicatives(a.label, b.label))
-    .map(vehicle => {
+  list.innerHTML = vehicleView === "all" ? all.html : active.html;
 
-      const parsed = Date.parse(vehicle.lastUpdated);
-
-      return vehicleListRow(
-        {
-          operator: vehicle.operator,
-          label: vehicle.label,
-          routeId: vehicle.routeId,
-          model: vehicle.model,
-          key: vehicleKeyOf(vehicle),
-          t: Number.isFinite(parsed) ? parsed : now
-        },
-        true,
-        now
-      );
-    });
-
-  const earlier = Object.entries(vehicleHistory)
-    .filter(([key, entry]) =>
-      !inFeed.has(key) &&
-      (
-        selectedRoute === "all" ||
-        String(entry.routeId) === String(selectedRoute)
-      )
-    )
-    .map(([, entry]) => entry)
-    .sort((a, b) => b.t - a.t)
-    .map(entry =>
-      vehicleListRow(
-        {
-          ...entry,
-          model: VEHICLES[entry.operator]?.[String(entry.label)]?.model
-        },
-        false,
-        now
-      )
-    );
-
-  const emptyText = selectedRoute === "all"
-    ? "No vehicles on the map right now."
-    : "No vehicles on this route right now.";
-
-  let html = `
-    <div class="vehicle-list-section">
-      <h4>On the map now (${active.length})</h4>
-      ${active.length > 0
-        ? active.join("")
-        : `<div class="vehicle-empty">${emptyText}</div>`}
-    </div>
-  `;
-
-  if (earlier.length > 0) {
-
-    html += `
-      <div class="vehicle-list-section">
-        <h4>Seen earlier, last 24 h (${earlier.length})</h4>
-        ${earlier.join("")}
-      </div>
-    `;
-  }
-
-  list.innerHTML = html;
+  updateVehicleTabs(active.count, all.count);
 }
 
 
@@ -2638,6 +2907,25 @@ function setupVehicleList() {
     if (item) {
       goToVehicle(item.dataset.vehicleKey);
     }
+  });
+
+  // Active / All vehicles buttons: same page, same place, one table at a time
+  document.querySelectorAll(".vehicle-tab").forEach(tab => {
+
+    tab.addEventListener("click", () => {
+
+      if (vehicleView === tab.dataset.view) {
+        return;
+      }
+
+      vehicleView = tab.dataset.view;
+
+      renderVehicleList(lastListVehicles);
+
+      if (vehicleView === "all") {
+        refreshServerLastSeen(true);
+      }
+    });
   });
 }
 
@@ -3179,6 +3467,9 @@ async function updateVehicles() {
 
 
     recordVehicleHistory(allVehicles);
+    recordLastSeen(allVehicles);
+
+    refreshServerLastSeen();
 
     updateRouteFilter();
 
