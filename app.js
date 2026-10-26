@@ -2732,6 +2732,18 @@ function buildActiveRows(activeVehicles, now) {
 }
 
 
+// Line the list follows: the Route filter, or else the line of the vehicle
+// whose popup is open on the map ("all" when neither is set)
+function listRoute() {
+
+  if (selectedRoute !== "all") {
+    return String(selectedRoute);
+  }
+
+  return focusedRoute ? String(focusedRoute) : "all";
+}
+
+
 // Vehicles seen in the last 24 h that are not in the feed right now.
 // Sources (newest time wins): this browser's history and data/lastseen.json
 // from collector.js.
@@ -2776,8 +2788,8 @@ function buildLastSeenRows(now) {
       !inFeed.has(key) &&
       now - entry.t <= VEHICLE_HISTORY_MS &&
       (
-        selectedRoute === "all" ||
-        String(entry.routeId) === String(selectedRoute)
+        listRoute() === "all" ||
+        String(entry.routeId) === listRoute()
       )
     )
     .map(([, entry]) => entry)
@@ -2817,7 +2829,7 @@ function renderVehicleList(activeVehicles) {
   const active = buildActiveRows(activeVehicles, now);
   const lastSeen = buildLastSeenRows(now);
 
-  const routeSuffix = selectedRoute === "all" ? "" : " on this route";
+  const routeSuffix = listRoute() === "all" ? "" : " on this route";
 
   const rowsHtml =
     sectionRow("Active vehicles", active.length) +
@@ -2925,12 +2937,9 @@ function displayVehicles() {
     vehicle => !mapRoute || String(vehicle.routeId) === mapRoute
   );
 
-  // The list under the map only follows the route filter
-  const listVehicles = allVehicles.filter(
-    vehicle =>
-      selectedRoute === "all" ||
-      String(vehicle.routeId) === String(selectedRoute)
-  );
+  // The list under the map follows the same line as the map: the route
+  // filter, or the line of the vehicle whose popup is open
+  const listVehicles = mapVehicles;
 
 
   renderingMarkers = true;
