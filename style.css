@@ -306,6 +306,7 @@ main {
 }
 
 .vehicle-ago {
+  display: block;
   color: #888;
   font-size: 13px;
 }

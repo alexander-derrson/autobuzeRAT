@@ -52,6 +52,11 @@ let drawnPatternKey = null;
 // while it is set, the map only shows the vehicles of that line.
 let focusedVehicleKey = null;
 let focusedRoute = null;
+
+// True while goToVehicle() opens a popup for a row clicked in the table:
+// that popup must not narrow the list/map to one line, so any other
+// vehicle can be picked next
+let openingFromList = false;
 let renderingMarkers = false;
 let transportDataPromise = null;
 
@@ -2150,6 +2155,11 @@ function focusVehicleLine(vehicleKey) {
     return;
   }
 
+  // Vehicle picked from the table: keep every vehicle listed
+  if (openingFromList) {
+    return;
+  }
+
   const vehicle = allVehicles.find(
     item => vehicleKeyOf(item) === vehicleKey
   );
@@ -2407,10 +2417,20 @@ function formatClockSeconds(timestamp) {
 }
 
 
-// "13:24:26" today, "19 Sep, 22:10" on another day
+function formatClockMinutes(timestamp) {
+
+  return new Date(timestamp).toLocaleTimeString("ro-RO", {
+    timeZone: BUCHAREST,
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+
+// "Today, 13:24" today, "19 Sep, 22:10" on another day
 function formatLastUpdate(timestamp, now) {
 
-  const time = formatClockSeconds(timestamp);
+  const time = formatClockMinutes(timestamp);
 
   const dayOf = value =>
     new Date(value).toLocaleDateString("en-CA", { timeZone: BUCHAREST });
@@ -2635,7 +2655,7 @@ function vehicleTableRow(row, dot, now) {
 
   const seen = row.t
     ? `<span class="vehicle-time">${escapeHtml(formatLastUpdate(row.t, now))}</span>
-       <span class="vehicle-ago">&middot; ${escapeHtml(formatAgo(row.t, now))}</span>`
+       <span class="vehicle-ago">${escapeHtml(formatAgo(row.t, now))}</span>`
     : '<span class="vehicle-muted">Never seen</span>';
 
   const dotHtml = dot
@@ -2746,7 +2766,7 @@ function listRoute() {
 
 // Vehicles seen in the last 24 h that are not in the feed right now.
 // Sources (newest time wins): this browser's history and data/lastseen.json
-// from collector.js.
+// from collector.js. Sorted by vehicle number, like "Active vehicles".
 function buildLastSeenRows(now) {
 
   const inFeed = new Set(allVehicles.map(vehicleKeyOf));
@@ -2793,7 +2813,7 @@ function buildLastSeenRows(now) {
       )
     )
     .map(([, entry]) => entry)
-    .sort((a, b) => b.t - a.t)
+    .sort((a, b) => compareIndicatives(a.label, b.label))
     .map(entry => {
 
       const info = VEHICLES[entry.operator]?.[String(entry.label)];
@@ -2883,8 +2903,15 @@ function goToVehicle(vehicleKey) {
     { animate: false }
   );
 
-  // Opens the popup (which also draws its route and focuses its line)
-  marker.openPopup();
+  // Opens the popup and draws its route. The line is not focused here, so
+  // the table keeps listing every vehicle.
+  openingFromList = true;
+
+  try {
+    marker.openPopup();
+  } finally {
+    openingFromList = false;
+  }
 }
 
 
