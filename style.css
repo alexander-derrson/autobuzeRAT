@@ -15,42 +15,86 @@ body {
   flex-direction: column;
 }
 
+/* ---------- Header (same look as the vehicle table) ---------- */
+
 header {
-  padding: 12px 16px;
-  background: #222;
-  color: white;
+  padding: 14px 16px;
+  background: #000;
+  border-bottom: 1px solid #1f1f1f;
+  color: #ddd;
 }
 
 header h1 {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
+  color: #fff;
   font-size: 22px;
 }
 
 .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
 .controls label {
   display: flex;
-  gap: 5px;
+  gap: 8px;
   align-items: center;
+  color: #bbb;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 select,
 button {
-  padding: 6px 10px;
+  padding: 7px 14px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0b0c10;
+  color: #ddd;
+  font-family: inherit;
   font-size: 14px;
+  font-weight: bold;
+  color-scheme: dark;
+}
+
+select:hover,
+button:hover {
+  background: #15171d;
+  color: #fff;
+}
+
+select:focus-visible,
+button:focus-visible,
+.stop-search input:focus-visible {
+  outline: none;
+  border-color: #1d4ed8;
+}
+
+select option {
+  background: #0b0c10;
+  color: #ddd;
 }
 
 button {
   cursor: pointer;
 }
 
+#refreshButton {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+
+#refreshButton:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
 #status {
-  margin-top: 8px;
+  margin-top: 10px;
+  color: #888;
   font-size: 13px;
 }
 
@@ -89,16 +133,24 @@ main {
 
 .stop-search {
   position: relative;
-  margin-top: 8px;
+  margin-top: 10px;
   max-width: 460px;
 }
 
 .stop-search input {
   width: 100%;
-  padding: 7px 10px;
+  padding: 8px 12px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0b0c10;
+  color: #eee;
+  font-family: inherit;
   font-size: 14px;
-  border: 1px solid #555;
-  border-radius: 5px;
+  color-scheme: dark;
+}
+
+.stop-search input::placeholder {
+  color: #777;
 }
 
 .stop-results {
@@ -115,10 +167,11 @@ main {
   max-height: 320px;
   overflow-y: auto;
 
-  background: white;
-  color: #222;
+  background: #000;
+  color: #ddd;
+  border: 1px solid #333;
   border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
 }
 
 .stop-results[hidden] {
@@ -131,7 +184,7 @@ main {
   gap: 4px;
 
   padding: 8px 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #1f1f1f;
   cursor: pointer;
 }
 
@@ -141,17 +194,18 @@ main {
 
 .stop-result:hover,
 .stop-result.active {
-  background: #eef4ff;
+  background: #15171d;
 }
 
 .stop-result-name {
+  color: #eee;
   font-weight: bold;
   font-size: 14px;
 }
 
 .stop-result-name small {
   font-weight: normal;
-  color: #777;
+  color: #888;
 }
 
 .stop-result-lines {
@@ -166,8 +220,8 @@ main {
 }
 
 .stop-result-empty {
-  padding: 10px;
-  color: #777;
+  padding: 12px;
+  color: #888;
   font-size: 13px;
 }
 
