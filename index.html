@@ -32,6 +32,10 @@
         Refresh
       </button>
 
+      <button id="timetableButton" type="button" onclick="window.location.href='orare.html'">
+        Orare
+      </button>
+
     </div>
 
     <div class="stop-search">
@@ -57,6 +61,15 @@
 
       <div class="vehicle-menu-header">
         <h3>Vehicles</h3>
+      </div>
+
+      <div class="vehicle-tabs" role="tablist">
+        <button type="button" class="vehicle-tab selected" data-view="active" role="tab" aria-selected="true">
+          Active vehicles <span class="vehicle-tab-count" id="tabCountActive"></span>
+        </button>
+        <button type="button" class="vehicle-tab" data-view="all" role="tab" aria-selected="false">
+          All vehicles <span class="vehicle-tab-count" id="tabCountAll"></span>
+        </button>
       </div>
 
       <div id="vehicleList">

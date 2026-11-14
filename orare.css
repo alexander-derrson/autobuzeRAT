@@ -1,0 +1,230 @@
+/* ============================================================
+   Orare (orare.html + linie.html)
+   Foloseste si style.css (header, butoane, taburi).
+   ============================================================ */
+
+.orare-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: #000;
+  color: #ddd;
+}
+
+.orare-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 16px 32px;
+}
+
+.orare-title {
+  margin: 0 0 16px;
+  color: #fff;
+  font-size: 20px;
+}
+
+.orare-note {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.orare-error {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #0b0c10;
+  border: 1px solid #1f1f1f;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* ---------- Lista de linii ---------- */
+
+.line-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.line-card {
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 84px;
+  padding: 14px 14px 14px 20px;
+
+  background: #0b0c10;
+  border: 1px solid #1f1f1f;
+  border-radius: 10px;
+
+  color: #ddd;
+  text-align: center;
+  text-decoration: none;
+}
+
+.line-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  background: var(--line-color, #666);
+}
+
+.line-card:hover,
+.line-card:focus-visible {
+  background: #14171d;
+  border-color: #333;
+  outline: none;
+}
+
+.line-card-title {
+  font-size: 22px;
+  color: #eee;
+}
+
+.line-card-sub {
+  font-size: 13px;
+  color: #aaa;
+}
+
+/* ---------- Pagina unei linii ---------- */
+
+.line-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.line-head h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 22px;
+}
+
+.line-badge {
+  display: inline-block;
+  min-width: 40px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+}
+
+.line-sub {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.day-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.orar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.orar-section {
+  overflow: hidden;
+  background: #000;
+  border: 1px solid #1f1f1f;
+  border-radius: 10px;
+}
+
+.orar-section-head {
+  padding: 12px 16px;
+  background: #0f1420;
+  border-bottom: 1px solid #1f1f1f;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.orar-section-head small {
+  display: block;
+  margin-top: 3px;
+  font-weight: normal;
+  color: #8a93a6;
+}
+
+.orar-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.orar-table th {
+  padding: 10px 16px;
+  background: #000;
+  border-bottom: 1px solid #1f1f1f;
+  color: #bbb;
+  font-size: 14px;
+  text-align: left;
+}
+
+.orar-table td {
+  padding: 8px 16px;
+  vertical-align: middle;
+}
+
+.orar-table tbody tr:nth-child(even) {
+  background: #0a0b0e;
+}
+
+.orar-table .orar-hour {
+  width: 70px;
+  font-weight: bold;
+  color: #eee;
+}
+
+.orar-min {
+  display: inline-block;
+  min-width: 32px;
+  margin: 2px 6px 2px 0;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: #15171d;
+  color: #ddd;
+  text-align: center;
+}
+
+.orar-empty {
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #888;
+}
+
+.orar-foot {
+  padding: 8px 16px 10px;
+  border-top: 1px solid #1f1f1f;
+  font-size: 12px;
+  color: #777;
+}
+
+@media (max-width: 700px) {
+
+  .orar-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .orar-table td,
+  .orar-table th {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
