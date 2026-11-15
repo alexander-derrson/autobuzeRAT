@@ -377,6 +377,13 @@ function buildSections(line) {
 
 function lineSubtitle(line) {
 
+  // Itinerarii trecute manual in orare.json -> info.itineraries (dupa id-ul liniei)
+  const override = MANUAL_INFO.itineraries?.[line.id];
+
+  if (override) {
+    return override;
+  }
+
   const manual = MANUAL[line.indicative];
 
   if (manual) {
