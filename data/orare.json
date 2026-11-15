@@ -23,7 +23,11 @@
     ]
    }
   },
-  "specialNote": "Perioadele speciale se editează aici: adaugă/modifică intervale în \"ranges\" ([\"AAAA-LL-ZZ\",\"AAAA-LL-ZZ\"]). O linie intră în program special prin câmpul \"special\"."
+  "specialNote": "Perioadele speciale se editează aici: adaugă/modifică intervale în \"ranges\" ([\"AAAA-LL-ZZ\",\"AAAA-LL-ZZ\"]). O linie intră în program special prin câmpul \"special\".",
+  "itineraries": {
+   "metro-carcea1": "S200 - Metro - Carcea",
+   "metro-carcea2": "S200 - FORD - Carcea"
+  }
  },
  "lines": {
   "1": {
@@ -233,7 +237,7 @@
      ]
     }
    },
-   "lineNote": "Linie circulară din octombrie 2026. Plecările din Fântâna Popova sunt strict orientative.",
+   "lineNote": "Linie circulară: Gară – … – Fântâna Popova (întoarcere) – … – Gară. Stația Bucura de după Fântâna Popova se elimină.",
    "itinerary": "Gară - Fântâna Popova - Gară (circulară)"
   },
   "10": {
@@ -616,7 +620,7 @@
      "vacation": {
       "first": [
        "06:00",
-       "06:30"
+       "06:00"
       ],
       "last": [
        "20:00",
@@ -662,7 +666,7 @@
       ],
       "times": [
        "06:00 07:00 08:00 09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00",
-       "06:30 07:30 08:30 09:30 10:30 11:30 12:30 13:30 14:30 15:30 16:30 17:30 18:30 19:30 20:30"
+       "06:00 07:00 08:00 09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 20:30"
       ]
      }
     },
@@ -670,7 +674,7 @@
      "normal": {
       "first": [
        "09:00",
-       "09:30"
+       "09:00"
       ],
       "last": [
        "20:00",
@@ -692,13 +696,13 @@
       ],
       "times": [
        "09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00",
-       "09:30 10:30 11:30 12:30 13:30 14:30 15:30 16:30 17:30 18:30 19:30 20:30"
+       "09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 20:30"
       ]
      },
      "vacation": {
       "first": [
        "09:00",
-       "09:30"
+       "09:00"
       ],
       "last": [
        "20:00",
@@ -720,7 +724,7 @@
       ],
       "times": [
        "09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00",
-       "09:30 10:30 11:30 12:30 13:30 14:30 15:30 16:30 17:30 18:30 19:30 20:30"
+       "09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 20:30"
       ]
      }
     },
@@ -820,7 +824,7 @@
        "07:00 08:00 09:00 10:00 11:00 12:00 12:30 13:00 13:30 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00",
        "06:30 07:00 07:30 08:00 08:30 09:30 10:30 11:30 12:30 13:30 14:30 15:30 16:30 17:30 18:30 19:30 20:30"
       ],
-      "note": ""
+      "note": "Frecvență de 30 min doar pentru plecările din Carpenului (06:30–08:00) și din Piața Centrală (12:00–14:00)."
      },
      "vacation": {
       "first": [
@@ -3190,7 +3194,7 @@
      ]
     }
    },
-   "itinerary": "Craiovița Nouă (Stația 20) - Parc - Gară - Craiovița Nouă (circulară)"
+   "itinerary": "Craiovița Nouă - Parc - Gară - Craiovița Nouă (circulară)"
   },
   "E1T": {
    "docName": "Traseul E1 TUR Autobuz",
