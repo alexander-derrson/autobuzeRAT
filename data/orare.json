@@ -25,8 +25,16 @@
   },
   "specialNote": "Perioadele speciale se editează aici: adaugă/modifică intervale în \"ranges\" ([\"AAAA-LL-ZZ\",\"AAAA-LL-ZZ\"]). O linie intră în program special prin câmpul \"special\".",
   "itineraries": {
-   "metro-carcea1": "S200 - Metro - Carcea",
-   "metro-carcea2": "S200 - FORD - Carcea"
+   "metro-carcea1": "S200 - METRO - Cârcea",
+   "metro-carcea2": "S200 - FORD - Cârcea",
+   "metro-breasta": "Teatrul Național - Breasta (Valea Lungului)",
+   "metro-simnic": "Gară - Șimnicu de Sus (Duțulești)",
+   "metro-ghercesti": "Gară - Ghercești (Cornet)",
+   "metro-magnolia": "S200 - Pielești (Magnolia)",
+   "metro-pielesti": "S200 - Pielești (Câmpeni)",
+   "metro-bucovat": "S200 - Bucovăț (Sărbătoarea)",
+   "metro-isalnita": "Gară - Ișalnița",
+   "metro-malumare": "S200 - Malu Mare"
   }
  },
  "lines": {
@@ -512,7 +520,7 @@
    "type": "bus",
    "ends": [
     "Gară",
-    "Simnic"
+    "Șimnicu de Jos"
    ],
    "schedules": {
     "weekday": {
@@ -1311,7 +1319,7 @@
    "type": "bus",
    "ends": [
     "Piața Centrală",
-    "Bucovat"
+    "Bucovăț"
    ],
    "schedules": {
     "weekday": {
@@ -3448,7 +3456,7 @@
          "17:05"
         ]
        ],
-       "text": "* Orele marcate cu asterisc (luni–vineri, 05:05–08:05 și 14:30–17:05): capătul de linie este FORD, nu Pod Electro. În aceste intervale toate tramvaiele circulă până la FORD, pe tur și pe retur."
+       "text": "* ❗ Cursele marcate cu * (asterisc) au capăt de linie la FORD pe tur și pleacă tot din capătul FORD pe retur."
       }
      },
      "vacation": {
@@ -3501,7 +3509,7 @@
          "17:05"
         ]
        ],
-       "text": "* Orele marcate cu asterisc (luni–vineri, 05:05–08:05 și 14:30–17:05): capătul de linie este FORD, nu Pod Electro. În aceste intervale toate tramvaiele circulă până la FORD, pe tur și pe retur."
+       "text": "* ❗ Cursele marcate cu * (asterisc) au capăt de linie la FORD pe tur și pleacă tot din capătul FORD pe retur."
       }
      }
     },
@@ -3610,7 +3618,7 @@
    "type": "tram",
    "ends": [
     "CLF",
-    "Ford Bucla"
+    "FORD"
    ],
    "schedules": {
     "weekday": {
@@ -3701,8 +3709,8 @@
    "docName": "Traseul 102 Tramvai",
    "type": "tram",
    "ends": [
-    "Termo Bucla",
-    "Ford Bucla"
+    "Termo Ișalnița",
+    "FORD"
    ],
    "schedules": {
     "weekday": {
