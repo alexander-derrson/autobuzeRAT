@@ -228,3 +228,12 @@
     font-size: 13px;
   }
 }
+
+.orar-bands {
+  margin-top: 16px;
+  max-width: 520px;
+}
+
+[hidden] {
+  display: none !important;
+}

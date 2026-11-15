@@ -2,11 +2,11 @@
 // orare.js - pagina "Orare" (orare.html) si orarul unei linii (linie.html)
 // ============================================================
 //
-//  - liniile metropolitane (data/extra.json): orele de plecare din
-//    "schedule" (luni-vineri / sambata / duminica)
-//  - celelalte linii (API): orele PROGRAMATE (scheduledArrival) ale
-//    capetelor de linie, luate din  .../stops/{id}/times .
-//    Intarzierile / "realtime" / vehiculele de pe harta NU sunt folosite.
+//  - liniile urbane (tramvai + autobuz): orarul din data/orare.json,
+//    trecut manual / calculat din documentul de program (PDF)
+//  - liniile metropolitane: orele de plecare din "schedule" (data/extra.json)
+//  - API-ul este folosit doar pentru lista de linii (nume, culori),
+//    NU pentru ore.
 
 const OPERATOR = "RAT Craiova";
 
@@ -19,12 +19,15 @@ const STOPS_URL = `${API_BASE}/stops`;
 const DAY_TYPES = [
   { key: "weekday", label: "Luni – Vineri" },
   { key: "saturday", label: "Sâmbătă" },
-  { key: "sunday", label: "Duminică și sărbători" }
+  { key: "sunday", label: "Duminică" },
+  { key: "holiday", label: "Sărbători" }
 ];
 
 let LINES = [];          // toate liniile
 let STOP_NAMES = {};     // stopId -> nume
 let HOLIDAYS = [];       // din extra.json
+let MANUAL = {};         // din orare.json (cheie = indicativ)
+let MANUAL_INFO = {};    // din orare.json ("info": perioade speciale etc.)
 
 
 // ------------------------------------------------------------
@@ -117,11 +120,11 @@ function bucharestParts(ms) {
 }
 
 
-// weekday / saturday / sunday (sarbatorile conteaza ca duminica)
+// weekday / saturday / sunday / holiday
 function dayTypeOf(date, weekday) {
 
   if (HOLIDAYS.includes(date)) {
-    return "sunday";
+    return "holiday";
   }
 
   if (weekday === "Sat") {
@@ -171,7 +174,7 @@ async function getJson(url) {
 
 async function loadData() {
 
-  const [apiRoutes, apiStops, localRoutes, extra] = await Promise.all([
+  const [apiRoutes, apiStops, localRoutes, extra, manual] = await Promise.all([
     getJson(ROUTES_URL).catch(error => {
       console.warn("Nu s-au putut încărca liniile din API:", error);
       return null;
@@ -181,8 +184,15 @@ async function loadData() {
       return null;
     }),
     getJson("data/routes.json").catch(() => ({})),
-    getJson("data/extra.json").catch(() => null)
+    getJson("data/extra.json").catch(() => null),
+    getJson("data/orare.json").catch(error => {
+      console.warn("Nu s-a putut încărca data/orare.json:", error);
+      return null;
+    })
   ]);
+
+  MANUAL = manual?.lines ?? {};
+  MANUAL_INFO = manual?.info ?? {};
 
   const indicatives = localRoutes?.[OPERATOR] ?? {};
 
@@ -343,7 +353,8 @@ function buildSections(line) {
         headsign: pattern.headsign,
         indices: new Set(),
         schedules: [],
-        times: null,      // API: Map(zi -> {date, minutes[]})
+        byDate: new Map(), // API: data -> Set(minute din zi)
+        times: new Map(),  // API: tip de zi -> {date, minutes[]}
         error: false
       };
 
@@ -363,6 +374,14 @@ function buildSections(line) {
 
 
 function lineSubtitle(line) {
+
+  const manual = MANUAL[line.indicative];
+
+  if (manual) {
+    return manual.ends.length === 1
+      ? `${manual.ends[0]} (circulară)`
+      : manual.ends.join(" - ");
+  }
 
   const sections = buildSections(line);
 
@@ -419,130 +438,77 @@ function renderList() {
 // Pagina 2: orarul unei linii
 // ------------------------------------------------------------
 
-// Din raspunsul .../stops/{id}/times pastreaza doar plecarile
-// PROGRAMATE ale liniei, pe zile.
-function applyApiTimes(data, line, stopId, sections) {
+const MANUAL_DAYS = [
+  { key: "weekday", label: "Luni – Vineri" },
+  { key: "weekend", label: "Sâmbătă – Duminică" },
+  { key: "holiday", label: "Sărbători" }
+];
 
-  const mine = sections.filter(
-    section => String(section.fromId) === String(stopId)
-  );
+const PROGRAMS = [
+  { key: "normal", label: "Program normal" },
+  { key: "vacation", label: "Program vacanță" }
+];
 
-  const buckets = new Map(mine.map(section => [section, new Map()]));
 
-  (Array.isArray(data) ? data : []).forEach(group => {
+// Pastele ortodox (calendar iulian + 13 zile), pentru 1900-2099
+function orthodoxEaster(year) {
 
-    if (String(group.route?.routeId) !== line.id) {
-      return;
-    }
+  const a = year % 4;
+  const b = year % 7;
+  const c = year % 19;
+  const d = (19 * c + 15) % 30;
+  const e = (2 * a + 4 * b - d + 34) % 7;
+  const month = Math.floor((d + e + 114) / 31);
+  const day = ((d + e + 114) % 31) + 1;
 
-    const index = String(group.route?.index);
-    const groupTo = group.route?.toStopId;
-
-    // 1. dupa indexul traseului, 2. dupa destinatie
-    let section = mine.find(item => item.indices.has(index));
-
-    if (!section && groupTo !== undefined && groupTo !== null) {
-      section = mine.find(item => String(item.toId) === String(groupTo));
-    }
-
-    // Sosiri la acest capat (nu plecari): nu intra in orar
-    if (!section && String(groupTo) === String(stopId)) {
-      return;
-    }
-
-    // Un singur sens care pleaca de aici: restul grupurilor ii apartin
-    if (!section && mine.length === 1) {
-      section = mine[0];
-    }
-
-    if (!section) {
-      return;
-    }
-
-    const byDate = buckets.get(section);
-
-    (group.times ?? []).forEach(time => {
-
-      // Doar ora programata, fara intarziere
-      const ms = Date.parse(time.scheduledDeparture ?? time.scheduledArrival);
-
-      if (Number.isNaN(ms)) {
-        return;
-      }
-
-      const parts = bucharestParts(ms);
-
-      if (!byDate.has(parts.date)) {
-
-        byDate.set(parts.date, {
-          type: dayTypeOf(parts.date, parts.weekday),
-          minutes: new Set()
-        });
-      }
-
-      byDate.get(parts.date).minutes.add(parts.minutes);
-    });
-  });
-
-  mine.forEach(section => {
-
-    const byType = new Map();
-
-    // Pentru fiecare tip de zi se alege data cu cele mai multe plecari
-    buckets.get(section).forEach((entry, date) => {
-
-      const best = byType.get(entry.type);
-
-      if (!best || entry.minutes.size > best.minutes.length) {
-
-        byType.set(entry.type, {
-          date,
-          minutes: [...entry.minutes].sort((a, b) => a - b)
-        });
-      }
-    });
-
-    section.times = byType;
-    section.error = false;
-
-    console.log(
-      `Linia ${line.indicative}, plecări din ${stopName(stopId)}:`,
-      Object.fromEntries(
-        [...byType].map(([type, value]) => [type, `${value.date}: ${value.minutes.length}`])
-      )
-    );
-  });
+  return Date.UTC(year, month - 1, day + 13);
 }
 
 
-function minutesFor(section, dayType) {
+// weekday / weekend / holiday (programul special: 1 ian, 25 dec, Pastele
+// ortodox - duminica si luni; celelalte sarbatori legale = ca weekendul)
+function manualDayType(date, weekday) {
 
-  // Linii metropolitane: din schedule
-  if (section.schedules.length > 0) {
+  const [year, month, day] = date.split("-").map(Number);
 
-    const all = new Set();
-
-    section.schedules.forEach(schedule => {
-
-      (schedule[dayType] ?? schedule.daily ?? []).forEach(text => {
-
-        const value = parseClock(text);
-
-        if (value !== null) {
-          all.add(value);
-        }
-      });
-    });
-
-    return { minutes: [...all].sort((a, b) => a - b), date: null };
+  if ((month === 1 && day === 1) || (month === 12 && day === 25)) {
+    return "holiday";
   }
 
-  // Linii din API
-  const entry = section.times?.get(dayType);
+  const today = Date.UTC(year, month - 1, day);
+  const easter = orthodoxEaster(year);
 
-  return entry
-    ? { minutes: entry.minutes, date: entry.date }
-    : { minutes: [], date: null };
+  if (today === easter || today === easter + 86400000) {
+    return "holiday";
+  }
+
+  if (weekday === "Sat" || weekday === "Sun" || HOLIDAYS.includes(date)) {
+    return "weekend";
+  }
+
+  return "weekday";
+}
+
+
+// normal: 6 ian - 15 iun, 11 sep - 20 dec
+// vacanta: 16 iun - 10 sep, 21 dec - 5 ian
+function programOf(date) {
+
+  const [, month, day] = date.split("-").map(Number);
+  const md = month * 100 + day;
+
+  return (md >= 616 && md <= 910) || md >= 1221 || md <= 105
+    ? "vacation"
+    : "normal";
+}
+
+
+function parseTimes(text) {
+
+  return String(text ?? "")
+    .split(/\s+/)
+    .map(parseClock)
+    .filter(value => value !== null);
 }
 
 
@@ -581,48 +547,293 @@ function timetableTable(minutes) {
 }
 
 
-function renderSections(line, sections, dayType) {
+function sectionHtml(title, destination, minutes, footExtra) {
 
-  const grid = document.getElementById("orarGrid");
+  const body = minutes.length > 0
+    ? timetableTable(minutes)
+    : '<div class="orar-empty">Nicio plecare în acest tip de zi.</div>';
 
-  grid.innerHTML = sections.map(section => {
+  const foot = minutes.length > 0
+    ? `<div class="orar-foot">${minutes.length} plecări${footExtra ? ` · ${escapeHtml(footExtra)}` : ""}</div>`
+    : "";
 
-    const { minutes, date } = minutesFor(section, dayType);
-
-    const title = `Plecări din ${stopName(section.fromId)}`;
-
-    const destination =
-      section.headsign || stopName(section.toId);
-
-    let body;
-
-    if (section.error) {
-      body = '<div class="orar-empty">Orarul nu a putut fi încărcat.</div>';
-    } else if (minutes.length === 0) {
-      body = '<div class="orar-empty">Nicio plecare în acest tip de zi.</div>';
-    } else {
-      body = timetableTable(minutes);
-    }
-
-    const foot = minutes.length > 0
-      ? `<div class="orar-foot">${minutes.length} plecări${date ? ` · orar din ${formatDate(date)}` : ""}</div>`
-      : "";
-
-    return `
-      <section class="orar-section">
-        <div class="orar-section-head">
-          ${escapeHtml(title)}
-          <small>spre ${escapeHtml(destination)}</small>
-        </div>
-        ${body}
-        ${foot}
-      </section>
-    `;
-  }).join("");
+  return `
+    <section class="orar-section">
+      <div class="orar-section-head">
+        ${escapeHtml(title)}
+        <small>${escapeHtml(destination)}</small>
+      </div>
+      ${body}
+      ${foot}
+    </section>
+  `;
 }
 
 
-async function renderLine(apiOk) {
+function lineHeader(line, subtitle) {
+
+  const background = line.color ? `#${line.color}` : "#666666";
+  const foreground = line.textColor
+    ? `#${line.textColor}`
+    : readableTextColor(line.color);
+
+  return `
+    <div class="line-head">
+      <span class="line-badge" style="background:${background}; color:${foreground};">
+        ${escapeHtml(line.indicative)}
+      </span>
+      <h2>Linia ${escapeHtml(line.indicative)}</h2>
+      ${subtitle ? `<span class="line-sub">${escapeHtml(subtitle)}</span>` : ""}
+    </div>
+  `;
+}
+
+
+function tabsHtml(id, items, selected, attribute) {
+
+  return `
+    <div class="vehicle-tabs day-tabs" id="${id}" role="tablist">
+      ${items.map(item => `
+        <button type="button"
+                class="vehicle-tab${item.key === selected ? " selected" : ""}"
+                ${attribute}="${item.key}" role="tab"
+                aria-selected="${item.key === selected}">
+          ${item.label}
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+
+function bindTabs(id, attribute, onSelect) {
+
+  document.getElementById(id).addEventListener("click", event => {
+
+    const tab = event.target.closest(".vehicle-tab");
+
+    if (!tab) {
+      return;
+    }
+
+    document.querySelectorAll(`#${id} .vehicle-tab`).forEach(item => {
+      const selected = item === tab;
+      item.classList.toggle("selected", selected);
+      item.setAttribute("aria-selected", String(selected));
+    });
+
+    onSelect(tab.getAttribute(attribute));
+  });
+}
+
+
+// Perioada speciala (ex. Targul de Craciun) in care se afla data data
+function specialPeriodFor(date, periodKey) {
+
+  const period = MANUAL_INFO.specialPeriods?.[periodKey];
+
+  if (!period) {
+    return null;
+  }
+
+  const active = (period.ranges ?? []).some(
+    ([from, to]) => date >= from && date <= to
+  );
+
+  return { ...period, active };
+}
+
+
+// ---- Linii urbane: data/orare.json
+function renderManual(line, def) {
+
+  const content = document.getElementById("content");
+  const now = bucharestParts(Date.now());
+
+  const special = def.special ? specialPeriodFor(now.date, def.special.period) : null;
+
+  const days = [...MANUAL_DAYS];
+
+  if (special) {
+    days.push({ key: "special", label: special.label ?? "Program special" });
+  }
+
+  let day = special?.active ? "special" : manualDayType(now.date, now.weekday);
+  let program = programOf(now.date);
+
+  content.innerHTML = `
+    ${lineHeader(line, lineSubtitle(line))}
+    ${def.lineNote ? `<p class="orare-note" style="margin:0 0 12px;">${escapeHtml(def.lineNote)}</p>` : ""}
+    ${tabsHtml("dayTabs", days, day, "data-day")}
+    <div id="programWrap">
+      ${tabsHtml("programTabs", PROGRAMS, program, "data-program")}
+    </div>
+    <div class="orar-grid" id="orarGrid"></div>
+    <div id="orarInfo"></div>
+    <p class="orare-note" id="orarNote"></p>
+  `;
+
+  function draw() {
+
+    document.getElementById("programWrap").hidden =
+      day === "holiday" || day === "special";
+
+    const schedule = day === "special"
+      ? def.special
+      : day === "holiday"
+        ? def.schedules?.holiday
+        : def.schedules?.[day]?.[program];
+
+    const grid = document.getElementById("orarGrid");
+    const info = document.getElementById("orarInfo");
+    const note = document.getElementById("orarNote");
+
+    const holidayText =
+      "Program valabil în zilele de 1 ianuarie, 25 decembrie și la Paștele " +
+      "ortodox (duminică și luni). La celelalte sărbători legale se folosește " +
+      "programul de sâmbătă sau duminică.";
+
+    const notes = [];
+
+    if (day === "holiday") {
+      notes.push(holidayText);
+    }
+
+    if (day === "special" && special) {
+
+      const ranges = (special.ranges ?? [])
+        .map(([from, to]) => `${formatDate(from)} – ${formatDate(to)}`)
+        .join(", ");
+
+      notes.push(
+        `Valabil în perioada ${ranges}` +
+        `${special.active ? "" : " (în prezent în afara perioadei)"}.`
+      );
+    }
+
+    if (schedule?.note) {
+      notes.push(schedule.note);
+    }
+
+    note.textContent = notes.join(" ");
+
+    if (!schedule || schedule.service === false) {
+
+      grid.innerHTML =
+        `<div class="orare-error">Nu circulă în acest tip de zi.${def.note ? ` ${escapeHtml(def.note)}` : ""}</div>`;
+      info.innerHTML = "";
+      return;
+    }
+
+    const ends = schedule.ends ?? def.ends;
+
+    grid.innerHTML = ends.map((end, index) => sectionHtml(
+      `Plecări din ${end}`,
+      ends.length === 2 ? `spre ${ends[1 - index]}` : "linie circulară",
+      parseTimes(schedule.times?.[index]),
+      schedule.explicit ? "orar din documentul de program" : "orar calculat din intervale"
+    )).join("");
+
+    info.innerHTML = schedule.bands
+      ? `
+        <div class="orar-section orar-bands">
+          <div class="orar-section-head">Intervale de succedare</div>
+          <table class="orar-table">
+            <thead><tr><th>Interval orar</th><th>Succedare</th><th>Vehicule</th></tr></thead>
+            <tbody>
+              ${schedule.bands.map(band => `
+                <tr>
+                  <td>${escapeHtml(band.from)} – ${escapeHtml(band.to)}</td>
+                  <td>${band.interval ? `${band.interval} min` : "fără curse"}</td>
+                  <td>${band.vehicles ?? "–"}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `
+      : "";
+  }
+
+  bindTabs("dayTabs", "data-day", value => { day = value; draw(); });
+  bindTabs("programTabs", "data-program", value => { program = value; draw(); });
+
+  draw();
+  setStatus(`Linia ${line.indicative}`);
+}
+
+
+// ---- Linii metropolitane: data/extra.json
+function renderExtra(line) {
+
+  const content = document.getElementById("content");
+  const sections = buildSections(line);
+  const now = bucharestParts(Date.now());
+
+  const types = [
+    { key: "weekday", label: "Luni – Vineri" },
+    { key: "saturday", label: "Sâmbătă" },
+    { key: "sunday", label: "Duminică" },
+    { key: "holiday", label: "Sărbători" }
+  ];
+
+  let day = HOLIDAYS.includes(now.date)
+    ? "holiday"
+    : now.weekday === "Sat" ? "saturday"
+    : now.weekday === "Sun" ? "sunday"
+    : "weekday";
+
+  content.innerHTML = `
+    ${lineHeader(line, lineSubtitle(line))}
+    ${tabsHtml("dayTabs", types, day, "data-day")}
+    <div class="orar-grid" id="orarGrid"></div>
+  `;
+
+  function minutesFor(section) {
+
+    const all = new Set();
+
+    section.schedules.forEach(schedule => {
+
+      const list =
+        schedule[day] ??
+        (day === "holiday" ? schedule.sunday : undefined) ??
+        schedule.daily ??
+        [];
+
+      list.forEach(text => {
+
+        const value = parseClock(text);
+
+        if (value !== null) {
+          all.add(value);
+        }
+      });
+    });
+
+    return [...all].sort((a, b) => a - b);
+  }
+
+  function draw() {
+
+    document.getElementById("orarGrid").innerHTML = sections.map(section =>
+      sectionHtml(
+        `Plecări din ${stopName(section.fromId)}`,
+        `spre ${section.headsign || stopName(section.toId)}`,
+        minutesFor(section),
+        ""
+      )
+    ).join("");
+  }
+
+  bindTabs("dayTabs", "data-day", value => { day = value; draw(); });
+
+  draw();
+  setStatus(`Linia ${line.indicative}`);
+}
+
+
+function renderLine() {
 
   const content = document.getElementById("content");
   const id = new URLSearchParams(location.search).get("id");
@@ -641,115 +852,21 @@ async function renderLine(apiOk) {
 
   document.title = `Linia ${line.indicative} - Orar - RAT Craiova Tracker`;
 
-  const background = line.color ? `#${line.color}` : "#666666";
-  const foreground = line.textColor
-    ? `#${line.textColor}`
-    : readableTextColor(line.color);
+  const manual = MANUAL[line.indicative];
 
-  const sections = buildSections(line);
-  const subtitle = lineSubtitle(line);
+  if (manual) {
+    renderManual(line, manual);
+  } else if (line.extra) {
+    renderExtra(line);
+  } else {
 
-  // Ziua selectata implicit: cea de azi
-  const now = bucharestParts(Date.now());
-  let dayType = dayTypeOf(now.date, now.weekday);
+    content.innerHTML = `
+      ${lineHeader(line, lineSubtitle(line))}
+      <div class="orare-error">Orarul acestei linii nu este disponibil încă.</div>
+    `;
 
-  content.innerHTML = `
-    <div class="line-head">
-      <span class="line-badge" style="background:${background}; color:${foreground};">
-        ${escapeHtml(line.indicative)}
-      </span>
-      <h2>Linia ${escapeHtml(line.indicative)}</h2>
-      ${subtitle ? `<span class="line-sub">${escapeHtml(subtitle)}</span>` : ""}
-    </div>
-
-    <div class="vehicle-tabs day-tabs" id="dayTabs" role="tablist">
-      ${DAY_TYPES.map(day => `
-        <button type="button"
-                class="vehicle-tab${day.key === dayType ? " selected" : ""}"
-                data-day="${day.key}" role="tab"
-                aria-selected="${day.key === dayType}">
-          ${day.label}
-        </button>
-      `).join("")}
-    </div>
-
-    <div class="orar-grid" id="orarGrid">
-      <div class="orar-empty">Se încarcă orarul...</div>
-    </div>
-
-    <p class="orare-note">
-      Orele afișate sunt cele programate (orarul oficial), fără întârzieri
-      sau poziția vehiculelor din timp real.
-    </p>
-  `;
-
-  document.getElementById("dayTabs").addEventListener("click", event => {
-
-    const tab = event.target.closest(".vehicle-tab");
-
-    if (!tab) {
-      return;
-    }
-
-    dayType = tab.dataset.day;
-
-    document.querySelectorAll("#dayTabs .vehicle-tab").forEach(item => {
-      const selected = item === tab;
-      item.classList.toggle("selected", selected);
-      item.setAttribute("aria-selected", String(selected));
-    });
-
-    renderSections(line, sections, dayType);
-  });
-
-  if (sections.length === 0) {
-
-    document.getElementById("orarGrid").innerHTML =
-      '<div class="orare-error">Nu există date de orar pentru această linie.</div>';
-
-    setStatus("");
-    return;
-  }
-
-  // Linii metropolitane: orarul e deja in extra.json
-  if (line.extra) {
-
-    renderSections(line, sections, dayType);
     setStatus(`Linia ${line.indicative}`);
-    return;
   }
-
-  if (!apiOk) {
-
-    sections.forEach(section => { section.error = true; });
-    renderSections(line, sections, dayType);
-    setStatus("API-ul nu a răspuns");
-    return;
-  }
-
-  // Linii din API: orele programate din capete
-  const terminals = [...new Set(sections.map(section => String(section.fromId)))];
-
-  await Promise.all(terminals.map(async stopId => {
-
-    try {
-
-      const data = await getJson(`${STOPS_URL}/${stopId}/times`);
-
-      applyApiTimes(data, line, stopId, sections);
-
-    } catch (error) {
-
-      console.warn(`Nu s-a putut încărca orarul stației ${stopId}:`, error);
-
-      sections
-        .filter(section => String(section.fromId) === stopId)
-        .forEach(section => { section.error = true; });
-    }
-  }));
-
-  renderSections(line, sections, dayType);
-  setStatus(`Linia ${line.indicative}`);
 }
 
 
@@ -771,7 +888,7 @@ async function start() {
 
     if (document.body.dataset.page === "line") {
 
-      await renderLine(apiOk);
+      renderLine();
 
     } else {
 
