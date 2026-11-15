@@ -869,9 +869,9 @@
           "duration": 30,
           "geometry": "ofomGcrgpCm@bHWf@g@bCgAzF]~BQtCMbCMdAGXC?GBGDKPETANH`@TPL@B?DHLp@?fAOtEKnEXlEB~@@xAEhB?@GvAA~ALbEHdADjAObBBxAFvCJpB@d@E~@i@nD}ApJm@tC[|Am@zBiBfG}AfFMd@wE|OuDrOs@rCwHtZ_AvDy@|C[`B_BlFuC`KiBdG_AhDm@jBOf@oD`MsDdMo@rCyF~QcKl]wKh_@yBvHT?DAmHzSaC|JQbB_QrwDRxGb@~C`GjYbCtIJnAI~Cu@|EaBhEmF~D_CnEYfBWxDAbF_LdA}BhBUjC{Nzy@eC|XmJp`@SdBDbBz@`D|@lB",
           "schedule": {
-            "weekday": ["05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30"],
-            "saturday": ["05:30", "06:30", "08:30", "11:30", "14:30", "16:30", "19:30"],
-            "sunday": ["05:30", "06:30", "08:30", "11:30", "14:30", "16:30", "19:30"]
+            "weekday": ["06:00", "07:00", "08:30", "10:00", "11:30", "13:00", "14:30", "16:00", "17:30", "19:30"],
+            "saturday": ["07:00", "09:00", "12:00"],
+            "sunday": ["07:00", "09:00", "12:00"]
           }
         },
         {
@@ -881,9 +881,9 @@
           "duration": 30,
           "geometry": "qhumGowloCgA{B{@_DEeBTcBhJi`@bCyXvNoy@RmC|BeBfLeADcFXwDZgB`CoErF}DbBiEr@}EHaDKoAeCuIgGmYc@_DSyGfP_xDReB~B}JhH}SO?xBwHvKi_@nKi^lFcQn@sCNg@fI}XXeA@Cl@kB~@iDhBeG`F_Qn@qCbBwGzAkG`DeMdEyP~BmJjFoQ~B}HbBcGhAsFbA{FfAeI@q@QyDEyBAcAJiABw@G{@OiCCsA?A@oB?i@De@BoDAkAYqEA_AXkIFq@DqAEgABEDQ?QAS?OPgB\\_FNsAtAoHn@wD@g@P{@BS",
           "schedule": {
-            "weekday": ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"],
-            "saturday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"],
-            "sunday": ["06:00", "07:00", "09:00", "12:00", "15:00", "17:00", "20:00"]
+            "weekday": ["06:30", "07:30", "09:15", "10:45", "12:15", "13:45", "15:30", "16:45", "18:15", "19:45"],
+            "saturday": ["08:30", "11:30", "14:30"],
+            "sunday": ["08:30", "11:30", "14:30"]
           }
         }
       ]
@@ -902,9 +902,9 @@
           "duration": 45,
           "geometry": "qwnmGgaipCkHvMqCpXzBJfJ~AzHu@Tt@Mz@FV|CnEN`Bd@?vGvAjFhBvB`CnChBzBhCzAHxEORJ|D~NDz@[dAu^fWgAB[x@B^`@`@Fd@rCf\\LpCtOzmB~j@tr@pAlAnEtCxSzPdAxBdMf_@^pBfAxCXhB@tGy@tCmC~CEKi@x@oBd@w@f@i@x@eA?MR[?oBtBuAx@w@Ri@x@?f@aIxH?lAMf@Ld@MR?f@eA`B[?y@x@[?w@f@qEjFoBPMReARMRy@?i@d@i@?MRsARMRi@?[d@i@Rw@lAaBnAw@lAM?iDjFi@rBeAtB?ReAlAw@`BM?aBtBaBz@i@x@y@f@[lA?f@i@`B?d@oBxHLbBLP@dE[lA?|FLR?|CLRL|CZx@?z@ZlA?f@h@tBh@lA?f@Zf@ZlAMRLtBfHtJLtBLRLlArAhCZnAv@`BtH`Zv@bB?Ph@f@Nz@v@lAZlAh@z@h@hCZf@?d@h@tBZf@?z@Zd@?nALRLhCXlAHhCXlA?f@d@`BX|CXx@Az@f@`BJ`BLRAz@LREjFXlAAnAXlAJtBLRAlAXnAAx@XnAAlAXlAAtBXnAChCXlACjFMRCtBMRLRChC]x@?f@JRA|COd@LRKjOHhRMRLR@`BLR@tBKP?tBg@z@u@hC?d@g@bB@d@[nAYd@MnAYd@?z@[d@KbBg@lA?f@aAbEJvULR?x@j@nA@d@x@|C@f@Zx@@lA\\nANtBLR@lAZlANtBNR?`B\\z@NhCLP@z@\\x@?z@j@`BvAtBZlAvAtBj@bBNtBZlA@lALR?`BLR@hCLR?hCfE|N\\R?lALR?|CNR?`BLR?xPMR?hCLRMxd@",
           "schedule": {
-            "weekday": ["05:00", "06:00", "07:35", "11:00", "15:00", "16:30", "19:00"],
-            "saturday": ["05:00", "06:00", "11:00", "14:30", "19:00"],
-            "sunday": ["05:00", "06:00", "11:00", "14:30", "19:00"]
+            "weekday": ["05:30", "06:55", "11:45", "17:00", "19:45"],
+            "saturday": ["06:45", "12:45", "19:45"]
+            "sunday": ["06:45", "12:45", "19:45"]
           }
         },
         {
@@ -914,9 +914,9 @@
           "duration": 45,
           "geometry": "cakmGafhoCJyd@MS@iCLS@yPMS?aBMS?}CMS?mA[SeE}N?iCMS?iCMS?aBMS?mA[mAOuBk@cBwAuB]mAuAuBk@aBA{@[y@A{@MQOiC]{@AaBMSOuB]mA?mAOSOuB[oAAmA]y@?g@{@}C?e@k@oA?y@OSIwU`AcE?g@f@mAJcBZe@A{@Ze@JoAZe@XoA?e@f@cB?e@t@iCf@{@AuBLQAuBMSAaBMSLSIkSJgNMSLg@B}CKQ?g@\\{@BgCMSLSBuBLSDkFYmABiCYmA@uBYoA@mAYoA@y@YmA@oAMSKuBYmA@mAYoADkFKQ?{@KSKaBg@aB@{@Yy@W}Cg@aB?g@YmAIiCYmAKiCMS?mA[g@?y@[g@i@uB?g@]e@i@iCi@{@[mAw@mAM{@i@e@?Sw@aBuHaZw@aB[oAsAgCMoAMSMuBgHsJMwBLQ[oA[e@?g@i@mAi@uB?g@[mA?{@[y@M}CMS?}CMQ?_GZmA?cEMSOaBnByH?g@h@aB?g@ZmAv@g@h@y@`By@`BuBL?Lg@rAuBZS?QdAuBh@uBfDkFL?v@mA`BmAv@mAh@SZg@h@?LSrAQLSh@?h@g@v@?LQdASLSnBSpEiFv@g@Z?v@y@Z?dAaB?g@LSMg@Le@?mA`IyH?g@h@y@v@SrA{@nBsBZ?LSdA?h@y@v@g@nBg@dAaBZSHH`AeA~@wBVaB@eFQkBoAqD_@qBaLq\\_B{DgAqA_R{N_GaEgk@sr@kNmdB_AkN{AoO}@{Lb@iA`a@gYgFyRFYK_@UGc@^eE`@cBQa@i@WsBc@uAsDaHqFcDgBcCcC{BMS?YKEKPsHSoFd@SKcAl@mCo@Ue@Cc@fAiNdAmSc@IBaC",
           "schedule": {
-            "weekday": ["05:30", "06:45", "08:20", "11:45", "15:45", "17:15", "19:45"],
-            "saturday": ["05:30", "06:45", "11:45", "15:15", "19:45"],
-            "sunday": ["05:30", "06:45", "11:45", "15:15", "19:45"]
+            "weekday": ["05:00", "06:10", "11:00", "16:15", "19:00"],
+            "saturday": ["06:00", "12:00", "19:00"],
+            "sunday": ["06:00", "12:00", "19:00"]
           }
         }
       ]
@@ -1001,9 +1001,9 @@
           "duration": 55,
           "geometry": "k}pmG_pjpCV{@|@x@V\\b@LRCl@eB?[s@aCCc@B]pFsPzCoIjSyn@d@gA`DqDjOyLrBmAnBw@nA]lLoBl@Ip@A`CYz@S~@Md@VFJD^IrAOl@WNUE]W\\{F\\qEXmGFCL_@EWEI?Qt@cXA]CIZcLLwSDe^?m`@IqIIcDAiCD_Kd@oDxAoJPsAPe@DmAGeBa@_GLcEAs@ZiKF{GKaKJrIAnDKfGK|CB?Bg@NcFHyG?s@I{BG_FAoCKwGGcH_@v~@eB@c@D[Hk@ZmBhBwEzE{@j@c@P_@Hm@Dm@?kDSqQsA{@ACCiADSCYBy@UM?q@K{DIi@o@Sg@PeFP{GXkWh@sl@AeBCu@IaAG_@Sw@Ws@a@y@[e@yCyDoFuGeQsTmCaDa@a@c@U[ASBg@T}@|@cCrCeFlGQNG?a@MoC_BiD_BmNaGqCqAq@_@_@U_@a@gAwBY_@USc@QWCuCLkCXYH[VQ`@Or@MrCIt@Mp@Wz@{@fBc@^wKlF]@e@Kg@e@o@w@sCsFUOQC[F]\\oDbJ]n@QLQB[Cu@]YIW?yFl@sQvAmBb@u@h@}DsJI]o@wTKsCGeAIu@Ww@w@mA_AiAkEwEsAcBwFjEsAz@mBfA{D|Cy@v@gBfDiBpEc@nAk@|@UT[NeBJmBBy@Ta@`@{CxDa@dA{AjFWp@}@bAyElEyA~AgAxBg@lAkIxPYb@a@V`@WXc@jIyPf@mAfAyBxA_BxEmE|@cAVq@zAkFRi@L[v@cAbBuB`@a@x@UlBCdBKZOTUj@}@b@oAhBqEfBgDx@w@zD}ClBgArA{@vFkEnDcDj@o@pIgLn@aAh@aArAoCbBsCrGaJ`@a@p@i@hCY`Dk@lAOrAG`AFhBX^IT]@g@U_@]_@wDeGsCqDq@aA{DeIc@aAGSCSAm@DoAP}BHeB?sBIoBi@cGGsAs@iZ?{@Da@`DeLXy@",
           "schedule": {
-            "weekday": ["06:00", "07:30", "11:00", "14:30", "16:30", "19:30"],
-            "saturday": ["12:00", "19:30"],
-            "sunday": ["12:00", "19:30"]
+            "weekday": ["05:30", "06:45", "08:15", "11:45", "15:15", "17:15", "20:45"]
+            "saturday": [],
+            "sunday": []
           }
         },
         {
@@ -1013,9 +1013,9 @@
           "duration": 52,
           "geometry": "kytmGy__qCWt@aDdLE`@?z@r@hZFrAh@bGHnB?rBIdBQ|BEnA@l@BRFRb@`AzDdIp@`ArCpDvDdG\\^T^Af@U\\_@HiBYaAGsAFmANaDj@iCXq@h@a@`@sG`JcBrCsAnCi@`Ao@`AqIfLk@n@oDbDwFjEsAz@mBfA{D|Cy@v@gBfDiBpEc@nAk@|@UT[NeBJmBBy@Ta@`@cBtBw@bAMZSh@{AjFWp@}@bAyElEyA~AgAxBg@lAkIxPYb@a@V`@WXc@jIyPf@mAfAyBxA_BxEmE|@cAVq@zAkF`@eAzCyD`@a@x@UlBCdBKZOTUj@}@b@oAhBqEfBgDx@w@zD}ClBgArA{@vFkErAbBjEvE~@hAv@lAVv@Ht@FdAJrCn@vTH\\|DrJt@i@lBc@rQwAxFm@V?XHt@\\ZBPCPM\\o@nDcJ\\]ZGPBTNrCrFn@v@f@d@d@J\\AvKmFb@_@z@gBV{@Lq@Hu@LsCNs@Pa@ZWXIjCYtCMVBb@PTRX^fAvB^`@^Tp@^pCpAlN`GhD~AnC~A`@LF?POdFmGbCsC|@}@f@URCZ@b@T`@`@lC`DdQrTnFtGxCxDZd@`@x@Vr@Rv@F^H`ABt@@dBi@rl@YjWQzGQdFRf@h@n@nCDj@Bn@HLXPp@rAa@lAMBER?f@@pQrAjDRl@?l@E^Ib@Qz@k@vE{ElBiBj@[RGj@GZ?lBoz@NpLB`DC@JjIAnDMbHKbDGzAI`@MxAA~@?tA`@vG?pAE~@BTQrAyBxNGpACrI@hCHbDFtFB|WGpi@MvS]fLCJu@zTQhCIHEJALF\\BDQxEEBS\\SRm@^c@t@MrAGRIz@Q`@MPy@Pm@V{MxBoA\\oBv@sBlAkOxLaDpDe@fAkSxn@{CnIqFrPC\\Bb@r@`C?Zm@dBSBc@MW]}@y@Wz@jAk@",
           "schedule": {
-            "weekday": ["05:30", "06:45", "08:15", "11:45", "15:15", "17:15", "20:15"],
-            "saturday": ["06:30", "12:45", "20:15"],
-            "sunday": ["06:30", "12:45", "20:15"]
+            "weekday": ["06:00", "07:30", "11:00", "14:30", "16:30", "20:00"],
+            "saturday": [],
+            "sunday": []
           }
         }
       ]
@@ -1034,8 +1034,8 @@
           "duration": 21,
           "geometry": "cwnmG{`ipCBn@EFCJUd@K?sCMUGNmA|@cHTsBBWJ_ANmAf@yEBW@QFc@d@_Ej@mENmAFg@@YHs@t@sGn@aFj@_FVqB^gDD_@Hy@h@eDnAsH\\sBF_@R}AJcANiAFw@LgAp@{KB]Bk@JmBHiADi@TqDB_@BWBa@@O@QDk@@S@M@QLmBFgA?MB_@Dy@@]JqBDo@Bm@?CRyC\\qEJgC@IHgB@SB??A@?@A@A?A@??A@??A?A@??A?A@??A?A@A?A?A?A?A@A?A?A?A?A?AA??A?A?A?A?AAA?A?AA??A?AA??AAA?AA??A?O?IFoBBw@RwGDiALeE@c@?a@?M?EAG?C?EAA?AAAFkBD_BF{A?KDoBBwAD_JB_F@aM@iE@oC?yA?w@?w@@wG?sAA{E?W?_A?gH?eBA{ACuAAqAAmAAk@CyB@kB?]@{A@s@@s@@w@AwA@Y?S@MBWJ_ANgAx@uFXwBPsAPe@@G@WBYASAi@E{@Ai@OeBOoBBy@By@HyA?OAg@FwAD_AFuBFmBDyCB_C?s@I{BG_FAoCKwGCmC?KEuDAuAIwF?AK}EGgCIqECcBAa@KaEAc@@??A@A?A?A?i@EaEAi@AUCu@K}DIwA?MCq@?AAm@Ag@AQ?S?SBQ@M?Q@?@A?A@??A@?FCLEJGHGT?ZATARCTCNABAJCNEJGBCBERO@APQ^i@dBaChEcGd@o@x@iAzCgEBCvDmF|@mA`AwAn@}@|B{CZa@NONM\\Q`@OTGtBm@Ds@ZiCD]h@uGB]HkABa@N{BHkAJqAXoDBOV}CNuBBYRsCLcB@KLgBRcCDq@Dg@BYNgCyCuAg@UqOkHSImAQ",
           "schedule": {
-            "weekday": ["06:30", "10:00", "11:30", "15:00", "18:30"],
-            "saturday": ["09:30"],
+            "weekday": ["07:00", "11:00", "12:00", "17:30", "19:00"],
+            "saturday": [],
             "sunday": []
           }
         },
@@ -1046,8 +1046,8 @@
           "duration": 20,
           "geometry": "_wlmGab}pCgAUmAY{AYGAeDk@CAiEq@WE_@IE?C@c@TuDnBC@aB|@aAh@MFqAx@q@b@m@`@IHKRGPGXKGEGEIEE@A?G@E?G?A?CAG?ECEAE?ACCCCCCCCCAEAC?E?C@E@CBCBCBCDAB?@ADADAF?D?D?@@D@F@D@DBBBDBBB@@?@D?B@@@B?B@B@TBZ@J@R?PFNFxABz@JlD?J@@HnD?@HlCVnIVxPFzETzJNhGDnBBbARdIBp@@p@DbB?DJ|D@PPdEAL?P?R?P@RAZ?T?V@J@N?L@H@TBRA??@?@A@?@?@?@?@?@?@?@?@?@@??@?@@@?@@@?@@?ATARAX@N?@@^?R@\\@j@B~@?@?N?T@RBx@D`BBhB@TDfARfE?@@@?@?@@??@@?@b@J`E@`@BbBHpEFfCJ|E?@HvF@tADtD?JBlCJvG@nCF~EHzB?r@C~BExCGlBGtBE~@GvAId@CPMpA?`@A\\Az@@XB\\Dr@?BL|ADdAB\\?j@?d@A\\C`@?B@B@LQrAYvBy@tFOfAK~@CVAL?RAX@vAAv@Ar@Ar@AzA?\\AjBBxB@j@@lA@pABtA@zA?dB?fH?~@?V@zE?rAAvG?v@?v@?xAAnCAhEA`MC~EE~ICvAEnB?JGzAE~AGjBA@?@A@?DABAJC`@?TC~@EpAEpAA`@Cj@EpAOnECb@KdBARCNA@A??@A??@A@A@?@A??@?@A@?@A@?@?@?@A@?@?@?@?@?@?@?@?@@@?@?@?@?@@@?@@@?@@@?@@??@@@AZKvCCd@WdDEt@?DEp@C^Cd@QtCK`BMrBAPC\\IfAO`CKbBGfA_@rFQnCQjCS`Ca@fGC`@WlCSrBIr@CNEXO~@s@pEeAjGQhAOfAK|@APg@dEc@pDIp@i@tECZ[dCAHWhBK~@Ep@In@q@pFg@dEGb@JNDLDTBT@L@j@B~@?z@BrB@`@J~CB`CAd@DfB",
           "schedule": {
-            "weekday": ["06:51", "10:21", "11:51", "15:21", "18:51"],
-            "saturday": ["09:51"],
+            "weekday": ["06:30", "10:30", "11:30", "17:00", "18:30"],
+            "saturday": [],
             "sunday": []
           }
         }
