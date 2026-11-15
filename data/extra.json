@@ -1122,7 +1122,7 @@
     {
       "id": "metro-carcea1",
       "shortName": "M Carcea 1",
-      "longName": "Metropolitan Craiova-Carcea",
+      "longName": "Metropolitan Craiova-Metro-Carcea",
       "color": "283593",
       "textColor": "ffffff",
       "patterns": [
@@ -1155,7 +1155,7 @@
     {
       "id": "metro-carcea2",
       "shortName": "M Carcea 2",
-      "longName": "Metropolitan Craiova-Carcea",
+      "longName": "Metropolitan Craiova-Ford-Carcea",
       "color": "283593",
       "textColor": "ffffff",
       "patterns": [
