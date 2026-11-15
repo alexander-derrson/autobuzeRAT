@@ -7,40 +7,24 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  background: #000;
+  color: #ddd;
 }
 
 .orare-wrap {
-  padding: 10px 0 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 16px 32px;
 }
 
-/* Panou negru, ca lista "Vehicles" de pe pagina principala */
-.orare-panel {
-  background: #000;
-  color: #ddd;
-  border-radius: 8px;
-  padding: 12px 0 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.orare-panel > * {
-  margin-left: 16px;
-  margin-right: 16px;
-}
-
-.orare-panel > .line-section {
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.orare-heading {
-  margin: 0 16px 10px;
+.orare-title {
+  margin: 0 0 16px;
   color: #fff;
-  font-size: 1.17em;
-  font-weight: bold;
+  font-size: 20px;
 }
 
 .orare-note {
-  margin-top: 14px;
+  margin: 14px 0 0;
   font-size: 13px;
   color: #888;
 }
@@ -56,19 +40,18 @@
 
 /* ---------- Lista de linii ---------- */
 
-/* Titlu de sectiune, ca randurile "Active vehicles" din tabel */
-.line-section {
-  margin-top: 14px;
-  padding: 10px 16px;
-  background: #0f1420;
-  border-top: 1px solid #1f1f1f;
-  border-bottom: 1px solid #1f1f1f;
+.line-group-title {
+  margin: 26px 0 12px;
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
 }
 
-.line-section-count {
+.line-group-title:first-of-type {
+  margin-top: 0;
+}
+
+.line-group-count {
   margin-left: 6px;
   font-weight: normal;
   opacity: 0.6;
@@ -76,57 +59,57 @@
 
 .line-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 8px;
-  margin: 12px 16px 0;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
 }
 
-.line-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.line-card {
+  position: relative;
+  overflow: hidden;
 
-  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 84px;
+  padding: 14px 14px 14px 20px;
 
   background: #0b0c10;
   border: 1px solid #1f1f1f;
-  border-radius: 6px;
+  border-radius: 10px;
 
   color: #ddd;
-  font-size: 15px;
+  text-align: center;
   text-decoration: none;
 }
 
-.line-item:hover,
-.line-item:focus-visible {
+.line-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  background: var(--line-color, #666);
+}
+
+.line-card:hover,
+.line-card:focus-visible {
   background: #14231a;
   outline: none;
 }
 
-.line-item .vehicle-type-icon {
-  flex: none;
-  margin-right: 0;
-}
-
-/* Acelasi badge ca in popup-urile si listele de pe harta */
-.line-item .line-badge-sm {
-  flex: none;
-  display: inline-block;
-  min-width: 34px;
-  padding: 1px 6px;
-  border-radius: 4px;
+.line-card-title {
+  font-size: 22px;
   font-weight: bold;
-  text-align: center;
+  color: #eee;
 }
 
-.line-item-text {
-  min-width: 0;
-  font-size: 14px;
-  color: #ddd;
-}
-
-.line-item-empty {
-  color: #777;
+.line-card-sub {
+  font-size: 13px;
+  font-weight: normal;
+  color: #aaa;
 }
 
 /* ---------- Pagina unei linii ---------- */
@@ -164,7 +147,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
+  margin: 0 0 16px;
 }
 
 .orar-grid {
@@ -276,7 +259,7 @@
 /* ---------- Asterisc (ex. T100 - capat FORD) ---------- */
 
 .orar-callout {
-  margin-bottom: 16px;
+  margin: 0 0 16px;
   padding: 12px 16px;
   background: #0f1420;
   border: 1px solid #1f1f1f;
