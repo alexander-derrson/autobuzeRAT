@@ -405,6 +405,20 @@ function lineSubtitle(line) {
 }
 
 
+function lineKind(line) {
+
+  if (line.extra) {
+    return "metro";
+  }
+
+  if (MANUAL[line.indicative]?.type === "tram" || /^T\d/i.test(line.indicative)) {
+    return "tram";
+  }
+
+  return "bus";
+}
+
+
 function renderList() {
 
   const content = document.getElementById("content");
@@ -417,25 +431,49 @@ function renderList() {
     return;
   }
 
+  const groups = [
+    { kind: "tram", title: "Tramvaie" },
+    { kind: "bus", title: "Autobuze" },
+    { kind: "metro", title: "Linii metropolitane" }
+  ];
+
+  const item = line => {
+
+    const background = line.color ? `#${line.color}` : "#666666";
+    const foreground = line.textColor
+      ? `#${line.textColor}`
+      : readableTextColor(line.color);
+
+    const kind = lineKind(line);
+    const subtitle = lineSubtitle(line);
+
+    return `
+      <a class="line-item" href="linie.html?id=${encodeURIComponent(line.id)}">
+        <img class="vehicle-type-icon"
+             src="${kind === "tram" ? "markerTram.png" : "markerBus.png"}"
+             alt="${kind === "tram" ? "Tramvai" : "Autobuz"}">
+        <span class="line-badge-sm"
+              style="background:${background}; color:${foreground};">${escapeHtml(line.indicative)}</span>
+        <span class="line-item-text${subtitle ? "" : " line-item-empty"}">${escapeHtml(subtitle || "Orar indisponibil")}</span>
+      </a>
+    `;
+  };
+
   content.innerHTML = `
-    <div class="line-grid">
-      ${LINES.map(line => {
+    <h3 class="orare-heading">Orare</h3>
+    ${groups.map(group => {
 
-        const color = line.color ? `#${line.color}` : "#666666";
-        const subtitle = lineSubtitle(line);
+      const lines = LINES.filter(line => lineKind(line) === group.kind);
 
-        return `
-          <a class="line-card"
-             style="--line-color: ${color};"
-             href="linie.html?id=${encodeURIComponent(line.id)}">
-            <span class="line-card-title">Linia ${escapeHtml(line.indicative)}</span>
-            ${subtitle
-              ? `<span class="line-card-sub">${escapeHtml(subtitle)}</span>`
-              : ""}
-          </a>
-        `;
-      }).join("")}
-    </div>
+      if (lines.length === 0) {
+        return "";
+      }
+
+      return `
+        <div class="line-section">${group.title}<span class="line-section-count">${lines.length}</span></div>
+        <div class="line-grid">${lines.map(item).join("")}</div>
+      `;
+    }).join("")}
   `;
 }
 
