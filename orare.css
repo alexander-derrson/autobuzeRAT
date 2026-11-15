@@ -237,3 +237,22 @@
 [hidden] {
   display: none !important;
 }
+
+/* ---------- Asterisc (ex. T100 - capat FORD) ---------- */
+
+.orar-callout {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  background: #0f1420;
+  border: 1px solid #1f1f1f;
+  border-left: 5px solid #f59e0b;
+  border-radius: 10px;
+  color: #eee;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.orar-star {
+  color: #f59e0b;
+  font-weight: bold;
+}

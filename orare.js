@@ -27,6 +27,7 @@ let LINES = [];          // toate liniile
 let STOP_NAMES = {};     // stopId -> nume
 let HOLIDAYS = [];       // din extra.json
 let MANUAL = {};         // din orare.json (cheie = indicativ)
+let MANUAL_LOADED = false;
 let MANUAL_INFO = {};    // din orare.json ("info": perioade speciale etc.)
 
 
@@ -191,6 +192,7 @@ async function loadData() {
     })
   ]);
 
+  MANUAL_LOADED = Boolean(manual?.lines);
   MANUAL = manual?.lines ?? {};
   MANUAL_INFO = manual?.info ?? {};
 
@@ -378,6 +380,10 @@ function lineSubtitle(line) {
   const manual = MANUAL[line.indicative];
 
   if (manual) {
+    if (manual.itinerary) {
+      return manual.itinerary;
+    }
+
     return manual.ends.length === 1
       ? `${manual.ends[0]} (circulară)`
       : manual.ends.join(" - ");
@@ -512,7 +518,7 @@ function parseTimes(text) {
 }
 
 
-function timetableTable(minutes) {
+function timetableTable(minutes, starred) {
 
   const hours = new Map();
 
@@ -524,7 +530,7 @@ function timetableTable(minutes) {
       hours.set(hour, []);
     }
 
-    hours.get(hour).push(total % 60);
+    hours.get(hour).push(total);
   });
 
   const pad = number => String(number).padStart(2, "0");
@@ -538,7 +544,7 @@ function timetableTable(minutes) {
         ${[...hours].map(([hour, mins]) => `
           <tr>
             <td class="orar-hour">${pad(hour % 24)}</td>
-            <td>${mins.map(m => `<span class="orar-min">${pad(m)}</span>`).join("")}</td>
+            <td>${mins.map(total => `<span class="orar-min">${pad(total % 60)}${starred && starred(total) ? '<span class="orar-star">*</span>' : ""}</span>`).join("")}</td>
           </tr>
         `).join("")}
       </tbody>
@@ -547,10 +553,10 @@ function timetableTable(minutes) {
 }
 
 
-function sectionHtml(title, destination, minutes, footExtra) {
+function sectionHtml(title, destination, minutes, footExtra, starred) {
 
   const body = minutes.length > 0
-    ? timetableTable(minutes)
+    ? timetableTable(minutes, starred)
     : '<div class="orar-empty">Nicio plecare în acest tip de zi.</div>';
 
   const foot = minutes.length > 0
@@ -668,6 +674,7 @@ function renderManual(line, def) {
     <div id="programWrap">
       ${tabsHtml("programTabs", PROGRAMS, program, "data-program")}
     </div>
+    <div id="orarCallout"></div>
     <div class="orar-grid" id="orarGrid"></div>
     <div id="orarInfo"></div>
     <p class="orare-note" id="orarNote"></p>
@@ -717,6 +724,19 @@ function renderManual(line, def) {
 
     note.textContent = notes.join(" ");
 
+    const callout = document.getElementById("orarCallout");
+
+    callout.innerHTML = schedule?.star
+      ? `<div class="orar-callout"><span class="orar-star">*</span> ${escapeHtml(schedule.star.text.replace(/^\*\s*/, ""))}</div>`
+      : "";
+
+    const ranges = (schedule?.star?.ranges ?? [])
+      .map(([from, to]) => [parseClock(from), parseClock(to)]);
+
+    const starred = ranges.length > 0
+      ? total => ranges.some(([from, to]) => total >= from && total <= to)
+      : null;
+
     if (!schedule || schedule.service === false) {
 
       grid.innerHTML =
@@ -731,7 +751,8 @@ function renderManual(line, def) {
       `Plecări din ${end}`,
       ends.length === 2 ? `spre ${ends[1 - index]}` : "linie circulară",
       parseTimes(schedule.times?.[index]),
-      schedule.explicit ? "orar din documentul de program" : "orar calculat din intervale"
+      schedule.explicit ? "orar din documentul de program" : "orar calculat din intervale",
+      starred
     )).join("");
 
     info.innerHTML = schedule.bands
@@ -862,7 +883,9 @@ function renderLine() {
 
     content.innerHTML = `
       ${lineHeader(line, lineSubtitle(line))}
-      <div class="orare-error">Orarul acestei linii nu este disponibil încă.</div>
+      <div class="orare-error">${MANUAL_LOADED
+        ? "Orarul acestei linii nu este disponibil încă."
+        : "Nu s-a putut încărca fișierul <b>data/orare.json</b>. Verifică dacă există în folderul <b>data</b>, cu exact acest nume, și că este servit de site."}</div>
     `;
 
     setStatus(`Linia ${line.indicative}`);
