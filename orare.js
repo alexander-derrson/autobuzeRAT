@@ -174,14 +174,52 @@ async function getJson(url) {
 // Incarcarea datelor
 // ------------------------------------------------------------
 
+// API-ul extern (linii, statii) e lent si se schimba rar: se raspunde
+// instant din cache, iar cache-ul se reimprospateaza in fundal pentru
+// urmatoarea vizita. Doar prima vizita asteapta reteaua.
+// shortcut: datele din cache pot fi vechi cu o vizita, fara expirare.
+async function cachedJson(url) {
+
+  if (!("caches" in window)) {
+    return getJson(url);
+  }
+
+  try {
+
+    const cache = await caches.open("orare-api-v1");
+    const hit = await cache.match(url);
+
+    const fresh = fetch(url).then(response => {
+
+      if (!response.ok) {
+        throw new Error(`${url} -> ${response.status}`);
+      }
+
+      cache.put(url, response.clone());
+
+      return response.json();
+    });
+
+    if (hit) {
+      fresh.catch(() => {});
+      return await hit.json();
+    }
+
+    return await fresh;
+
+  } catch (error) {
+    return getJson(url);
+  }
+}
+
 async function loadData() {
 
   const [apiRoutes, apiStops, localRoutes, extra, manual] = await Promise.all([
-    getJson(ROUTES_URL).catch(error => {
+    cachedJson(ROUTES_URL).catch(error => {
       console.warn("Nu s-au putut încărca liniile din API:", error);
       return null;
     }),
-    getJson(STOPS_URL).catch(error => {
+    cachedJson(STOPS_URL).catch(error => {
       console.warn("Nu s-au putut încărca stațiile din API:", error);
       return null;
     }),
