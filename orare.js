@@ -23,6 +23,7 @@ const DAY_TYPES = [
   { key: "holiday", label: "Sărbători" }
 ];
 
+let STOP_COORDS = {};    // stopId -> [lat, lng]
 let LINES = [];          // toate liniile
 let STOP_NAMES = {};     // stopId -> nume
 let HOLIDAYS = [];       // din extra.json
@@ -207,6 +208,15 @@ async function loadData() {
     ? apiStops
     : (apiStops?.stops ?? apiStops?.data ?? []);
 
+  STOP_COORDS = {};
+
+  const setCoords = (id, lat, lng) => {
+
+    if (Number.isFinite(Number(lat)) && Number.isFinite(Number(lng)) && lat != null && lng != null) {
+      STOP_COORDS[String(id)] = [Number(lat), Number(lng)];
+    }
+  };
+
   stopList.forEach(stop => {
 
     const id = stop.id ?? stop.stopId;
@@ -215,6 +225,12 @@ async function loadData() {
       STOP_NAMES[String(id)] =
         stop.name ?? stop.stopName ?? stop.shortName ?? stop.longName ??
         `Stația ${id}`;
+
+      setCoords(
+        id,
+        stop.latitude ?? stop.lat ?? stop.position?.latitude ?? stop.position?.lat,
+        stop.longitude ?? stop.lng ?? stop.lon ?? stop.position?.longitude ?? stop.position?.lng
+      );
     }
   });
 
@@ -222,6 +238,7 @@ async function loadData() {
 
     if (stop.id !== undefined && !(String(stop.id) in STOP_NAMES)) {
       STOP_NAMES[String(stop.id)] = stop.name ?? `Stația ${stop.id}`;
+      setCoords(stop.id, stop.latitude ?? stop.lat, stop.longitude ?? stop.lng);
     }
   });
 
@@ -252,7 +269,9 @@ async function loadData() {
           direction: Number(pattern.direction ?? -1),
           fromId: pattern.fromStopId ?? stops[0],
           toId: pattern.toStopId ?? stops[stops.length - 1],
-          headsign: pattern.headsign ?? null
+          headsign: pattern.headsign ?? null,
+          stopIds: stops,
+          geometry: pattern.geometry ?? null
         };
       })
     });
@@ -284,7 +303,10 @@ async function loadData() {
           fromId: stops[0],
           toId: stops[stops.length - 1],
           headsign: item.headsign ?? null,
-          schedule: item.schedule ?? {}
+          schedule: item.schedule ?? {},
+          stopIds: stops,
+          geometry: item.geometry ?? null,
+          path: item.path ?? null
         };
       })
     });
@@ -891,6 +913,144 @@ function renderExtra(line) {
 }
 
 
+// ------------------------------------------------------------
+// Harta liniei (pop-up)
+// ------------------------------------------------------------
+
+let lineMap = null;
+let lineMapLayer = null;
+
+
+// Polyline codificat (Google, precizie 5) -> [[lat, lng], ...]
+function decodePolyline(encoded) {
+
+  const points = [];
+  let index = 0;
+  let lat = 0;
+  let lng = 0;
+
+  const next = () => {
+
+    let result = 0;
+    let shift = 0;
+    let byte;
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while (byte >= 0x20);
+
+    return (result & 1) ? ~(result >> 1) : (result >> 1);
+  };
+
+  while (index < encoded.length) {
+    lat += next();
+    lng += next();
+    points.push([lat / 1e5, lng / 1e5]);
+  }
+
+  return points;
+}
+
+
+function openLineMap(line) {
+
+  document.getElementById("mapModal").hidden = false;
+
+  // Harta se creeaza o singura data, la prima deschidere
+  if (!lineMap) {
+
+    lineMap = L.map("lineMap");
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(lineMap);
+
+    lineMapLayer = L.layerGroup().addTo(lineMap);
+  }
+
+  lineMap.invalidateSize();
+  lineMapLayer.clearLayers();
+
+  const color = line.color ? `#${line.color}` : "#3388ff";
+  const bounds = [];
+  const seenStops = new Set();
+
+  // "Intreaga linie" (direction -1) doar daca nu exista sensuri separate
+  const hasDirections = line.patterns.some(pattern => pattern.direction >= 0);
+
+  line.patterns
+    .filter(pattern => !hasDirections || pattern.direction >= 0)
+    .forEach(pattern => {
+
+      const drawn = pattern.path
+        ? pattern.path.map(point => [Number(point[0]), Number(point[1])])
+        : pattern.geometry ? decodePolyline(pattern.geometry) : [];
+
+      const stops = (pattern.stopIds ?? []).filter(id => STOP_COORDS[String(id)]);
+
+      // Fara traseu desenat, se unesc statiile (linie punctata)
+      const points = drawn.length > 1
+        ? drawn
+        : stops.map(id => STOP_COORDS[String(id)]);
+
+      if (points.length > 1) {
+
+        L.polyline(points, {
+          color,
+          weight: 5,
+          opacity: 0.85,
+          dashArray: drawn.length > 1 ? null : "6 8"
+        }).addTo(lineMapLayer);
+
+        bounds.push(...points);
+      }
+
+      stops.forEach(id => {
+
+        if (seenStops.has(String(id))) {
+          return;
+        }
+
+        seenStops.add(String(id));
+
+        L.circleMarker(STOP_COORDS[String(id)], {
+          radius: 5,
+          color: "#000000",
+          weight: 2,
+          fillColor: "#ffffff",
+          fillOpacity: 1
+        }).bindTooltip(escapeHtml(stopName(id))).addTo(lineMapLayer);
+
+        bounds.push(STOP_COORDS[String(id)]);
+      });
+    });
+
+  if (bounds.length > 0) {
+    lineMap.fitBounds(bounds, { padding: [30, 30] });
+  } else {
+    lineMap.setView([44.321, 23.800], 13);
+  }
+}
+
+
+// Butonul "Harta" apare doar daca linia are statii cu coordonate
+function setupLineMap(line) {
+
+  const button = document.getElementById("mapButton");
+
+  button.hidden =
+    typeof L === "undefined" ||
+    !line.patterns.some(pattern =>
+      (pattern.stopIds ?? []).some(id => STOP_COORDS[String(id)])
+    );
+
+  button.onclick = () => openLineMap(line);
+}
+
+
 function renderLine() {
 
   const content = document.getElementById("content");
@@ -909,6 +1069,8 @@ function renderLine() {
   }
 
   document.title = `Linia ${line.indicative} - Orar - RAT Craiova Tracker`;
+
+  setupLineMap(line);
 
   const manual = MANUAL[line.indicative];
 
@@ -941,6 +1103,17 @@ async function start() {
       window.location.href = button.dataset.href;
     });
   });
+
+  const modal = document.getElementById("mapModal");
+
+  if (modal) {
+
+    const close = () => { modal.hidden = true; };
+
+    document.getElementById("mapClose").addEventListener("click", close);
+    modal.addEventListener("click", event => { if (event.target === modal) close(); });
+    document.addEventListener("keydown", event => { if (event.key === "Escape") close(); });
+  }
 
   try {
 

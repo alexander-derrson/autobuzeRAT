@@ -6,6 +6,7 @@
 
   <title>Orar linie - RAT Craiova Tracker</title>
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="orare.css">
 </head>
@@ -17,7 +18,7 @@
 
     <div class="controls">
       <button type="button" data-href="orare.html">&larr; Toate liniile</button>
-      <button type="button" data-href="index.html">Harta</button>
+      <button type="button" id="mapButton" hidden>Harta</button>
     </div>
 
     <div id="status">
@@ -31,6 +32,14 @@
     </div>
   </main>
 
+  <div id="mapModal" class="map-modal" hidden role="dialog" aria-modal="true" aria-label="Harta liniei">
+    <div class="map-modal-box">
+      <button type="button" id="mapClose" class="map-close" aria-label="Închide">&times;</button>
+      <div id="lineMap"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="orare.js"></script>
 
 </body>
