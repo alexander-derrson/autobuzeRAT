@@ -6,9 +6,9 @@ const API_URLS = [
   {
     operator: "RAT Craiova",
     name: "RAT Craiova",
-    url: "https://craiova-prx.derrson.workers.dev/api/v1/ba79f1ee-c6f7-48ad-8a42-d23417a3ab53/transport/planner/vehicles",
-    routesUrl: "https://craiova-prx.derrson.workers.dev/api/v1/ba79f1ee-c6f7-48ad-8a42-d23417a3ab53/transport/planner/routes",
-    stopsUrl: "https://craiova-prx.derrson.workers.dev/api/v1/ba79f1ee-c6f7-48ad-8a42-d23417a3ab53/transport/planner/stops"
+    url: "https://craiova-prx.derrson.workers.dev/vehicles",
+    routesUrl: "https://craiova-prx.derrson.workers.dev/routes",
+    stopsUrl: "https://craiova-prx.derrson.workers.dev/stops"
   }
 ];
 

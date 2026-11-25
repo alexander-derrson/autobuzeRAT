@@ -11,7 +11,7 @@
 const OPERATOR = "RAT Craiova";
 
 const API_BASE =
-  "https://app.craiova-transport.com/api/v1/ba79f1ee-c6f7-48ad-8a42-d23417a3ab53/transport/planner";
+  "https://craiova-prx.derrson.workers.dev";
 
 const ROUTES_URL = `${API_BASE}/routes`;
 const STOPS_URL = `${API_BASE}/stops`;
